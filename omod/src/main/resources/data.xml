@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<data xmlns="tmac:basic:resources" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<user>
+		<id>1</id>
+		<first_name>Gregory</first_name>
+		<last_name>House</last_name>
+		<DoB>1965-12-11</DoB>
+		<!--  <role>doctor</role>-->
+		<role>patient</role>
+		<assigned_patient>2</assigned_patient>
+		<trustworthiness>0.6</trustworthiness>
+		<budget>0.6</budget>
+	</user>
+
+	<user>
+		<id>2</id>
+		<first_name>Luca</first_name>
+		<last_name>Gasparini</last_name>
+		<DoB>1988-10-09</DoB>
+		<role>patient</role>
+		<clinical_data>healthy, but smoker</clinical_data>
+		<budget>1.0</budget>
+	</user>
+
+	<user>
+		<id>3</id>
+		<first_name>Nicola</first_name>
+		<last_name>Gasparini</last_name>
+		<DoB>1982-09-01</DoB>
+		<role>patient</role>
+		<clinical_data>flu</clinical_data>
+		<budget>1.0</budget>
+	</user>
+
+	<user>
+		<id>4</id>
+		<first_name>Francesca</first_name>
+		<last_name>Rossi</last_name>
+		<DoB>1982-07-14</DoB>
+		<role>nurse</role>
+		<assigned_patient>2</assigned_patient>
+		<trustworthiness>0.6</trustworthiness>
+		<budget>0.6</budget>
+	</user>
+
+	<user>
+		<id>15</id>
+		<first_name>Liang</first_name>
+		<last_name>Chen</last_name>
+		<DoB>1983-05-05</DoB>
+		<role>doctor</role>
+		<budget>1.0</budget>
+	</user>
+	
+	<!-- user jackchen has the budget 0.6 and trustworthiness :0.6 -->
+	<user>
+		<id>5</id>
+		<budget>2.0</budget>
+		
+		<assigned_patient>d</assigned_patient>
+		<assigned_patient>john</assigned_patient>
+	</user>
+	
+	<!-- user anita has the budget 1.0 and trustworthiness :0.7 -->
+	<user>
+		<id>3</id>
+		<budget>1.0</budget>
+		<trustworthiness>0.7</trustworthiness>
+	</user>
+	
+	<team>
+		<id>1</id>
+		<member_id>1</member_id>
+		<member_id>4</member_id>
+		<budget>0.8</budget>
+	</team>
+
+	<team>
+		<id>2</id>
+		<member_id>2</member_id>
+		<member_id>3</member_id>
+		<budget>0</budget>
+	</team>
+
+	<task>
+		<id>1</id>
+		<permission_id>1</permission_id>
+		<duration>P1DT6H</duration>
+	</task>
+
+	<task>
+		<id>2</id>
+		<permission_id>2</permission_id>
+		<permission_id>3</permission_id>
+		<permission_id>4</permission_id>
+		<duration>P1DT6H</duration>
+	<team_id>1</team_id>
+        <start_time>2013-02-12T15:40:30.651000000+00:00</start_time>
+    </task>
+
+	<permission>
+		<id>1</id>
+		<action>write</action>
+		<resource_type>user</resource_type>
+		<resource_id>1</resource_id>
+	</permission>
+
+	<permission>
+		<id>2</id>
+		<action>write</action>
+		<resource_type>user</resource_type>
+		<resource_id>2</resource_id>
+	</permission>
+
+	<permission>
+		<id>3</id>
+		<action>read</action>
+		<resource_type>user</resource_type>
+		<resource_id>2</resource_id>
+	</permission>
+
+	<permission>
+		<id>4</id>
+		<action>write</action>
+		<resource_type>user</resource_type>
+		<resource_id>3</resource_id>
+	</permission>
+
+	<permission>
+		<id>5</id>
+		<action>get</action>
+		<resource_type>patients</resource_type>
+	</permission>
+	
+	<permission>
+		<id>6</id>
+		<action>get</action>
+		<resource_type>identifier types</resource_type>
+	</permission>
+	
+	<permission>
+		<id>7</id>
+		<action>add</action>
+		<resource_type>patients</resource_type>
+	</permission>
+		
+	<permission>
+		<id>8</id>
+		<action>edit</action>
+		<resource_type>patients</resource_type>
+	</permission>
+
+
+<obligation>
+        <id>1</id>
+        <action_name>user:justify:obligation</action_name>
+        <start_time>2013-02-12T15:39:59+00:00</start_time>
+        <duration>P1DT15S</duration>
+        <state>expired</state>
+        <team>1</team>
+        <setId>0</setId>
+    </obligation>
+<obligation>
+        <id>2</id>
+        <action_name>user:example:obligation</action_name>
+        <start_time>2013-02-12T15:39:59+00:00</start_time>
+        <duration>P1DT15S</duration>
+        <state>expired</state>
+        <team>1</team>
+        <setId>0</setId>
+    </obligation>
+<obligation>
+        <id>3</id>
+        <action_name>user:justify:obligation</action_name>
+        <start_time>2013-02-12T15:40:29+00:00</start_time>
+        <duration>P1DT15S</duration>
+        <state>expired</state>
+        <team>1</team>
+        <setId>1</setId>
+    </obligation>
+<obligation>
+        <id>4</id>
+        <action_name>user:example:obligation</action_name>
+        <start_time>2013-02-12T15:40:29+00:00</start_time>
+        <duration>P1DT15S</duration>
+        <state>expired</state>
+        <team>1</team>
+        <setId>1</setId>
+    </obligation>
+    
+    
+ <obligation>
+        <id>5</id>
+        <action_name>user:send:email</action_name>
+      <!--   <start_time>2014-03-6T12:40:29+00:00</start_time> -->
+        <duration>P1DT10M</duration>    <!-- PT10M means 10 mins -->
+<!--         <state>active</state>
+        <userID>5</userID> -->
+    </obligation>
+    
+   
+</data>

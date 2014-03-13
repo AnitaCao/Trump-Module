@@ -1,0 +1,26 @@
+<PolicySet xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-­instance"
+	xsi:schemaLocation="urn:oasis:names:tc:xacml:3.0:core:schema:wd-­17  xacml-­core-­v3-­schema-­wd-­17.xsd"
+	PolicySetId="RPS:doctor:role"
+	Version="1.0"
+	PolicyCombiningAlgId="urn:oasis:names:tc:xacml:3.0:policy-combining-algorithm:deny-unless-permit">
+	
+	<Description> PolicySet with role-permission assignment for doctor role </Description>
+	
+	<Target>
+		<AnyOf>
+			<AllOf>
+				<Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">doctor</AttributeValue>
+					<AttributeDesignator
+						MustBePresent="false"
+						Category="luca:tmac:subject-category:subject"
+						AttributeId ="luca:tmac:subject-category:subject:role"
+				
+						DataType="http://www.w3.org/2001/XMLSchema#string"/>
+				</Match>
+			</AllOf>
+		</AnyOf>
+	</Target>
+	<PolicySetIdReference>PPS:doctor:role</PolicySetIdReference>
+</PolicySet>
