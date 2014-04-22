@@ -199,8 +199,8 @@
 <obligation>
         <id>4</id>
         <action_name>user:rest</action_name>
-        <start_time>2013-02-12T15:40:29+00:00</start_time>
-        <duration>P1DT15S</duration>
+       
+        <duration>P1DT10M</duration>
        
     </obligation>
     
