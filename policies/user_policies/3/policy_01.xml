@@ -1,0 +1,347 @@
+<PolicySet xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:md="http://dot.rural.ac.uk/rbac/test/data/data_schema.xsd"
+	xsi:schemaLocation="urn:oasis:names:tc:xacml:3.0:core:schema:wd-­17  xacml-­core-­v3-­schema-­wd-­17.xsd"
+	PolicySetId="PPS:doctor:role" Version="1.0"
+	PolicyCombiningAlgId="urn:oasis:names:tc:xacml:3.0:policy-combining-algorithm:permit-overrides">
+
+	<Description> PolicySet with permission for the doctor role !
+	</Description>
+	<Target>
+	
+	</Target>
+
+	<Policy PolicyId="Permissions:specifically:for:the:doctor:role"
+		Version="1.0"
+		RuleCombiningAlgId="urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-overrides">
+		<Description> Policy with permission for the doctor role !  </Description>
+	  	<Target>
+		<AnyOf>
+			<AllOf>
+				<Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">3</AttributeValue>
+					<AttributeDesignator MustBePresent="false"
+						Category="luca:tmac:subject-category:subject" AttributeId="luca:tmac:subject-category:subject:id"
+						DataType="http://www.w3.org/2001/XMLSchema#string" />
+				</Match>
+			</AllOf>
+		</AnyOf>
+
+		</Target>
+  	  	
+		<!--  CHECK THE REQUEST IS VIEW PATIENT OR NOT  -->
+		<VariableDefinition VariableId="get/viewpatients">
+			<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+				<Apply
+					FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+					<AttributeDesignator MustBePresent="false"
+								Category="luca:tmac:permission-category:permission" AttributeId="luca:tmac:permission-category:permission:action"
+								DataType="http://www.w3.org/2001/XMLSchema#string" />
+					<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+           				<!--  <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">get</AttributeValue>  -->
+           				 <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">view</AttributeValue>
+       			    </Apply>
+				</Apply>
+				
+				 <Apply
+					FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+					<AttributeDesignator MustBePresent="false"
+								Category="luca:tmac:permission-category:permission" AttributeId="luca:tmac:permission-category:permission:resource_type"
+								DataType="http://www.w3.org/2001/XMLSchema#string" />
+					<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+           				<!-- <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">problems</AttributeValue>
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">allergies</AttributeValue> -->
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">patients</AttributeValue>
+       			    </Apply>
+				</Apply> 
+			
+			</Apply>
+		</VariableDefinition>
+		
+		<!--  CHECK THE REQUEST IS VIEW PATIENT'S OTHER INFO OR NOT  -->
+		<VariableDefinition VariableId="viewotherpatientinfo">
+			<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+				<Apply
+					FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+					<AttributeDesignator MustBePresent="false"
+								Category="luca:tmac:permission-category:permission" AttributeId="luca:tmac:permission-category:permission:action"
+								DataType="http://www.w3.org/2001/XMLSchema#string" />
+					<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+           				
+           				 <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">view</AttributeValue>
+       			    </Apply>
+				</Apply>
+				
+				 <Apply
+					FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+					<AttributeDesignator MustBePresent="false"
+								Category="luca:tmac:permission-category:permission" AttributeId="luca:tmac:permission-category:permission:resource_type"
+								DataType="http://www.w3.org/2001/XMLSchema#string" />
+					<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+           				<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">problems</AttributeValue>
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">allergies</AttributeValue>
+						
+       			    </Apply>
+				</Apply> 
+			
+			</Apply>
+		</VariableDefinition>
+		
+		<!--  CHECK WHETHER THE WANTED PATIENT IN ASSIGNED PATIENT OR NOT  -->
+		<VariableDefinition VariableId="checkasignedpatients">
+			<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+				<AttributeDesignator MustBePresent="false"
+					Category="luca:tmac:subject-category:subject" AttributeId="luca:tmac:subject-category:subject:wanted_patient"
+					DataType="http://www.w3.org/2001/XMLSchema#string" />
+				<AttributeDesignator MustBePresent="false"
+					Category="luca:tmac:subject-category:subject" AttributeId="luca:tmac:subject-category:subject:assigned_patient"
+					DataType="http://www.w3.org/2001/XMLSchema#string" />
+			</Apply>
+		</VariableDefinition>
+		
+		<!--   CHECK WHETHER USER HAVE ENOUGH BUDGET OR NOT   -->
+		<VariableDefinition VariableId="checkbudget">
+			<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:double-greater-than-or-equal">
+				<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:double-one-and-only">
+					<AttributeDesignator MustBePresent="false"
+						Category="luca:tmac:subject-category:subject" AttributeId="luca:tmac:subject-category:subject:budget"
+						DataType="http://www.w3.org/2001/XMLSchema#double" />
+				</Apply>
+				<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:double-one-and-only">
+					<AttributeDesignator MustBePresent="false"
+						Category="luca:tmac:risk-category:risk" AttributeId="luca:tmac:risk-category:risk:needed-budget"
+						DataType="http://www.w3.org/2001/XMLSchema#double" />
+				</Apply>
+			</Apply>
+		</VariableDefinition>
+		
+		<!--   CHECK WHETHER TIME IN RANGE OR NOT  -->
+		<VariableDefinition VariableId="checktimerange">
+			<Apply FunctionId="urn:oasis:names:tc:xacml:2.0:function:time-in-range">
+				<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:time-one-and-only">
+					<AttributeDesignator MustBePresent="false"
+						Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment" AttributeId="urn:oasis:names:tc:xacml:1.0:environment:current-time"
+						DataType="http://www.w3.org/2001/XMLSchema#time" />
+				</Apply>
+					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#time">09:00:00</AttributeValue>
+					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#time">10:00:00</AttributeValue>
+			</Apply>
+		</VariableDefinition>
+		
+		<!-- DENY IF BUDGET IS NOT ENOUGH -->
+		<Rule RuleId="check:budget:rule" Effect="Deny">
+			<Description>budget not enough</Description>
+			<Target>
+			</Target>
+			<Condition>
+				<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+					<Apply FunctionId ="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">patients</AttributeValue>
+						<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+							<AttributeDesignator MustBePresent="false"
+								Category="luca:tmac:permission-category:permission" AttributeId="luca:tmac:permission-category:permission:resource_type"
+								DataType="http://www.w3.org/2001/XMLSchema#string" />
+						</Apply>
+					</Apply>
+					<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
+						<VariableReference VariableId="checkbudget"/>
+					</Apply>
+					<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
+						<VariableReference VariableId="checktimerange"/>
+					</Apply> 
+				</Apply>
+			</Condition>
+			<ObligationExpressions>
+				<ObligationExpression ObligationId="system:show:deny:reason"
+					FulfillOn="Deny">
+					<AttributeAssignmentExpression
+						AttributeId="message">
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Budget not enough!
+						</AttributeValue>
+					</AttributeAssignmentExpression>
+				</ObligationExpression>
+			</ObligationExpressions>
+		</Rule>	
+		
+		<!-- DENY IF NOT SEARCHING ASSIGNED PATIENT -->
+		<Rule RuleId="check:assigned:patient:rule" Effect="Deny">
+			<Description>required patient is not assigned</Description>
+			<Target>
+			</Target>
+			<Condition>
+				<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+					<Apply FunctionId ="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">patients</AttributeValue>
+						<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+							<AttributeDesignator MustBePresent="false"
+								Category="luca:tmac:permission-category:permission" AttributeId="luca:tmac:permission-category:permission:resource_type"
+								DataType="http://www.w3.org/2001/XMLSchema#string" />
+						</Apply>
+					</Apply>
+					<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
+						<VariableReference VariableId="checkasignedpatients"/>
+					</Apply>
+				</Apply>
+			</Condition>
+			<ObligationExpressions>
+				<ObligationExpression ObligationId="system:show:deny:reason"
+					FulfillOn="Deny">
+					<AttributeAssignmentExpression
+						AttributeId="message">
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Required patient is not assigned to this doctor!
+						</AttributeValue>
+					</AttributeAssignmentExpression>
+				</ObligationExpression>
+			</ObligationExpressions>
+		</Rule>	
+			
+		<Rule RuleId="Permission:to:visit:patient:not:in:worktime" Effect="Permit">
+			<Description> Permission to visit an assigned patient for doctor 3 (ID), if it's not the work time, need to check the budget and perform obligation </Description>
+			<Target>
+			</Target> 
+			<Condition>
+				<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+					<VariableReference VariableId="get/viewpatients"/>
+					<VariableReference VariableId="checkasignedpatients"/>
+					<VariableReference VariableId="checkbudget"/>
+					<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
+						<VariableReference VariableId="checktimerange"/>
+					</Apply> 
+				</Apply>
+				
+			</Condition>
+			
+			<ObligationExpressions>
+				
+				<ObligationExpression ObligationId="system:show:permit:message"
+					FulfillOn="Permit">
+					<AttributeAssignmentExpression
+						AttributeId="message">
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Permit but with obligation
+						</AttributeValue>
+					</AttributeAssignmentExpression>
+				</ObligationExpression>
+			
+			
+				<ObligationExpression ObligationId="system:decrease:budget"
+					FulfillOn="Permit">
+					<AttributeAssignmentExpression
+						AttributeId="budgetDecreaseMessage">
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">decrease budget until user obligation performed.
+						</AttributeValue>
+					</AttributeAssignmentExpression>
+					<AttributeAssignmentExpression
+						AttributeId="needed-budget">
+						<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:double-one-and-only">
+						<AttributeDesignator MustBePresent="false" 
+							Category="luca:tmac:risk-category:risk" AttributeId="luca:tmac:risk-category:risk:needed-budget"
+							DataType="http://www.w3.org/2001/XMLSchema#double"/>
+						</Apply>
+					</AttributeAssignmentExpression>
+					<AttributeAssignmentExpression
+						AttributeId="budget">
+						<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:double-one-and-only">
+						<AttributeDesignator MustBePresent="false"
+							Category="luca:tmac:subject-category:subject" AttributeId="luca:tmac:subject-category:subject:budget"
+							DataType="http://www.w3.org/2001/XMLSchema#double" />
+					</Apply>
+					</AttributeAssignmentExpression>
+				</ObligationExpression>
+				
+				<ObligationExpression ObligationId="user:send:email" 
+				
+					FulfillOn="Permit">
+					<AttributeAssignmentExpression
+						AttributeId="message">
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Send an email to Anitacao1@gmail.com, 
+						the format in the beginning of the content should be : [yourUserId;yourObligationUUID], 
+						the duration is : 24 hours.
+						</AttributeValue>
+					</AttributeAssignmentExpression>
+					<AttributeAssignmentExpression
+						AttributeId="duration">
+						<AttributeValue
+							DataType="http://www.w3.org/TR/2002/WD-xquery-operators-20020816#dayTimeDuration">P1DT15S</AttributeValue>
+					</AttributeAssignmentExpression>
+					<!-- <AttributeAssignmentExpression
+						AttributeId="email_address">
+						<AttributeValue
+							DataType="http://www.w3.org/2001/XMLSchema#string">Anitacao1@gmail.com</AttributeValue>
+					</AttributeAssignmentExpression>
+					<AttributeAssignmentExpression
+						AttributeId="formate_of_email">
+						<AttributeValue
+							DataType="http://www.w3.org/2001/XMLSchema#string">[yourUserId;yourObligationUUID]</AttributeValue>
+					</AttributeAssignmentExpression> -->
+					<AttributeAssignmentExpression
+						AttributeId="id">
+						<AttributeValue
+							DataType="http://www.w3.org/2001/XMLSchema#string">5</AttributeValue>
+					</AttributeAssignmentExpression>
+					
+				</ObligationExpression> 
+				<ObligationExpression ObligationId ="user:rest"
+					FulfillOn="Permit">
+					<AttributeAssignmentExpression
+						AttributeId="message">
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">User Rest Obligation
+						</AttributeValue>
+					</AttributeAssignmentExpression>
+					<AttributeAssignmentExpression
+						AttributeId="duration">
+						<AttributeValue
+							DataType="http://www.w3.org/TR/2002/WD-xquery-operators-20020816#dayTimeDuration">P1DT15S</AttributeValue>
+					</AttributeAssignmentExpression>
+					<AttributeAssignmentExpression
+						AttributeId="id">
+						<AttributeValue
+							DataType="http://www.w3.org/2001/XMLSchema#string">4</AttributeValue>
+					</AttributeAssignmentExpression>
+					
+				</ObligationExpression> 
+			</ObligationExpressions>
+		</Rule>
+	
+		<Rule RuleId="Permission:to:visit:patient:in:worktime" Effect="Permit">
+			<Description> Permission to visit an assigned patient for doctor 3 (ID), if it's in the work time, no need to check budget or perform obligation </Description>
+			<Target>
+			</Target> 
+			<Condition>
+				<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+					<VariableReference VariableId="get/viewpatients"/>
+					<VariableReference VariableId="checkasignedpatients"/>
+					<VariableReference VariableId="checktimerange"/>
+				</Apply>
+			</Condition>
+			<ObligationExpressions>
+			<ObligationExpression ObligationId="system:show:permit:message"
+					FulfillOn="Permit">
+					<AttributeAssignmentExpression
+						AttributeId="message">
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Permit with no obligation because in work time
+						</AttributeValue>
+					</AttributeAssignmentExpression>
+				</ObligationExpression>
+				</ObligationExpressions>
+		</Rule> 
+		
+		<Rule RuleId="Permission:to:view:patient:problems:or:allergies" Effect="Permit">
+			<Description> Permission to visit an assigned patient's info  </Description>
+			<Target>
+			</Target> 
+			<Condition>
+				<VariableReference VariableId="viewotherpatientinfo"/>
+			</Condition>
+			<ObligationExpressions>
+			<ObligationExpression ObligationId="system:show:permit:message"
+					FulfillOn="Permit">
+					<AttributeAssignmentExpression
+						AttributeId="message">
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Permit with no obligation for viewing patients' other info
+						</AttributeValue>
+					</AttributeAssignmentExpression>
+				</ObligationExpression>
+				</ObligationExpressions>
+		</Rule> 
+		</Policy>
+		
+</PolicySet>
