@@ -22,7 +22,7 @@
 		<budget>1.0</budget>
 	</user>
 
-	<user>
+<!-- 	<user>
 		<id>3</id>
 		<first_name>Nicola</first_name>
 		<last_name>Gasparini</last_name>
@@ -30,7 +30,7 @@
 		<role>patient</role>
 		<clinical_data>flu</clinical_data>
 		<budget>1.0</budget>
-	</user>
+	</user> -->
 
 	<user>
 		<id>4</id>
@@ -52,18 +52,19 @@
 		<budget>1.0</budget>
 	</user>
 	
-	<!-- user jackchen has the budget 0.6 and trustworthiness :0.6 -->
+	<!-- user jack has the budget 0.6 -->
 	<user>
-		<id>5</id>
-		<budget>2.0</budget>
+		<id>3</id>
+		<budget>3.0</budget>
 		
-		<assigned_patient>d</assigned_patient>
-		<assigned_patient>john</assigned_patient>
+		<!-- <assigned_patient>100-8</assigned_patient> the patient identifier Id  -->
+		
+		<assigned_patient>270b233a-b10c-11e3-8699-f259e5739077</assigned_patient>
 	</user>
 	
 	<!-- user anita has the budget 1.0 and trustworthiness :0.7 -->
 	<user>
-		<id>3</id>
+		<id>4</id>
 		<budget>1.0</budget>
 		<trustworthiness>0.7</trustworthiness>
 	</user>
@@ -150,7 +151,24 @@
 		<resource_type>patients</resource_type>
 	</permission>
 
-
+	<permission>
+		<id>9</id>
+		<action>view</action>
+		<resource_type>patients</resource_type>
+	</permission>
+	
+	<permission>
+		<id>10</id>
+		<action>view</action>
+		<resource_type>allergies</resource_type>
+	</permission>
+	
+	<permission>
+		<id>11</id>
+		<action>view</action>
+		<resource_type>problems</resource_type>
+	</permission>
+	
 <obligation>
         <id>1</id>
         <action_name>user:justify:obligation</action_name>
@@ -180,12 +198,10 @@
     </obligation>
 <obligation>
         <id>4</id>
-        <action_name>user:example:obligation</action_name>
+        <action_name>user:rest</action_name>
         <start_time>2013-02-12T15:40:29+00:00</start_time>
         <duration>P1DT15S</duration>
-        <state>expired</state>
-        <team>1</team>
-        <setId>1</setId>
+       
     </obligation>
     
     
@@ -194,6 +210,8 @@
         <action_name>user:send:email</action_name>
       <!--   <start_time>2014-03-6T12:40:29+00:00</start_time> -->
         <duration>P1DT10M</duration>    <!-- PT10M means 10 mins -->
+        <email_address>anitacao1@gmail.com</email_address>
+        <formate_of_email>[userId;obligationUuid]</formate_of_email>
 <!--         <state>active</state>
         <userID>5</userID> -->
     </obligation>

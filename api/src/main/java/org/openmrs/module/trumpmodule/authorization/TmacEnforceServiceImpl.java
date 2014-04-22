@@ -7,17 +7,22 @@ import java.util.List;
 
 import luca.data.AttributeQuery;
 import luca.data.DataHandler;
-import luca.data.XmlDataHandler;
 import luca.tmac.basic.ResponseParser;
 import luca.tmac.basic.StandardBudgetCalculator;
 import luca.tmac.basic.data.xml.PermissionAttributeXmlName;
 import luca.tmac.basic.obligations.Obligation;
 import luca.tmac.basic.obligations.ObligationMonitorable;
 
+
+
+
+
+
 //import org.apache.commons.logging.Log;
 //import org.apache.commons.logging.LogFactory;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
+import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 import org.openmrs.module.trumpmodule.TmacEnforceService;
 import org.openmrs.module.trumpmodule.dataFinder.OpenmrsRiskAttributeFinderModule;
 import org.openmrs.module.trumpmodule.dataFinder.OpenmrsSubjectAttributeFinderModule;
@@ -28,12 +33,11 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 	
 	
 	//private static final Log LOG = LogFactory.getLog(TmacEnforceServiceImpl.class);
-	private static final String RESOURCE_PATH = "data.xml";
+	//private static final String RESOURCE_PATH = "data.xml";
 
 	//private static final long serialVersionUID = -8561161513239681330L;
 	private OpenmrsTmacPEP pep;
 	private DataHandler dh;
-	//private List<String> obligationList;
 	private long responseParserId;
 	
 	String userID;
@@ -41,17 +45,17 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 	//messages stores the system obligation performing result messages. 
 	HashMap<String,String> messages = null;
 	
-	public TmacEnforceServiceImpl(Object[] parameters) throws FileNotFoundException {
+	public TmacEnforceServiceImpl(Object[] parameters,String methodName) throws FileNotFoundException {
 		
-		String path = this.getClass().getClassLoader().getResource(RESOURCE_PATH).toString().substring(5);
+		//String path = this.getClass().getClassLoader().getResource(RESOURCE_PATH).toString().substring(5);
 		//BufferedReader path2 = new BufferedReader(new FileReader(RESOURCE_PATH));
 		//System.err.println("SERIOUSLY CHRIS : " + path);
-		dh = new XmlDataHandler(path);
-		
+		//dh = new XmlDataHandler(path);
+		dh = OpenmrsEnforceServiceContext.getInstance().getDh();
 		pep = new OpenmrsTmacPEP(dh,this);
 		//pep = new TmacPEP(dh,this);
 		//pep.createTmacPDP(TOP_LEVEL_POLICIES_FOLDER ,OTHER_POLICIES_FOLDER);
-		pep.addAttributeFinderToPDP(new OpenmrsSubjectAttributeFinderModule((dh),parameters));
+		pep.addAttributeFinderToPDP(new OpenmrsSubjectAttributeFinderModule((dh),parameters,methodName));
 		pep.addAttributeFinderToPDP(new OpenmrsRiskAttributeFinderModule(dh,new StandardBudgetCalculator()));
 		pep.createPDP();
 		
@@ -69,7 +73,7 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 	 * create and send request to pdp
 	 * @param privilege a string which contains the action and resource
 	 * @param user
-	 * @return
+	 * @return boolean
 	 */
     public boolean sendRequest(String privilege, User user){
     	
@@ -107,6 +111,9 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 		ResponseParser rParser = pep.requestAccess(userID,
 				permission, "", "",
 				"obtain_permission");
+//		ResponseParser rParser = pep.requestAccess(userID,
+//				null, "", "",
+//				"obtain_permission");
 
 		responseParserId = rParser.getParserId();
 		//List<Obligation> oblList = rParser.getObligation().getList();
@@ -120,8 +127,7 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 		
 		//if the decision is permit, return true
 		if(rParser.getDecision().equals(ResponseParser.PERMIT_RESPONSE)){	
-			//assume automatically accept response 
-			//messages = pep.acceptResponse(responseParserId);
+			
 			return true;
 		}
 		else{
@@ -130,11 +136,10 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 				if (obl.isSystemObligation())
 					message += pep.performObligation(obl) + "\n";
 			}
-			System.err.println(message + "the system obligation is this message");
+			System.err.println("the deny reason (from system obligation ) is  : " + message );
 			return false;
 		}
     }
-    
     
     public HashMap<String,String> acceptResponse(String methodName){
     	HashMap<String, String> messages = pep.acceptResponse(responseParserId,methodName);
@@ -150,64 +155,31 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
     	return obList;
     }
     
-    /**
-     * update the budget in the data.xml file to currentBudget
-     * @param currentBudget
-     */
-//    public void updateBudget(String currentBudget){
-//    	
-//    	List<AttributeQuery> attributes = new ArrayList<AttributeQuery>();
-//    	attributes.add(new AttributeQuery(SubjectAttributeXmlName.BUDGET, currentBudget,
-//				StringAttribute.identifier));
-//    	
-//    	dh.modifyAttribute(SubjectAttributeXmlName.SUBJECT_TABLE, userID, attributes);
-//    }
-//    
-//   public String updateBudget(String currentBudget){
-//    	String previousBudget = getBudgetfromDb();
-//    	List<AttributeQuery> attributes = new ArrayList<AttributeQuery>();
-//    	attributes.add(new AttributeQuery(SubjectAttributeXmlName.BUDGET, currentBudget,
-//				StringAttribute.identifier));
-//    	
-//    	dh.modifyAttribute(SubjectAttributeXmlName.SUBJECT_TABLE, userID, attributes);
-//    	return previousBudget;
-//    } 
     
-    /**
-     * get budget from database(it's the same as the subject finder module)
-     * @return
-     */
-//    public String getBudgetfromDb(){
-//    	ArrayList<AttributeQuery> query = new ArrayList<AttributeQuery>();
-//		query.add(new AttributeQuery(SubjectAttributeXmlName.ID, userID,StringAttribute.identifier));
-//    	List<String> budgets = dh.getAttribute(SubjectAttributeXmlName.SUBJECT_TABLE, query, "budget");
-//    	return budgets.get(0);
-//    }
-    
-    
-    public void fulfillObligation(Obligation obl){
-    	pep.fulfillObligation(obl);
-    }
-   
+
+	public List<String> getObligations() throws APIException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 	public void notifyDeadline(Obligation obl) {
 		// TODO Auto-generated method stub
 		
 	}
+
 
 	public void notifyFulfillment(Obligation obl) {
 		// TODO Auto-generated method stub
 		
 	}
 
+
 	public void notifyObligationInsert(Obligation obl) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public List<String> getObligations() throws APIException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 
 

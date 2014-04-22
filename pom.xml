@@ -78,11 +78,15 @@
 				<version>2.0</version>
 				<scope>runtime</scope>
 			</dependency>
+			
+ 
+			
 		</dependencies>
+		
 	</dependencyManagement>
 
 	<properties>
-		<openMRSVersion>1.8.0-alpha</openMRSVersion>
+		<openMRSVersion>1.9.7</openMRSVersion>
 	</properties>
 
 	<build>
@@ -133,11 +137,25 @@
 		</pluginRepository>
 	</pluginRepositories>
 
-	<dependencies>
-		<dependency>
+	<dependencies><dependency>
 			<groupId>uk.ac.abdn.trump</groupId>
 			<artifactId>RA-TMAC-2</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+    <groupId>org.openmrs.module</groupId>
+    <artifactId>webservices.rest-omod</artifactId>
+    <version>2.5-SNAPSHOT</version>
+    <scope>provided</scope>
+</dependency>
+ 
+<dependency>
+    <groupId>org.openmrs.module</groupId>
+    <artifactId>webservices.rest-omod-common</artifactId>
+    <version>2.5-SNAPSHOT</version>
+    <classifier>tests</classifier>
+    <scope>test</scope>
+</dependency>
 	</dependencies>
 </project>

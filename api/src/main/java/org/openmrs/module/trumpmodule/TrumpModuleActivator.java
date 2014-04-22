@@ -13,13 +13,13 @@
  */
 package org.openmrs.module.trumpmodule;
 
+
 import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.aop.AuthorizationAdvice;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.context.ServiceContext;
 import org.openmrs.module.Activator;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.aop.Advisor;
@@ -39,17 +39,12 @@ public class TrumpModuleActivator implements Activator {
 		log.info("Starting Advice Killer Module");
 		System.out.println("Bye bye authorization advice!1");
 		reInitialServiceAdvices();
-		
-		ServiceContext sc = ServiceContext.getInstance();
-		OpenmrsEnforceServiceContext.getActiveOb().clear();
-		OpenmrsEnforceServiceContext.getExpiredOb().clear();
-		OpenmrsEnforceServiceContext.getFulfilledOb().clear();
+		OpenmrsEnforceServiceContext SerContext = OpenmrsEnforceServiceContext.getInstance();
+		SerContext.getActiveObs().clear();
+		SerContext.getExpiredObs().clear();
+		SerContext.getFulfilledObs().clear();
 
-		
-//		sc.setService(TmacEnforceService.class, new TmacEnforceServiceImpl()); 
-//		sc.getService(TmacEnforceServiceImpl.class);
-		
-		
+	
 	}
 	
 	/**
@@ -57,6 +52,9 @@ public class TrumpModuleActivator implements Activator {
 	 */
 	public void shutdown() {
 		log.info("Shutting down Trump Module");
+		
+		// here, we need to write all the policy objects from the context back to the
+		// local policy directory as files.
 	}
 	
 	/**
@@ -66,7 +64,7 @@ public class TrumpModuleActivator implements Activator {
 
 		ArrayList<OpenmrsService> services = new ArrayList<OpenmrsService>();
 		
-		// painstakingly add all the services to a list, because reflection is annoying
+		// painstakingly add all the services to a list, because reflection is dangerous
 		// not the tidiest way, but hey...
 		services.add(Context.getPatientService());
 		services.add(Context.getAdministrationService());
@@ -96,4 +94,6 @@ public class TrumpModuleActivator implements Activator {
 			}
 		}
 	}
+		
+
 }

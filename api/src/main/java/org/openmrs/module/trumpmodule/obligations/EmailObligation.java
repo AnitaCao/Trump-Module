@@ -4,29 +4,25 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+
+
 //import javax.mail.Address;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Store;
 
-
 import luca.data.AttributeQuery;
-import luca.tmac.basic.obligations.Obligation;
+import luca.tmac.basic.obligations.NonRESTObligation;
 
-public class EmailObligation extends Obligation{
-	public static String obligationNameXML = "user:send:email";
+public class EmailObligation extends NonRESTObligation {
 
-	public EmailObligation(String pId, Date pStartDate,
+
+	public EmailObligation(String actionName, String userId, Date pStartDate,
 			List<AttributeQuery> pParameters) {
-		super(pId, pStartDate, pParameters);
+		super(actionName,userId, pStartDate, pParameters);
 	}
 	
-//public class EmailObligation{
-//	
-//	public static void main(String[] args){
-//		isSatisfied("5","aaa");
-//	}
 	public String[] readEmails() {
 	    // Create all the needed properties 
 		Properties props = new Properties();
@@ -38,7 +34,9 @@ public class EmailObligation extends Obligation{
 	    try {
 	    	Session session = Session.getInstance(props, null);
 	    	Store store = session.getStore();
-	    	store.connect(host, username, password);
+	    	if(!store.isConnected()){
+	    		store.connect(host, username, password);
+	    	}
 	            
 	        // Get the Inbox folder
 	        Folder inbox = store.getFolder("INBOX");
@@ -48,16 +46,10 @@ public class EmailObligation extends Obligation{
 	       for(int i = inbox.getMessageCount(),j=0; i > inbox.getMessageCount()-5; i--,j++){
 	        	Message msg = inbox.getMessage(i);  //get the newest message 
 	        	System.out.println("Anita : Reading messages...");
-//	        	Address[] in = msg.getFrom();
-//	        	for (Address address : in) {
-//	        		System.out.println("FROM:" + address.toString());
-//	        	}
-//	        	Multipart mp = (Multipart) msg.getContent();
-//	        	BodyPart bp = mp.getBodyPart(0);
-	        	//content = bp.getContent().toString();
 	        	subjects[j] = msg.getSubject();
 	        	System.out.println("SUBJECT:" + msg.getSubject());
 	        }  
+	       store.close();
 	         
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -67,18 +59,20 @@ public class EmailObligation extends Obligation{
 	
 	public  boolean checkEmail(String[] subject,String userId,String uuid){
 		boolean flag = false;
-		for(int i = 0;i<subject.length;i++){
-			String[] args = null;
-			args = subject[i].split(";");
-			if(args.length >= 2){
-				String a = args[0];
-				String b = args[1];
-				String userIdString = "["+userId;
-				String obligationString = uuid+"]";
+		if(subject.length>0){
+			for(int i = 0;i<subject.length;i++){
+				String[] args = null;
+				args = subject[i].split(";");
+				if(args.length >= 2){
+					String a = args[0];
+					String b = args[1];
+					String userIdString = "["+userId;
+					String obligationString = uuid+"]";
 			
-				if(a.equalsIgnoreCase(userIdString)
+					if(a.equalsIgnoreCase(userIdString)
 						&& b.equalsIgnoreCase(obligationString)){
 					return true;
+					}
 				}
 			}
 		}
@@ -91,5 +85,4 @@ public class EmailObligation extends Obligation{
 		isSatisfied = checkEmail(subject,userId,uuid);
 		return isSatisfied;
 	}
-
 }

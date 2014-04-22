@@ -27,10 +27,10 @@ public class OpenmrsRiskAttributeFinderModule extends AbstractAttributeFinderMod
 	private Set<String> categories;
 	private Set<String> ids;
 
-	private static URI team_category_uri = null;
-	private static URI team_id_uri = null;
-	private static URI task_category_uri = null;
-	private static URI task_id_uri = null;
+//	private static URI team_category_uri = null;
+//	private static URI team_id_uri = null;
+//	private static URI task_category_uri = null;
+//	private static URI task_id_uri = null;
 	
 	DataHandler data = null;
 	TrustCalculator trustCalc = null;
