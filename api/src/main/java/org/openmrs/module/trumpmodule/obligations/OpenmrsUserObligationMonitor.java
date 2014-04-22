@@ -1,6 +1,5 @@
 package org.openmrs.module.trumpmodule.obligations;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,15 +8,12 @@ import java.util.TimerTask;
 import java.util.UUID;
 
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
-import org.wso2.balana.ParsingException;
-import org.wso2.balana.attr.DateTimeAttribute;
 import org.wso2.balana.attr.StringAttribute;
 
 import luca.data.AttributeQuery;
 import luca.data.DataHandler;
 import luca.tmac.basic.data.xml.SubjectAttributeXmlName;
 import luca.tmac.basic.obligations.Obligation;
-import luca.tmac.basic.obligations.ObligationIds;
 import luca.tmac.basic.obligations.ObligationMonitorable;
 import luca.tmac.basic.obligations.UserObligationMonitor;
 

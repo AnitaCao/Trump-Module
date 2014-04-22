@@ -99,11 +99,11 @@ public class OpenmrsTmacPEP extends TmacPEP {
 					Obligation ob = null ;
 					ArrayList<AttributeQuery> newAttList = new ArrayList<AttributeQuery>();
 					
-					if(obl.getActionName().equals(ObligationIds.EMAIL_OBLIGATION_NAME_XML)){
+					if(obl.getActionName().equals(ObligationIds.REST_OBLIGATION_NAME_XML)){
 						
-						ob = new NonRESTObligation(obl.getActionName(),user.getId().toString(),startTime,newAttList);
-					}else if(obl.getActionName().equals(ObligationIds.REST_OBLIGATION_NAME_XML)){
 						ob = new RESTObligation(obl.getActionName(),user.getId().toString(),startTime,newAttList);
+					}else{
+						ob = new NonRESTObligation(obl.getActionName(),user.getId().toString(),startTime,newAttList);
 					}
 					ob.setDecreasedBudget(decreasedBudget);
 					ob.setObUUID(UUID.randomUUID());
@@ -113,6 +113,7 @@ public class OpenmrsTmacPEP extends TmacPEP {
 					SerContext.setActiveObs(activeObs);
 					
 					String message = obl.getAttribute("message") + "your UUID of the obligation is : "+ ob.getObUUID().toString();
+					System.err.println("the size of the obligation is : " + activeObs.size());
 					messages.put(obl.getActionName(), message);
 				}
 			}

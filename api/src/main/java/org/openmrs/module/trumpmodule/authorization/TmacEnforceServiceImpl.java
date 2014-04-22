@@ -47,14 +47,8 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 	
 	public TmacEnforceServiceImpl(Object[] parameters,String methodName) throws FileNotFoundException {
 		
-		//String path = this.getClass().getClassLoader().getResource(RESOURCE_PATH).toString().substring(5);
-		//BufferedReader path2 = new BufferedReader(new FileReader(RESOURCE_PATH));
-		//System.err.println("SERIOUSLY CHRIS : " + path);
-		//dh = new XmlDataHandler(path);
 		dh = OpenmrsEnforceServiceContext.getInstance().getDh();
 		pep = new OpenmrsTmacPEP(dh,this);
-		//pep = new TmacPEP(dh,this);
-		//pep.createTmacPDP(TOP_LEVEL_POLICIES_FOLDER ,OTHER_POLICIES_FOLDER);
 		pep.addAttributeFinderToPDP(new OpenmrsSubjectAttributeFinderModule((dh),parameters,methodName));
 		pep.addAttributeFinderToPDP(new OpenmrsRiskAttributeFinderModule(dh,new StandardBudgetCalculator()));
 		pep.createPDP();
