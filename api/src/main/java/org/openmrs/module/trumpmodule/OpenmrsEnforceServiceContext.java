@@ -28,25 +28,12 @@ import org.wso2.balana.attr.StringAttribute;
  */
 public class OpenmrsEnforceServiceContext {
 
-	
-	//userOb stores the relationship between user and user obligations, which means it stores which user have which 
-	//obligations,the key is an UUID , the value is a UserObRelation object, which contains userId, actionName, start 
-	//date and decreasedBudget related to this obligation
-//	private HashMap<UUID, Obligation> activeObs = null;
-//
-//
-//	//fulfilledOb stores fulfilled obligation, the key is the uuid , the value is a UserObRelation object
-//	private HashMap<UUID, Obligation> fulfilledObs = null;
-//	
-//	//fulfilledOb stores expiredOb obligation, the key is the uuid , the value is a UserObRelation object
-//	private HashMap<UUID, Obligation> expiredObs = null;
-	
+	//!Question : do we need to store the normal obligation with the REST obligation separately ? 
 	private ArrayList<Obligation> activeObs;
-	
-
 	private ArrayList<Obligation> fulfilledObs;
 	private ArrayList<Obligation> expiredObs;
 	
+	//obsAttributes stores the attributes of obligations from data.xml file. The key is the obligation name (action_name), the value is the list of AttributeQuery
 	private HashMap<String,List<AttributeQuery>> obsAttributes;
 	
 	//assignedPatientInternalIds stores the assigned patients' ids of the user (doctor), the key is the userId, the value is a set which contians the assigned patients' patient_id
@@ -154,15 +141,11 @@ public class OpenmrsEnforceServiceContext {
 		
 		return AssigendPatientInternalIds;
 	}
-	
-	
-
 
 	public void setAssigendPatientInternalIds(
 			HashMap<String, HashSet<String>> assigendPatientInternalIds) {
 		AssigendPatientInternalIds = assigendPatientInternalIds;
 	}
-
 
 	public ArrayList<Policy> getPolicyByPerson(String personId) {
 		ArrayList<Policy> policy = null;
@@ -170,7 +153,6 @@ public class OpenmrsEnforceServiceContext {
 			policy = policies.get(personId);
 		}
 		return policy;
-		
 	}
 	
 	public List<Policy> getAllPolicies(){
@@ -234,7 +216,6 @@ public class OpenmrsEnforceServiceContext {
 		try {
 			PolicyFileHandler.savePolicies(getUserPolicyDirectory(), policies);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

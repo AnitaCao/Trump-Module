@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
+import org.openmrs.module.trumpmodule.obligations.EmailObligation;
 import org.openmrs.module.trumpmodule.obligations.OpenmrsUserObligationMonitor;
 import org.openmrs.module.trumpmodule.obligations.RESTObligation;
 import org.wso2.balana.attr.StringAttribute;
@@ -18,7 +19,6 @@ import luca.data.DataHandler;
 import luca.tmac.basic.ResponseParser;
 import luca.tmac.basic.TmacPEP;
 import luca.tmac.basic.data.xml.SubjectAttributeXmlName;
-import luca.tmac.basic.obligations.NonRESTObligation;
 import luca.tmac.basic.obligations.Obligation;
 import luca.tmac.basic.obligations.ObligationIds;
 import luca.tmac.basic.obligations.ObligationMonitorable;
@@ -39,7 +39,6 @@ public class OpenmrsTmacPEP extends TmacPEP {
 		openmrsOblMonitor = new OpenmrsUserObligationMonitor(new ArrayList<Obligation>(),monitorable,dh);
 		
 	}
-
 	
 	@Override
 	public String getUserPolicyDirectory() {
@@ -77,13 +76,10 @@ public class OpenmrsTmacPEP extends TmacPEP {
 			
 				if (obl.isSystemObligation()) {
 					if(!obl.getActionName().equalsIgnoreCase(ObligationIds.DECREASE_BUDGET_ID)){
-					
 						String performingResult = performObligation(obl);
 						messages.put(obl.getActionName(), performingResult);
 					}
 				} else {
-					//System.out.println(obl.actionName);
-					
 					//if it's not system obligation which means it's a user obligation, then we should add the obligation to the openmrs context
 					Date startTime = new Date();
 					String decreasedBudget = null;
@@ -94,16 +90,17 @@ public class OpenmrsTmacPEP extends TmacPEP {
 					}
 					
 					//UserObRelation uo = new UserObRelation(user.getId().toString(),obl.getAttribute("id"),startTime,decreasedBudget);
-					//UserObRelation uo = new UserObRelation(user.getId().toString(),obl,startTime,decreasedBudget);
 					
 					Obligation ob = null ;
+					
 					ArrayList<AttributeQuery> newAttList = new ArrayList<AttributeQuery>();
 					
 					if(obl.getActionName().equals(ObligationIds.REST_OBLIGATION_NAME_XML)){
 						
 						ob = new RESTObligation(obl.getActionName(),user.getId().toString(),startTime,newAttList);
 					}else{
-						ob = new NonRESTObligation(obl.getActionName(),user.getId().toString(),startTime,newAttList);
+						//ob = new NonRESTObligation(obl.getActionName(),user.getId().toString(),startTime,newAttList);
+						ob = new EmailObligation(obl.getActionName(),user.getId().toString(),startTime,newAttList);
 					}
 					ob.setDecreasedBudget(decreasedBudget);
 					ob.setObUUID(UUID.randomUUID());
@@ -113,11 +110,12 @@ public class OpenmrsTmacPEP extends TmacPEP {
 					SerContext.setActiveObs(activeObs);
 					
 					String message = obl.getAttribute("message") + "your UUID of the obligation is : "+ ob.getObUUID().toString();
+					
 					System.err.println("the size of the obligation is : " + activeObs.size());
+					
 					messages.put(obl.getActionName(), message);
 				}
 			}
-			
 		}
 		openmrsOblMonitor.checkObligations();
 		return messages;
@@ -132,7 +130,6 @@ public class OpenmrsTmacPEP extends TmacPEP {
 	dh.modifyAttribute(SubjectAttributeXmlName.SUBJECT_TABLE, user.getId().toString(), attributes);
 	
 }
-
 
 	public String performObligation(Obligation obl)
 	{

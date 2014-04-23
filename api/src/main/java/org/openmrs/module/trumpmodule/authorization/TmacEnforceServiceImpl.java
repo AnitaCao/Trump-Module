@@ -105,9 +105,6 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 		ResponseParser rParser = pep.requestAccess(userID,
 				permission, "", "",
 				"obtain_permission");
-//		ResponseParser rParser = pep.requestAccess(userID,
-//				null, "", "",
-//				"obtain_permission");
 
 		responseParserId = rParser.getParserId();
 		//List<Obligation> oblList = rParser.getObligation().getList();
@@ -117,7 +114,6 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 //			oblText += obl.toString() + "\n";
 //		}
 //		
-//		System.err.println("Anita, the obligation get from the policy here is : " + oblText +", the number of obligation is : " + oblList.size());
 		
 		//if the decision is permit, return true
 		if(rParser.getDecision().equals(ResponseParser.PERMIT_RESPONSE)){	
@@ -151,10 +147,9 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
     
     
 
-	public List<String> getObligations() throws APIException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	public List<String> getObligations() throws APIException {
+//		return null;
+//	}
 
 
 	public void notifyDeadline(Obligation obl) {

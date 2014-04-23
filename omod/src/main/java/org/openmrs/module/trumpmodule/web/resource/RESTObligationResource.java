@@ -1,11 +1,16 @@
 package org.openmrs.module.trumpmodule.web.resource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import luca.tmac.basic.obligations.Obligation;
+import luca.tmac.basic.obligations.ObligationIds;
 
+import org.openmrs.api.context.Context;
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 import org.openmrs.module.trumpmodule.obligations.RESTObligation;
+import org.openmrs.module.trumpmodule.policies.Policy;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
@@ -57,7 +62,10 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 	@Override
 	protected void delete(RESTObligation delegate, String reason,
 			RequestContext context) throws ResponseException {
+		ArrayList<Obligation> activeObs = OpenmrsContext.getActiveObs();
 		
+		activeObs.remove(delegate);
+		OpenmrsContext.setActiveObs(activeObs);
 	}
 
 	@Override
@@ -72,21 +80,25 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 
 	@Override
 	public RESTObligation save(RESTObligation delegate) {
-		return null;
+		
+		ArrayList<Obligation> activeObs = OpenmrsContext.getActiveObs();
+		
+		activeObs.add(delegate);
+		OpenmrsContext.setActiveObs(activeObs);
+		return delegate;
 	}
 	
 	@Override
-	public NeedsPaging<RESTObligation> doGetAll(RequestContext context){
+	public NeedsPaging<Obligation> doGetAll(RequestContext context){
 		
-//		HashMap<UUID, UserObRelation> activeObs = OpenmrsContext.getActiveObs();
-		List<RESTObligation> restObList = new ArrayList<RESTObligation>();
-//		for(UserObRelation uo : activeObs.values()){
-//			if(uo.obligation.getActionName().equals(ObligationIds.REST_OBLIGATION_NAME_XML)){
-//				restObList.add((RESTObligation) uo.obligation);
-//			}
-//		}
-		
-		return new NeedsPaging<RESTObligation>(restObList, context);
+		List<Obligation> restObList = new ArrayList<Obligation>();
+		ArrayList<Obligation> activeObs = OpenmrsContext.getActiveObs();
+		for(Obligation ob : activeObs){
+			if(ob.getActionName().equals(ObligationIds.REST_OBLIGATION_NAME_XML)){
+				restObList.add(ob);
+			}
+		}
+		return new NeedsPaging<Obligation>(restObList, context);
 	}
 
 

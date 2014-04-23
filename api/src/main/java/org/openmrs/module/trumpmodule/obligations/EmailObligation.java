@@ -29,7 +29,7 @@ public class EmailObligation extends NonRESTObligation {
 	    props.setProperty("mail.store.protocol", "imaps");
 	    String host = "imap.gmail.com";
 	    String username = "anitacao1@gmail.com";
-	    String password = "FB529452TBFB";
+	    String password = "273488140";
 	    String[] subjects = new String[5];
 	    try {
 	    	Session session = Session.getInstance(props, null);

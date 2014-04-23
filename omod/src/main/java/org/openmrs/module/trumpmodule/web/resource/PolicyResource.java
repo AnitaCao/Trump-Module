@@ -130,12 +130,6 @@ public class PolicyResource extends DataDelegatingCrudResource<Policy> {
 	@Override
 	public NeedsPaging<Policy> doGetAll(RequestContext context){
 		
-//		HashMap<String,ArrayList<Policy>> policies = 
-//				OpenmrsContext.getPolicies();
-//		List<Policy> policyList = new ArrayList<Policy>();
-//		for(Entry<String,ArrayList<Policy>> e : policies.entrySet()) {
-//			policyList.addAll(e.getValue());
-//		}
 		List<Policy> policyList = OpenmrsContext.getAllPolicies();
 		return new NeedsPaging<Policy>(policyList, context);
 	}
