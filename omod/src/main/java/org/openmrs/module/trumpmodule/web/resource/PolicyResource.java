@@ -38,7 +38,7 @@ public class PolicyResource extends DataDelegatingCrudResource<Policy> {
 		}else if (rep instanceof FullRepresentation){
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("policyName");
-			description.addProperty("context");
+			description.addProperty("content");
 			description.addProperty("userId");
 			
 			//description.addProperty("tags", Representation.DEFAULT);
@@ -47,7 +47,16 @@ public class PolicyResource extends DataDelegatingCrudResource<Policy> {
 			return description;
 		}
 		return null;	
-	}	
+	}
+	
+	@Override
+	public DelegatingResourceDescription getCreatableProperties() {
+		DelegatingResourceDescription description = new DelegatingResourceDescription();
+		description.addRequiredProperty("policyName");
+		description.addRequiredProperty("content");
+
+		return description;
+	}
 		
 	@Override
     public List<Representation> getAvailableRepresentations() {
@@ -59,9 +68,16 @@ public class PolicyResource extends DataDelegatingCrudResource<Policy> {
 	public Policy save(Policy delegate) {
 		String personId = Context.getAuthenticatedUser().getId().toString();
 		HashMap<String, ArrayList<Policy>> policies = OpenmrsContext.getPolicies();
-		
+		// set the policy person ID to be the authenticated user
+		// this means that users can only upload policies belonging to themselves
+		// which makes sense.
+		delegate.setUserId(personId);
 		policies.get(personId).add(delegate);
 		OpenmrsContext.setPolicies(policies);
+		
+		// every time we save a policy, we should write them to disk
+		// because we are not using a database for persistence.
+		OpenmrsContext.savePolicies();
 		
 		return delegate;
 	}

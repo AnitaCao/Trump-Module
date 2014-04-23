@@ -47,6 +47,8 @@ public class OpenmrsEnforceServiceContext {
 	private ArrayList<Obligation> fulfilledObs;
 	private ArrayList<Obligation> expiredObs;
 	
+	private HashMap<String,List<AttributeQuery>> obsAttributes;
+	
 	//assignedPatientInternalIds stores the assigned patients' ids of the user (doctor), the key is the userId, the value is a set which contians the assigned patients' patient_id
 	private HashMap<String, HashSet<String>> AssigendPatientInternalIds = null;
 	
@@ -67,6 +69,7 @@ public class OpenmrsEnforceServiceContext {
 		expiredObs = new ArrayList<Obligation>();
 		AssigendPatientInternalIds = new HashMap<String, HashSet<String>>();
 		policies = new HashMap<String, ArrayList<Policy>>();
+		obsAttributes = new HashMap<String,List<AttributeQuery>>();
 		
 		String path = this.getClass().getClassLoader().getResource(RESOURCE_PATH).toString().substring(5);
 		dh = new XmlDataHandler(path);
@@ -214,5 +217,26 @@ public class OpenmrsEnforceServiceContext {
 
 	public void setExpiredObs(ArrayList<Obligation> expiredObs) {
 		this.expiredObs = expiredObs;
+	}
+
+	public HashMap<String,List<AttributeQuery>> getObsAttributes() {
+		return obsAttributes;
+	}
+
+	public void setObsAttributes(HashMap<String,List<AttributeQuery>> obsAttributes) {
+		this.obsAttributes = obsAttributes;
+	}
+
+	/**
+	 * Cause policies in the context to be saved to disk
+	 */
+	public void savePolicies() {
+		try {
+			PolicyFileHandler.savePolicies(getUserPolicyDirectory(), policies);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }

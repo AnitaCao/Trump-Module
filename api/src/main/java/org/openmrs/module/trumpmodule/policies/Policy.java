@@ -32,6 +32,8 @@ public class Policy extends BaseOpenmrsData implements Serializable {
 		this.policyName = name;
 	    this.userId = uid;
 	    this.content = content;
+		this.id = new Long(System.currentTimeMillis() / 1000L).intValue();
+
 	}
 	
 	public Policy(String path){
@@ -51,6 +53,8 @@ public class Policy extends BaseOpenmrsData implements Serializable {
 	}
 
 	public String getContent() {
+		// TODO the content should be returned as an XML string and not just a normal string, because
+		// we end up sending a lot of newline and tab characters unneccessarily.
 		return content;
 	}
 
