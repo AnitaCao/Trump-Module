@@ -13,7 +13,6 @@ public class Policy extends BaseOpenmrsData implements Serializable {
 	/**
 	 * 
 	 */
-	UUID uuid = UUID.randomUUID();
 	private Integer id;
 	private String content;
 	private String policyName;
@@ -21,12 +20,16 @@ public class Policy extends BaseOpenmrsData implements Serializable {
 	
 	public Policy(){
 		//this.userId = userId;
-		this.id = (int) uuid.getMostSignificantBits();
+		// TODO - fix this - super dirty generation of a not very unique integer ID just to keep 
+		// OpenMRS happy for now. But we will need a better solution in production. It seems that
+		// openmrs objects get their integer IDs after serialisation in the database (a bit like
+		// Ruby on Rails ) and since we are not using the database, we don't get this. But we are
+		// only going to use UUID anyway so it shouldn't be a problem.
+		this.id = new Long(System.currentTimeMillis() / 1000L).intValue();
 	}
 	
 	public Policy(String name, String uid, String content) {
 		this.policyName = name;
-		this.id = (int) uuid.getMostSignificantBits();
 	    this.userId = uid;
 	    this.content = content;
 	}

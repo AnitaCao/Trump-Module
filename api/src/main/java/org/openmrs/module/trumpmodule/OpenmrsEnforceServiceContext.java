@@ -183,7 +183,7 @@ public class OpenmrsEnforceServiceContext {
 		Policy policy = null;
 		for(Entry<String,ArrayList<Policy>> e : policies.entrySet()) {
 			for(Policy p : e.getValue()){
-				if(p.getId()==Integer.parseInt(policyId)){
+				if(p.getUuid().equals(policyId)){
 					policy = p;
 					break;
 				}
