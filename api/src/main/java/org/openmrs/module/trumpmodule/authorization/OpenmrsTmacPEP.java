@@ -99,7 +99,7 @@ public class OpenmrsTmacPEP extends TmacPEP {
 						
 						ob = new RESTObligation(obl.getActionName(),user.getId().toString(),startTime,newAttList);
 					}else{
-						//ob = new NonRESTObligation(obl.getActionName(),user.getId().toString(),startTime,newAttList);
+						//ob = new ObligationImpl(obl.getActionName(),user.getId().toString(),startTime,newAttList);
 						ob = new EmailObligation(obl.getActionName(),user.getId().toString(),startTime,newAttList);
 					}
 					ob.setDecreasedBudget(decreasedBudget);
