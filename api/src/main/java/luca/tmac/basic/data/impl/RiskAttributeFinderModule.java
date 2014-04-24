@@ -1,0 +1,194 @@
+package luca.tmac.basic.data.impl;
+
+import org.wso2.balana.attr.AttributeValue;
+import org.wso2.balana.attr.BagAttribute;
+import org.wso2.balana.attr.DoubleAttribute;
+import org.wso2.balana.attr.StringAttribute;
+import org.wso2.balana.cond.EvaluationResult;
+import org.wso2.balana.ctx.EvaluationCtx;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import luca.data.DataHandler;
+import luca.data.AttributeQuery;
+import luca.tmac.basic.NeededBudgetCalculator;
+import luca.tmac.basic.RiskCalculator;
+import luca.tmac.basic.TrustCalculator;
+import luca.tmac.basic.data.AbstractAttributeFinderModule;
+import luca.tmac.basic.data.uris.RiskAttributeURI;
+import luca.tmac.basic.data.uris.TaskAttributeURI;
+import luca.tmac.basic.data.uris.TeamAttributeURI;
+import luca.tmac.basic.data.xml.SubjectAttributeXmlName;
+import luca.tmac.basic.data.xml.TeamAttributeXmlName;
+
+public class RiskAttributeFinderModule extends AbstractAttributeFinderModule {
+
+
+	private Set<String> categories;
+	private Set<String> ids;
+
+	private static URI team_category_uri = null;
+	private static URI team_id_uri = null;
+	private static URI task_category_uri = null;
+	private static URI task_id_uri = null;
+	
+	DataHandler data = null;
+	TrustCalculator trustCalc = null;
+	RiskCalculator riskCalc = null;
+	NeededBudgetCalculator budgetCalc = null;
+
+	public RiskAttributeFinderModule(DataHandler pData, TrustCalculator tc,RiskCalculator rc, NeededBudgetCalculator bc) {
+
+		this.trustCalc = tc;
+		this.riskCalc = rc;
+		this.budgetCalc = bc;
+
+		try {
+			team_category_uri = new URI(TeamAttributeURI.TEAM_CATEGORY_URI);
+			team_id_uri = new URI(TeamAttributeURI.ID_URI);
+			task_category_uri = new URI(
+					TaskAttributeURI.TASK_CATEGORY_URI);
+			task_id_uri = new URI(
+					TaskAttributeURI.ID_URI);
+
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+
+		// set Data Handler
+		data = pData;
+
+		// set supported categories
+		categories = new HashSet<String>();
+		categories.add(RiskAttributeURI.RISK_CATEGORY_URI);
+
+		// set supported ids
+		ids = new HashSet<String>();
+		ids.add(RiskAttributeURI.TRUSTWORTHINESS_URI);
+		ids.add(RiskAttributeURI.BUDGET_URI);
+	}
+
+	@Override
+	public Set<String> getSupportedCategories() {
+		return categories;
+	}
+
+	@Override
+	public Set<String> getSupportedIds() {
+		return ids;
+	}
+
+	@Override
+	public EvaluationResult findAttribute(URI attributeType, URI attributeId,
+			String issuer, URI category, EvaluationCtx context) {
+
+		if (!getSupportedCategories().contains(category.toString()))
+			return new EvaluationResult(getEmptyBag());
+
+		String teamId = getIdFromContext(team_id_uri, issuer,
+				team_category_uri, context);
+
+		String taskId = getIdFromContext(task_id_uri, issuer,
+				task_category_uri, context);
+
+		AttributeValue AttResult = findAttributes(teamId, taskId,
+				attributeId);
+
+		return new EvaluationResult(AttResult);
+	}
+
+	private AttributeValue findAttributes(String teamId, String taskId,
+			URI attributeURI) {
+
+		if (attributeURI.toString()
+				.equals(RiskAttributeURI.TRUSTWORTHINESS_URI)) {
+			double trust = computeTrust(teamId);
+
+			ArrayList<DoubleAttribute> values = new ArrayList<DoubleAttribute>();
+			values.add(new DoubleAttribute(trust));
+
+			URI type = null;
+			try {
+				type = new URI(DoubleAttribute.identifier);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+
+			return new BagAttribute(type, values);
+		} else if (attributeURI.toString()
+				.equals(RiskAttributeURI.RISK_VALUE_URI)) {
+			
+			double risk = computeRisk(teamId,taskId);
+			ArrayList<DoubleAttribute> values = new ArrayList<DoubleAttribute>();
+			values.add(new DoubleAttribute(risk));
+
+			URI type = null;
+			try {
+				type = new URI(DoubleAttribute.identifier);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+
+			return new BagAttribute(type, values);
+		} else if(attributeURI.toString().equals(RiskAttributeURI.BUDGET_URI))
+		{
+			double budget = computeBudget(teamId,taskId);
+			ArrayList<DoubleAttribute> values = new ArrayList<DoubleAttribute>();
+			values.add(new DoubleAttribute(budget));
+
+			URI type = null;
+			try {
+				type = new URI(DoubleAttribute.identifier);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+
+			return new BagAttribute(type, values);
+		}
+		return null;
+	}
+
+	public double computeBudget(String teamId,String taskId)
+	{
+		return budgetCalc.calculateBudget(teamId, taskId);
+	}
+	
+	public double computeRisk(String teamId, String taskId) {
+		double teamTrust = computeTrust(teamId);
+		return riskCalc.calculateRisk(teamTrust, taskId);
+	}
+
+	private double computeTrust(String teamId) {
+		
+		// retrieve all member ids
+		ArrayList<AttributeQuery> query = new ArrayList<AttributeQuery>();
+		query.add(new AttributeQuery(TeamAttributeXmlName.ID, teamId,
+				StringAttribute.identifier));
+		List<String> member_ids = data.getAttribute(
+				TeamAttributeXmlName.TEAM_TABLE, query,
+				TeamAttributeXmlName.MEMBER_ID);
+
+		// retrieve all member trustworthiness
+		List<Double> trustList = new ArrayList<Double>();
+		for (String member : member_ids) {
+			ArrayList<AttributeQuery> mQuery = new ArrayList<AttributeQuery>();
+			mQuery.add(new AttributeQuery(SubjectAttributeXmlName.ID, member,
+					StringAttribute.identifier));
+			List<String> s_trust = new ArrayList<String>();
+			s_trust.addAll(data.getAttribute(
+					SubjectAttributeXmlName.SUBJECT_TABLE, mQuery,
+					SubjectAttributeXmlName.TRUSTWORTHINESS));
+			for (String s : s_trust) {
+				trustList.add(DoubleAttribute.getInstance(s).getValue());
+			}
+		}
+		// now in trustList i have all the trustworthiness values
+		return trustCalc.calculateTrust(trustList);
+
+	}
+}

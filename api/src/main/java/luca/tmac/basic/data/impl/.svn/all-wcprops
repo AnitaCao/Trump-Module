@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/3/trunk/RA-TMAC/src/luca/tmac/basic/data/impl
+END
+SubjectAttributeFinderModule.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/!svn/ver/3/trunk/RA-TMAC/src/luca/tmac/basic/data/impl/SubjectAttributeFinderModule.java
+END
+TaskAttributeFinderModule.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/3/trunk/RA-TMAC/src/luca/tmac/basic/data/impl/TaskAttributeFinderModule.java
+END
+TeamAttributeFinderModule.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/3/trunk/RA-TMAC/src/luca/tmac/basic/data/impl/TeamAttributeFinderModule.java
+END
+PermissionAttributeFinderModule.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/!svn/ver/3/trunk/RA-TMAC/src/luca/tmac/basic/data/impl/PermissionAttributeFinderModule.java
+END
+RiskAttributeFinderModule.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/3/trunk/RA-TMAC/src/luca/tmac/basic/data/impl/RiskAttributeFinderModule.java
+END

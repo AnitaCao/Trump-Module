@@ -1,0 +1,26 @@
+package luca.tmac.basic;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import luca.data.AttributeQuery;
+import luca.data.XmlDataHandler;
+
+public class WriterTest {
+
+	
+	public static final String RESOURCE_PATH = "./tmac/basic/resources/data.xml";
+	
+	public static void main(String[] args) {
+		XmlDataHandler dh = new XmlDataHandler(RESOURCE_PATH);
+
+		String entity = "cacca";
+		List<AttributeQuery> aq = new ArrayList<AttributeQuery>();
+		aq.add(new AttributeQuery("merda7","eeuu",""));
+		//aq.add(new AttributeQuery("merda2","bb",""));
+		//aq.add(new AttributeQuery("merda3","cc",""));
+		dh.addAttribute(entity, "aa", aq);
+		
+	}
+
+}

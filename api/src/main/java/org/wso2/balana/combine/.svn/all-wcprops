@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/combine
+END
+CombinerParameter.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/combine/CombinerParameter.java
+END
+RuleCombinerElement.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/combine/RuleCombinerElement.java
+END
+CombiningAlgFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/combine/CombiningAlgFactory.java
+END
+StandardCombiningAlgFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/combine/StandardCombiningAlgFactory.java
+END
+CombiningAlgFactoryProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/combine/CombiningAlgFactoryProxy.java
+END
+RuleCombiningAlgorithm.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/combine/RuleCombiningAlgorithm.java
+END
+CombinerElement.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/combine/CombinerElement.java
+END
+PolicyCombinerElement.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/combine/PolicyCombinerElement.java
+END
+BaseCombiningAlgFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/combine/BaseCombiningAlgFactory.java
+END
+CombiningAlgorithm.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/combine/CombiningAlgorithm.java
+END
+PolicyCombiningAlgorithm.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/combine/PolicyCombiningAlgorithm.java
+END
+package.html
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/combine/package.html
+END

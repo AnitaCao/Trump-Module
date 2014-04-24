@@ -1,0 +1,161 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana
+END
+Policy.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/Policy.java
+END
+PolicyMetaData.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/PolicyMetaData.java
+END
+Utils.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/Utils.java
+END
+XACMLConstants.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/XACMLConstants.java
+END
+TargetMatch.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/TargetMatch.java
+END
+DefaultNamespaceContext.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/DefaultNamespaceContext.java
+END
+Rule.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/Rule.java
+END
+Indenter.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/Indenter.java
+END
+PDPConfig.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/PDPConfig.java
+END
+AbstractTarget.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/AbstractTarget.java
+END
+AbstractObligation.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/AbstractObligation.java
+END
+PolicySet.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/PolicySet.java
+END
+VersionConstraints.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/VersionConstraints.java
+END
+Balana.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/Balana.java
+END
+PolicyReference.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/PolicyReference.java
+END
+TargetFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/TargetFactory.java
+END
+ObligationFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/ObligationFactory.java
+END
+UnknownIdentifierException.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/UnknownIdentifierException.java
+END
+ParsingException.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/ParsingException.java
+END
+PDP.java
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/PDP.java
+END
+AbstractPolicy.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/AbstractPolicy.java
+END
+ConfigurationStore.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/ConfigurationStore.java
+END
+ObligationResult.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/ObligationResult.java
+END
+PolicyTreeElement.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/PolicyTreeElement.java
+END
+MatchResult.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/MatchResult.java
+END
+ProcessingException.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/ProcessingException.java
+END

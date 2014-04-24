@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/cond/cluster/xacml3
+END
+StringCreationFunctionCluster.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/cond/cluster/xacml3/StringCreationFunctionCluster.java
+END
+StringConversionFunctionCluster.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/cond/cluster/xacml3/StringConversionFunctionCluster.java
+END
+SubStringFunctionCluster.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/cond/cluster/xacml3/SubStringFunctionCluster.java
+END
+StringComparingFunctionCluster.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/cond/cluster/xacml3/StringComparingFunctionCluster.java
+END

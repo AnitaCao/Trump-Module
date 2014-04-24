@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/xacml3
+END
+AttributeDesignator.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/xacml3/AttributeDesignator.java
+END
+AttributeSelector.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/xacml3/AttributeSelector.java
+END
+XPathAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/xacml3/XPathAttribute.java
+END

@@ -1,0 +1,9 @@
+package luca.tmac.basic.data.xml;
+
+public class TaskAttributeXmlName {
+	public static String TASK_TABLE = "task";
+	public static String ID = "id";
+	public static String PERMISSION = "permission_id";
+	public static String START_TIME = "start_time";
+	public static String DURATION = "duration";
+}

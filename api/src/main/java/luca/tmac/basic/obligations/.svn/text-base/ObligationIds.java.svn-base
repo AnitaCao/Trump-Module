@@ -1,0 +1,5 @@
+package luca.tmac.basic.obligations;
+
+public class ObligationIds {
+	public static final String ASSIGN_TASK_OBLIGATION_ID = "assign:task:obligation";
+}

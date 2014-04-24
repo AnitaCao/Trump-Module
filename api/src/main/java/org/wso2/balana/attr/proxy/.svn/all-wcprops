@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy
+END
+DoubleAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/DoubleAttributeProxy.java
+END
+YearMonthDurationAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/YearMonthDurationAttributeProxy.java
+END
+DateAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/DateAttributeProxy.java
+END
+IPAddressAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/IPAddressAttributeProxy.java
+END
+BooleanAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/BooleanAttributeProxy.java
+END
+DNSNameAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/DNSNameAttributeProxy.java
+END
+package.html
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/package.html
+END
+HexBinaryAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/HexBinaryAttributeProxy.java
+END
+Base64BinaryAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/Base64BinaryAttributeProxy.java
+END
+DateTimeAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/DateTimeAttributeProxy.java
+END
+IntegerAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/IntegerAttributeProxy.java
+END
+X500NameAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/X500NameAttributeProxy.java
+END
+TimeAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/TimeAttributeProxy.java
+END
+DayTimeDurationAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/DayTimeDurationAttributeProxy.java
+END
+AbstractAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/AbstractAttributeProxy.java
+END
+StringAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/StringAttributeProxy.java
+END
+RFC822NameAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/RFC822NameAttributeProxy.java
+END
+AnyURIAttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/proxy/AnyURIAttributeProxy.java
+END

@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/ctx/xacml3
+END
+RequestCtx.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/ctx/xacml3/RequestCtx.java
+END
+Result.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/ctx/xacml3/Result.java
+END
+XACML3EvaluationCtx.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/ctx/xacml3/XACML3EvaluationCtx.java
+END

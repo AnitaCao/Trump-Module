@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/3/trunk/RA-TMAC/src/luca/tmac/basic/data/uris
+END
+ActionAttributeURI.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/3/trunk/RA-TMAC/src/luca/tmac/basic/data/uris/ActionAttributeURI.java
+END
+SubjectAttributeURI.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/3/trunk/RA-TMAC/src/luca/tmac/basic/data/uris/SubjectAttributeURI.java
+END
+TaskAttributeURI.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/3/trunk/RA-TMAC/src/luca/tmac/basic/data/uris/TaskAttributeURI.java
+END
+TeamAttributeURI.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/3/trunk/RA-TMAC/src/luca/tmac/basic/data/uris/TeamAttributeURI.java
+END
+PermissionAttributeURI.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/3/trunk/RA-TMAC/src/luca/tmac/basic/data/uris/PermissionAttributeURI.java
+END
+RiskAttributeURI.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/3/trunk/RA-TMAC/src/luca/tmac/basic/data/uris/RiskAttributeURI.java
+END

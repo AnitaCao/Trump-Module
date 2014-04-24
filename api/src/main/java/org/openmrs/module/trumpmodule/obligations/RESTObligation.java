@@ -77,6 +77,10 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 	public boolean isFulfilled() {
 		return ob.isFulfilled();
 	}
+	
+	public void setFulfilled(boolean fulfilled) {
+		ob.setFulfilled(fulfilled);
+	}
 
 	public boolean isActive() {
 		return ob.isActive();
@@ -143,6 +147,15 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 	 */
 	public String getObligationDisplayString() {
 		return getUserId() + ":" + getActionName();
+	}
+
+	public void setActive(boolean active) {
+		ob.setActive(active);
+		
+	}
+
+	public void setExpired(boolean expired) {
+		ob.setExpired(expired);
 	}
 
 

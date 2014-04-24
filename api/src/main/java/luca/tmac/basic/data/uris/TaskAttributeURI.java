@@ -1,0 +1,12 @@
+package luca.tmac.basic.data.uris;
+
+public class TaskAttributeURI {
+	public static String TASK_CATEGORY_URI = "luca:tmac:task-category:task";
+	public static String ID_URI = TASK_CATEGORY_URI + ":" + "id";
+	public static String PERMISSION_URI = TASK_CATEGORY_URI + ":"
+			+ "permission_id";
+	public static String START_TIME_URI = TASK_CATEGORY_URI + ":"
+			+ "start_time";
+	public static String DURATION_URI = TASK_CATEGORY_URI + ":" + "duration";
+	public static String TEAM_ID_URI = TASK_CATEGORY_URI + ":" + "team_id";
+}

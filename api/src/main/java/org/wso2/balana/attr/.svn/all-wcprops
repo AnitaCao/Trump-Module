@@ -1,0 +1,209 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr
+END
+YearMonthDurationAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/YearMonthDurationAttribute.java
+END
+PortRange.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/PortRange.java
+END
+DateAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/DateAttribute.java
+END
+IPAddressAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/IPAddressAttribute.java
+END
+BooleanAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/BooleanAttribute.java
+END
+AttributeSelector.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/AttributeSelector.java
+END
+DNSNameAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/DNSNameAttribute.java
+END
+AttributeDesignatorFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/AttributeDesignatorFactory.java
+END
+StandardAttributeFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/StandardAttributeFactory.java
+END
+IntegerAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/IntegerAttribute.java
+END
+X500NameAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/X500NameAttribute.java
+END
+AttributeDesignator.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/AttributeDesignator.java
+END
+DayTimeDurationAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/DayTimeDurationAttribute.java
+END
+AbstractAttributeSelector.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/AbstractAttributeSelector.java
+END
+StringAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/StringAttribute.java
+END
+AnyURIAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/AnyURIAttribute.java
+END
+AttributeSelectorFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/AttributeSelectorFactory.java
+END
+AttributeFactoryProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/AttributeFactoryProxy.java
+END
+AttributeValue.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/AttributeValue.java
+END
+AttributeProxy.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/AttributeProxy.java
+END
+IPv4AddressAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/IPv4AddressAttribute.java
+END
+HexBinaryAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/HexBinaryAttribute.java
+END
+BagAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/BagAttribute.java
+END
+Base64BinaryAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/Base64BinaryAttribute.java
+END
+IPv6AddressAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/IPv6AddressAttribute.java
+END
+package.html
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/package.html
+END
+DateTimeAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/DateTimeAttribute.java
+END
+TimeAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/TimeAttribute.java
+END
+AbstractDesignator.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/AbstractDesignator.java
+END
+Base64.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/Base64.java
+END
+BaseAttributeFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/BaseAttributeFactory.java
+END
+RFC822NameAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/RFC822NameAttribute.java
+END
+AttributeFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/AttributeFactory.java
+END
+DoubleAttribute.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/3/trunk/RA-TMAC/src/org/wso2/balana/attr/DoubleAttribute.java
+END
