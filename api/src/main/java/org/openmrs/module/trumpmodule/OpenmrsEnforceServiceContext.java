@@ -29,9 +29,9 @@ import org.wso2.balana.attr.StringAttribute;
 public class OpenmrsEnforceServiceContext {
 
 	//!Question : do we need to store the normal obligation with the REST obligation separately ? 
-	private ArrayList<Obligation> activeObs;
-	private ArrayList<Obligation> fulfilledObs;
-	private ArrayList<Obligation> expiredObs;
+	private HashMap<String,Obligation> activeObs;
+	private HashMap<String,Obligation> fulfilledObs;
+	private HashMap<String,Obligation> expiredObs;
 	
 	//obsAttributes stores the attributes of obligations from data.xml file. The key is the obligation name (action_name), the value is the list of AttributeQuery
 	private HashMap<String,List<AttributeQuery>> obsAttributes;
@@ -51,9 +51,9 @@ public class OpenmrsEnforceServiceContext {
 
 
 	private OpenmrsEnforceServiceContext(){
-		activeObs = new ArrayList<Obligation>();
-		fulfilledObs = new ArrayList<Obligation>();
-		expiredObs = new ArrayList<Obligation>();
+		activeObs = new HashMap<String,Obligation>();
+		fulfilledObs = new HashMap<String,Obligation>();
+		expiredObs = new HashMap<String,Obligation>();
 		AssigendPatientInternalIds = new HashMap<String, HashSet<String>>();
 		policies = new HashMap<String, ArrayList<Policy>>();
 		obsAttributes = new HashMap<String,List<AttributeQuery>>();
@@ -177,27 +177,27 @@ public class OpenmrsEnforceServiceContext {
 		return policy;
 	}
 
-	public ArrayList<Obligation> getActiveObs() {
+	public HashMap<String, Obligation> getActiveObs() {
 		return activeObs;
 	}
 
-	public void setActiveObs(ArrayList<Obligation> activeObs) {
+	public void setActiveObs(HashMap<String, Obligation> activeObs) {
 		this.activeObs = activeObs;
 	}
 
-	public ArrayList<Obligation> getFulfilledObs() {
+	public HashMap<String, Obligation> getFulfilledObs() {
 		return fulfilledObs;
 	}
 
-	public void setFulfilledObs(ArrayList<Obligation> fulfilledObs) {
+	public void setFulfilledObs(HashMap<String, Obligation> fulfilledObs) {
 		this.fulfilledObs = fulfilledObs;
 	}
 
-	public ArrayList<Obligation> getExpiredObs() {
+	public HashMap<String, Obligation> getExpiredObs() {
 		return expiredObs;
 	}
 
-	public void setExpiredObs(ArrayList<Obligation> expiredObs) {
+	public void setExpiredObs(HashMap<String, Obligation> expiredObs) {
 		this.expiredObs = expiredObs;
 	}
 

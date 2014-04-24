@@ -26,6 +26,22 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 		id = (int)UUID.randomUUID().getMostSignificantBits();
 	}
 	
+	/**
+	 * Default constructor required by REST framework
+	 */
+	public RESTObligation() {
+		
+	}
+	
+	/**
+	 * Create a new RESTObligation from an abstract non-rest one, RESTifying it.
+	 * @param ob
+	 */
+	public RESTObligation(ObligationImpl ob) {
+		this.ob = ob;
+		id = (int)UUID.randomUUID().getMostSignificantBits();
+	}
+
 	public Integer getId() {
 		return this.id;
 	}
@@ -94,11 +110,11 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 		ob.setStartDate(startDate);
 	}
 
-	public UUID getObUUID() {
-		return ob.getObUUID();
+	public String getObUUID() {
+		return this.getUuid();
 	}
 
-	public void setObUUID(UUID obUUID) {
+	public void setObUUID(String obUUID) {
 		ob.setObUUID(obUUID);
 		
 	}
@@ -119,6 +135,14 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 	public void setDecreasedBudget(String decreasedBudget) {
 		// TODO Auto-generated method stub
 		ob.setDecreasedBudget(decreasedBudget);
+	}
+
+	/**
+	 * Display string for this object
+	 * @return a string summarising this object
+	 */
+	public String getObligationDisplayString() {
+		return getUserId() + ":" + getActionName();
 	}
 
 

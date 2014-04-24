@@ -111,10 +111,6 @@ public class PolicyResource extends DataDelegatingCrudResource<Policy> {
 		return new Policy();
 	}
 	
-	/**
-	 * @param encounter
-	 * @return encounter type and date
-	 */
 	public String getDisplayString(Policy policy) {
 		return policy.getPolicyName();
 	}

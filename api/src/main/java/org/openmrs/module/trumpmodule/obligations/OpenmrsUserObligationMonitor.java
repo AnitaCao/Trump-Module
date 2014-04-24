@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 import org.wso2.balana.attr.StringAttribute;
@@ -23,9 +24,9 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 	private Timer timer2;
 	private Timer timer;
 	private DataHandler dh = null;
-	private ArrayList<Obligation> activeObs;
-	private ArrayList<Obligation> fulfilledObs;
-	private ArrayList<Obligation> expiredObs;
+	private HashMap<String,Obligation> activeObs;
+	private HashMap<String,Obligation> fulfilledObs;
+	private HashMap<String,Obligation> expiredObs;
 	private OpenmrsEnforceServiceContext SerContext;
 	
 	
@@ -49,7 +50,8 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 	
 	public void checkObligations() {
 		if(!activeObs.isEmpty()){
-			for(Obligation ob : activeObs){
+			for(Entry<String, Obligation> e : activeObs.entrySet()){
+				Obligation ob = e.getValue();
 				checkObligation(ob);
 			}
 		}
@@ -81,7 +83,7 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 	 *
 	 */
 	public class OblCheckerTimerTask extends TimerTask {
-		UUID uuid;
+		String uuid;
 		Obligation ob;
 		OpenmrsUserObligationMonitor monitor;
 		String userId;
@@ -91,11 +93,12 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 		}
 		  
 		public void run() {
-			if(activeObs.contains(ob)){
+			if(activeObs.containsValue(ob)){
+			//if(activeObs.contains(ob)){
 				String userId = ob.getUserId();
+				//uuid = ob.getObUUID();
 				uuid = ob.getObUUID();
-			
-				if(ob.isSatisfied(userId,uuid.toString())){
+				if(ob.isSatisfied(userId,uuid)){
 					timer2.cancel();
 					String currentBudget = getBudgetfromDb(userId);
 					String decreasedBudget = ob.getDecreasedBudget(); 
@@ -114,7 +117,7 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 					
 					//remove from the active list, add to the fulfilled list in openmrs enfroce service context. 
 					activeObs.remove(ob);
-					fulfilledObs.add(ob);
+					fulfilledObs.put(uuid,ob);
 					SerContext.setActiveObs(activeObs);
 					SerContext.setFulfilledObs(fulfilledObs);
 					System.err.println("Anita, now the active obligation is : " + activeObs.size());
@@ -130,7 +133,7 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 	
 	
 	public class OblDeadlineTimerTask extends TimerTask {
-		UUID uuid;
+		//String uuid;
 		Obligation ob;
 		OpenmrsUserObligationMonitor monitor;
 		public OblDeadlineTimerTask(Obligation ob, OpenmrsUserObligationMonitor monitor){
@@ -139,12 +142,12 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 		}
 		
 		public void run() {
-			if(activeObs.contains(ob)){
+			if(activeObs.containsValue(ob)){
 				timer.cancel();
 				
 				//remove from the active list, add to the expired list in openmrs enfroce service context. 
 				activeObs.remove(ob);
-				expiredObs.add(ob);
+				expiredObs.put(ob.getObUUID(),ob);
 				SerContext.setActiveObs(activeObs);
 				SerContext.setExpiredObs(expiredObs);
 				monitorableObject.notifyDeadline(ob);

@@ -30,7 +30,7 @@ public class OpenmrsTmacPEP extends TmacPEP {
 	private HashMap<String,String> messages;
 	
 	OpenmrsEnforceServiceContext SerContext = OpenmrsEnforceServiceContext.getInstance();
-	private ArrayList<Obligation> activeObs = SerContext.getActiveObs();
+	private HashMap<String,Obligation> activeObs = SerContext.getActiveObs();
 	
 	public OpenmrsTmacPEP(DataHandler parDataHandler,
 			ObligationMonitorable monitorable) {
@@ -94,19 +94,14 @@ public class OpenmrsTmacPEP extends TmacPEP {
 					Obligation ob = null ;
 					
 					ArrayList<AttributeQuery> newAttList = new ArrayList<AttributeQuery>();
-					
 					if(obl.getActionName().equals(ObligationIds.REST_OBLIGATION_NAME_XML)){
-						
 						ob = new RESTObligation(obl.getActionName(),user.getId().toString(),startTime,newAttList);
 					}else{
-						//ob = new ObligationImpl(obl.getActionName(),user.getId().toString(),startTime,newAttList);
 						ob = new EmailObligation(obl.getActionName(),user.getId().toString(),startTime,newAttList);
 					}
-					ob.setDecreasedBudget(decreasedBudget);
-					ob.setObUUID(UUID.randomUUID());
+					ob.setDecreasedBudget(decreasedBudget);				
 					
-					
-					activeObs.add(ob);
+					activeObs.put(ob.getObUUID(), ob);
 					SerContext.setActiveObs(activeObs);
 					
 					String message = obl.getAttribute("message") + "your UUID of the obligation is : "+ ob.getObUUID().toString();
