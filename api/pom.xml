@@ -47,11 +47,6 @@
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>uk.ac.abdn.trump</groupId>
-			<artifactId>RA-TMAC-2</artifactId>
-			<type>jar</type>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
