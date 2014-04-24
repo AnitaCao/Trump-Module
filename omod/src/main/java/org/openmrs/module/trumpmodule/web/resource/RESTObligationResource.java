@@ -44,11 +44,17 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 		}else if (rep instanceof FullRepresentation){
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("actionName");
-			description.addProperty("attributeMap");
+			description.addProperty("active");
 			description.addProperty("id");
+			description.addProperty("userId");
 			description.addProperty("startDate");
-			
-			//description.addProperty("tags", Representation.DEFAULT);
+			description.addProperty("deadline");
+			description.addProperty("obUUID");
+			description.addProperty("userObligation");
+			description.addProperty("systemObligation");
+			description.addProperty("fulfilled");
+			description.addProperty("decreasedBudget");
+			description.addProperty("attributeMap");
 			description.addProperty("auditInfo", findMethod("getAuditInfo"));
 			description.addSelfLink();
 			return description;
