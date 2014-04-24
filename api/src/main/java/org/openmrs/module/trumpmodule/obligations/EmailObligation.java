@@ -13,9 +13,9 @@ import javax.mail.Session;
 import javax.mail.Store;
 
 import luca.data.AttributeQuery;
-import luca.tmac.basic.obligations.NonRESTObligation;
+import luca.tmac.basic.obligations.ObligationImpl;
 
-public class EmailObligation extends NonRESTObligation {
+public class EmailObligation extends ObligationImpl {
 
 
 	public EmailObligation(String actionName, String userId, Date pStartDate,

@@ -10,11 +10,11 @@ import org.openmrs.BaseOpenmrsData;
 
 import luca.data.AttributeQuery;
 import luca.tmac.basic.obligations.Obligation;
-import luca.tmac.basic.obligations.NonRESTObligation;
+import luca.tmac.basic.obligations.ObligationImpl;
 
 public class RESTObligation extends BaseOpenmrsData implements Serializable, Obligation {
 	private Integer id;
-	private NonRESTObligation ob;
+	private ObligationImpl ob;
 	
 	/**
 	 * 
@@ -22,7 +22,7 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 	private static final long serialVersionUID = 1L;
 	public RESTObligation(String actionName,String userId, Date pStartDate, List<AttributeQuery> pParameters){
 		// our 'wrapped' obligation instance
-		ob = new NonRESTObligation(actionName, userId, pStartDate, pParameters);
+		ob = new ObligationImpl(actionName, userId, pStartDate, pParameters);
 		id = (int)UUID.randomUUID().getMostSignificantBits();
 	}
 	
