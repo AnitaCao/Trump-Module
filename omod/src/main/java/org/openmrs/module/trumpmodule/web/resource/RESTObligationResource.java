@@ -105,6 +105,14 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 	}
 	
 	@Override
+	public DelegatingResourceDescription getUpdatableProperties() {
+		DelegatingResourceDescription description = new DelegatingResourceDescription();
+		description.addRequiredProperty("fulfilled");
+
+		return description;
+	}
+	
+	@Override
 	public NeedsPaging<Obligation> doGetAll(RequestContext context){
 		
 		List<Obligation> restObList = new ArrayList<Obligation>();
