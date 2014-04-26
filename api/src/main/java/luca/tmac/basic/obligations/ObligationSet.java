@@ -2,11 +2,9 @@ package luca.tmac.basic.obligations;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import luca.data.AttributeQuery;
 import luca.data.DataHandler;
-import luca.data.Entity;
 
 
 public class ObligationSet {
