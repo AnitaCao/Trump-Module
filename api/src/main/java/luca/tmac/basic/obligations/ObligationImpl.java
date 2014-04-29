@@ -133,9 +133,8 @@ public class ObligationImpl implements Obligation {
 	 * @see luca.tmac.basic.obligations.Obligation#isActive()
 	 */
 	@Override
-	public boolean isActive()
+	public Boolean isActive()
 	{
-		
 		String state =  getAttribute(STATE_ATTRIBUTE_NAME);
 		return state == null || state.equals(STATE_ACTIVE);
 		
@@ -145,7 +144,7 @@ public class ObligationImpl implements Obligation {
 	 * @see luca.tmac.basic.obligations.Obligation#isExpired()
 	 */
  	@Override
-	public boolean isExpired()
+	public Boolean isExpired()
 	{
 		String state =  getAttribute(STATE_ATTRIBUTE_NAME);
 		return state != null && state.equals(STATE_EXPIRED);	}
@@ -198,28 +197,31 @@ public class ObligationImpl implements Obligation {
 	}
 
 	@Override
-<<<<<<< HEAD
+
 	public void setFulfilled(Boolean fulfilled) {
 		if(fulfilled)
 			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_FULFILLED, StringAttribute.identifier));
 		else
-			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_ACTIVE, StringAttribute.identifier));	
-=======
-	public void setFulfilled(boolean fulfilled) {
-		setAttribute(new AttributeQuery(STATE_FULFILLED, new Boolean(fulfilled).toString(), StringAttribute.identifier));
+			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_ACTIVE, StringAttribute.identifier));
+	}
+
+
+
+	@Override
+	public void setActive(Boolean active) {
+		if(active)
+			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_ACTIVE, StringAttribute.identifier));
+		else
+			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_EXPIRED, StringAttribute.identifier));
 		
->>>>>>> 050804970181d09ea88c0f4d758a953d5e46528e
 	}
 
 	@Override
-	public void setActive(boolean active) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setExpired(boolean expired) {
-		// TODO Auto-generated method stub
+	public void setExpired(Boolean expired) {
+		if(expired)
+			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_EXPIRED, StringAttribute.identifier));
+		else
+			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_ACTIVE, StringAttribute.identifier));
 		
 	}
 

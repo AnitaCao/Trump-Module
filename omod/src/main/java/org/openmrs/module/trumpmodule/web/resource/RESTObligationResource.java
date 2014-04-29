@@ -63,6 +63,9 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 		return null;	
 	}
 
+	/**
+	 * get obligation by the uuid of the obligation
+	 */
 	@Override
 	public RESTObligation getByUniqueId(String uniqueId) {
 		Obligation ob = OpenmrsContext.getActiveObs().get(uniqueId);
