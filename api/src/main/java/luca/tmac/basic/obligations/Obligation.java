@@ -53,7 +53,7 @@ public interface Obligation {
 	 */
 	public abstract Boolean isFulfilled();
 	
-	public abstract void setFulfilled(Boolean fulfilled);
+	public abstract void setFulfilled(boolean fulfilled);
 
 	/* (non-Javadoc)
 	 * @see luca.tmac.basic.obligations.Obligation#isActive()

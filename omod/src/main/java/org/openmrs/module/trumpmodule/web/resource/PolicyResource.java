@@ -57,7 +57,15 @@ public class PolicyResource extends DataDelegatingCrudResource<Policy> {
 
 		return description;
 	}
-		
+	
+	@Override
+	public DelegatingResourceDescription getUpdatableProperties() {
+		DelegatingResourceDescription description = new DelegatingResourceDescription();
+		description.addRequiredProperty("policyName");
+
+		return description;
+	}
+	
 	@Override
     public List<Representation> getAvailableRepresentations() {
         return Arrays.asList(Representation.DEFAULT);

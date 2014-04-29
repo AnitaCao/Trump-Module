@@ -144,12 +144,6 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
     	List<Obligation> obList = pep.obligationMonitor.getList();
     	return obList;
     }
-    
-    
-
-//	public List<String> getObligations() throws APIException {
-//		return null;
-//	}
 
 
 	public void notifyDeadline(Obligation obl) {

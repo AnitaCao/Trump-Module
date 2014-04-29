@@ -198,11 +198,17 @@ public class ObligationImpl implements Obligation {
 	}
 
 	@Override
+<<<<<<< HEAD
 	public void setFulfilled(Boolean fulfilled) {
 		if(fulfilled)
 			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_FULFILLED, StringAttribute.identifier));
 		else
 			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_ACTIVE, StringAttribute.identifier));	
+=======
+	public void setFulfilled(boolean fulfilled) {
+		setAttribute(new AttributeQuery(STATE_FULFILLED, new Boolean(fulfilled).toString(), StringAttribute.identifier));
+		
+>>>>>>> 050804970181d09ea88c0f4d758a953d5e46528e
 	}
 
 	@Override
