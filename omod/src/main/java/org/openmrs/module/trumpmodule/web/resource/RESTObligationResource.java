@@ -44,7 +44,6 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 		}else if (rep instanceof FullRepresentation){
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("actionName");
-			description.addProperty("active");
 			description.addProperty("id");
 			description.addProperty("userId");
 			description.addProperty("startDate");
@@ -53,6 +52,8 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 			description.addProperty("userObligation");
 			description.addProperty("systemObligation");
 			description.addProperty("fulfilled");
+			description.addProperty("active");
+			description.addProperty("expired");
 			description.addProperty("decreasedBudget");
 			description.addProperty("attributeMap");
 			description.addProperty("auditInfo", findMethod("getAuditInfo"));
@@ -108,6 +109,8 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 	public DelegatingResourceDescription getUpdatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		description.addRequiredProperty("fulfilled");
+		description.addRequiredProperty("active");
+		description.addRequiredProperty("expired");
 
 		return description;
 	}

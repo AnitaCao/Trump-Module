@@ -51,23 +51,23 @@ public interface Obligation {
 	/* (non-Javadoc)
 	 * @see luca.tmac.basic.obligations.Obligation#isFulfilled()
 	 */
-	public abstract boolean isFulfilled();
+	public abstract Boolean isFulfilled();
 	
 	public abstract void setFulfilled(Boolean fulfilled);
 
 	/* (non-Javadoc)
 	 * @see luca.tmac.basic.obligations.Obligation#isActive()
 	 */
-	public abstract boolean isActive();
+	public abstract Boolean isActive();
 
-	public abstract void setActive(boolean active);
+	public abstract void setActive(Boolean active);
 	
 	/* (non-Javadoc)
 	 * @see luca.tmac.basic.obligations.Obligation#isExpired()
 	 */
-	public abstract boolean isExpired();
+	public abstract Boolean isExpired();
 	
-	public abstract void setExpired(boolean expired);
+	public abstract void setExpired(Boolean expired);
 	
 	public String getActionName();
 

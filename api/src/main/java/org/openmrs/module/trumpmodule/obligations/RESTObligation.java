@@ -74,20 +74,41 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 		ob.setAttribute(aq);
 	}
 
-	public boolean isFulfilled() {
+	public Boolean isFulfilled() {
 		return ob.isFulfilled();
 	}
 	
-	public void setFulfilled(boolean fulfilled) {
+	public Boolean getFulfilled() {
+		return ob.isFulfilled();
+	}
+	
+	public void setFulfilled(Boolean fulfilled) {
 		ob.setFulfilled(fulfilled);
 	}
 
-	public boolean isActive() {
+
+	public Boolean isActive() {
 		return ob.isActive();
 	}
+	
+	public Boolean getActive() {
+		return ob.isActive();
+	}
+	
+	public void setActive(Boolean active) {
+		ob.setActive(active);
+	}
 
-	public boolean isExpired() {
+	public Boolean isExpired() {
 		return ob.isExpired();
+	}
+	
+	public Boolean getExpired() {
+		return ob.isExpired();
+	}
+	
+	public void setExpired(Boolean expired) {
+		ob.setExpired(expired);
 	}
 
 	public String getActionName() {
@@ -157,7 +178,5 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 	public void setExpired(boolean expired) {
 		ob.setExpired(expired);
 	}
-
-
 
 }

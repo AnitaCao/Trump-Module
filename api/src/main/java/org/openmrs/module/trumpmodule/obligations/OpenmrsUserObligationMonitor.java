@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 import java.util.Map.Entry;
 
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;

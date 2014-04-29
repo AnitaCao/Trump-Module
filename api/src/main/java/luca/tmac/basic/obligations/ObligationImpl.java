@@ -123,10 +123,10 @@ public class ObligationImpl implements Obligation {
 	 * @see luca.tmac.basic.obligations.Obligation#isFulfilled()
 	 */
 	@Override
-	public boolean isFulfilled()
+	public Boolean isFulfilled()
 	{
-		String state =  getAttribute(STATE_ATTRIBUTE_NAME);
-		return state != null && state.equals(STATE_FULFILLED);
+		String stateAttrName =  getAttribute(STATE_ATTRIBUTE_NAME);
+		return stateAttrName != null && stateAttrName.equals(STATE_FULFILLED);
 	}
 	
 	/* (non-Javadoc)
@@ -199,8 +199,10 @@ public class ObligationImpl implements Obligation {
 
 	@Override
 	public void setFulfilled(Boolean fulfilled) {
-		setAttribute(new AttributeQuery(STATE_FULFILLED, fulfilled.toString(), StringAttribute.identifier));
-		
+		if(fulfilled)
+			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_FULFILLED, StringAttribute.identifier));
+		else
+			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_ACTIVE, StringAttribute.identifier));	
 	}
 
 	@Override
