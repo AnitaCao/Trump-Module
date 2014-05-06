@@ -1,9 +1,9 @@
 package org.openmrs.module.trumpmodule.authorization;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
@@ -20,22 +20,29 @@ import luca.tmac.basic.TmacPEP;
 import luca.tmac.basic.data.xml.SubjectAttributeXmlName;
 import luca.tmac.basic.obligations.Obligation;
 import luca.tmac.basic.obligations.ObligationIds;
+import luca.tmac.basic.obligations.ObligationImpl;
 import luca.tmac.basic.obligations.ObligationMonitorable;
 
 public class OpenmrsTmacPEP extends TmacPEP {
 	
 	private OpenmrsUserObligationMonitor openmrsOblMonitor;
-	private User user = Context.getAuthenticatedUser();
+	private User currentUser = Context.getAuthenticatedUser(); //currentUser is the trigger user
 	private HashMap<String,String> messages;
 	
 	OpenmrsEnforceServiceContext SerContext = OpenmrsEnforceServiceContext.getInstance();
 	private HashMap<String,Obligation> activeObs = SerContext.getActiveObs();
+	private HashMap<String,List<Obligation>> userObs = SerContext.getUserObs();
+	private HashMap<String,List<Obligation>> roleObs = SerContext.getRoleObs();
+	private HashMap<String,List<Obligation>> oblSets = SerContext.getObligationSets();
+	private List<Obligation> userObsList = new ArrayList<Obligation>();
+	private List<Obligation> roleObsList = new ArrayList<Obligation>();
 	
 	public OpenmrsTmacPEP(DataHandler parDataHandler,
 			ObligationMonitorable monitorable) {
 		super(parDataHandler, monitorable);
 		
 		openmrsOblMonitor = new OpenmrsUserObligationMonitor(new ArrayList<Obligation>(),monitorable,dh);
+	
 		
 	}
 	
@@ -54,20 +61,23 @@ public class OpenmrsTmacPEP extends TmacPEP {
 	public HashMap<String,String> acceptResponse(long parserId,String methodName) {
 		ResponseParser parser = sessionParsers.get(parserId);
 		messages = new HashMap<String,String>();
-		String budgetfromDb = openmrsOblMonitor.getBudgetfromDb(user.getId().toString());
+		String budgetfromDb = openmrsOblMonitor.getBudgetfromDB(currentUser.getId().toString());
 		double previousBudget = Double.parseDouble(budgetfromDb);
 		if (parser == null)
 			throw new IllegalArgumentException("invalid parser id");
 		
 		if(methodName.equalsIgnoreCase("getPatientByUuid")){
-			List<Obligation> obls = parser.getObligation().getList();
+			List<Obligation> obls = parser.getObligation();
+			
+			String setId = null;
 			
 			//firstly perform decrease budget system obligation. 
 			for (Obligation obl : obls) {
 				if (obl.getActionName().equalsIgnoreCase(ObligationIds.DECREASE_BUDGET_ID)) {
 					String performingResult = performObligation(obl);
 					messages.put(obl.getActionName(), performingResult);
-					openmrsOblMonitor.updateBudget(performingResult,user.getId().toString());
+					openmrsOblMonitor.updateBudgetToDB(performingResult,currentUser.getId().toString());
+					setId = String.valueOf(UUID.randomUUID().getMostSignificantBits());
 				}
 			}
 			
@@ -80,36 +90,63 @@ public class OpenmrsTmacPEP extends TmacPEP {
 					}
 				} else {
 					//if it's not system obligation which means it's a user obligation, then we should add the obligation to the openmrs context
-					Date startTime = new Date();
 					String decreasedBudget = null;
 					
 					if(messages.containsKey(ObligationIds.DECREASE_BUDGET_ID)){
 						double curB = Double.parseDouble(messages.get((ObligationIds.DECREASE_BUDGET_ID)));
 						decreasedBudget = String.valueOf(previousBudget - curB);
+						
 					}
 					
-					//UserObRelation uo = new UserObRelation(user.getId().toString(),obl.getAttribute("id"),startTime,decreasedBudget);
+					Obligation obligation = null ;
 					
-					Obligation ob = null ;
+					//get the attributeMap of the obl from policy
+					HashMap<String,String> attributeMap = obl.getAttributeMap();
 					
-					ArrayList<AttributeQuery> newAttList = new ArrayList<AttributeQuery>();
-					if(obl.getActionName().equals(ObligationIds.REST_OBLIGATION_NAME_XML)){
-						ob = new RESTObligation(obl.getActionName(),user.getId().toString(),startTime,newAttList);
+					if(obl.getActionName().contains(ObligationIds.REST_OBLIGATION_NAME_XML)){
+						
+						obligation = new RESTObligation((ObligationImpl)obl);
+						obligation.setTriggeringUserId(currentUser.getId().toString());
+						
+						setOblSetId(obligation,setId);
+						
+						if(attributeMap.containsKey("requiredUserId")){
+							String userId = attributeMap.get("requiredUserId");
+							obligation.setUserId(userId);
+							userObsList.add(obligation);
+							userObs.put(userId, userObsList);
+							
+						}else if(attributeMap.containsKey("roleName")){
+							//if it's a obligation to role, then don't need to set userId, just leave it null. 
+							roleObsList.add(obligation);
+							roleObs.put(attributeMap.get("roleName"), roleObsList);
+						}else 
+							obligation.setUserId(currentUser.getId().toString());
 					}else{
-						ob = new EmailObligation(obl.getActionName(),user.getId().toString(),startTime,newAttList);
+						
+						obligation = new EmailObligation(obl.getActionName(),currentUser.getId().toString(),obl.getStartDate(),null);
+						obligation.setAttributeMap(attributeMap);
+						obligation.setUserId(currentUser.getId().toString());//userid and triggeringUiserId are the same.
+						setOblSetId(obligation,setId);
+						
 					}
-					ob.setDecreasedBudget(decreasedBudget);				
 					
-					activeObs.put(ob.getObUUID(), ob);
+					
+					
+					obligation.setDecreasedBudget(decreasedBudget);	
+					
+					activeObs.put(obligation.getObUUID(), obligation);
 					SerContext.setActiveObs(activeObs);
+					SerContext.setUserObs(userObs);
+					SerContext.setRoleObs(roleObs);
 					
-					String message = obl.getAttribute("message") + "your UUID of the obligation is : "+ ob.getObUUID().toString();
-					
-					System.err.println("the size of the obligation is : " + activeObs.size());
-					
+					String message = obl.getAttribute("message") + "your UUID of the obligation is : "+ obligation.getObUUID().toString();
 					messages.put(obl.getActionName(), message);
 				}
 			}
+			System.err.println("the size of the activeObs is : " + activeObs.size());
+			System.err.println("the size of the userObs is : " + userObs.size());
+			System.err.println("the size of the roleObs is : " + roleObs.size());
 		}
 		openmrsOblMonitor.checkObligations();
 		return messages;
@@ -121,9 +158,31 @@ public class OpenmrsTmacPEP extends TmacPEP {
 	List<AttributeQuery> attributes = new ArrayList<AttributeQuery>();
 	attributes.add(new AttributeQuery(SubjectAttributeXmlName.BUDGET, currentBudget,
 			StringAttribute.identifier));
-	dh.modifyAttribute(SubjectAttributeXmlName.SUBJECT_TABLE, user.getId().toString(), attributes);
+	dh.modifyAttribute(SubjectAttributeXmlName.SUBJECT_TABLE, currentUser.getId().toString(), attributes);
 	
-}
+  }
+  
+  public void setOblSetId(Obligation obligation, String setId){
+	  if(obligation.getAttribute("setName").contains(ObligationIds.BUDGET_DECREASE_SET_XML)){
+			obligation.setSetId(setId);
+			if(oblSets.containsKey(setId)){
+				oblSets.get(setId).add(obligation); 
+				System.err.println("Anita, the oblSets has contains this setId : " +setId+", and the "
+						+ "there are " + oblSets.get(setId).size() + "obligations with the same setId.");
+			}else{
+				List<Obligation> obls = new ArrayList<Obligation>();
+				obls.add(obligation);
+				oblSets.put(setId,obls);
+			}
+		}else {
+			String newSetId = String.valueOf(UUID.randomUUID().getMostSignificantBits());
+			obligation.setSetId(newSetId);
+			List<Obligation> obls = new ArrayList<Obligation>();
+			obls.add(obligation);
+			oblSets.put(newSetId,obls);
+		}
+	  System.err.println("Anita, the size of the oblSets is : " + oblSets.size());
+  }
 
 	public String performObligation(Obligation obl)
 	{

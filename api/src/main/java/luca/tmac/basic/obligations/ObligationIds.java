@@ -16,6 +16,7 @@ public class ObligationIds {
 	
 	public static final String EMAIL_OBLIGATION_NAME_XML = "user:send:email";
 	public static final String REST_OBLIGATION_NAME_XML = "user:rest";
+	public static final String BUDGET_DECREASE_SET_XML = "budget_decrease_set";
 
 
 }

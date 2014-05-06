@@ -151,14 +151,20 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 	public void setUserId(String userId) {
 		ob.setUserId(userId);
 	}
+	
+	public String getTriggeringUserId(){
+		return ob.getTriggeringUserId();
+	}
+	
+	public void setTriggeringUserId(String triggeringUserId){
+		ob.setTriggeringUserId(triggeringUserId);
+	}
 
 	public String getDecreasedBudget() {
-		// TODO Auto-generated method stub
 		return ob.getDecreasedBudget();
 	}
 
 	public void setDecreasedBudget(String decreasedBudget) {
-		// TODO Auto-generated method stub
 		ob.setDecreasedBudget(decreasedBudget);
 	}
 
@@ -177,6 +183,16 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 
 	public void setExpired(boolean expired) {
 		ob.setExpired(expired);
+	}
+
+	@Override
+	public String getSetId() {
+		return ob.getSetId();
+	}
+
+	@Override
+	public void setSetId(String setId) {
+		ob.setSetId(setId);
 	}
 
 }

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
 import java.util.Map.Entry;
 
 import luca.data.AttributeQuery;
@@ -14,6 +13,7 @@ import luca.data.DataHandler;
 import luca.data.XmlDataHandler;
 import luca.tmac.basic.data.xml.SubjectAttributeXmlName;
 import luca.tmac.basic.obligations.Obligation;
+import luca.tmac.basic.obligations.ObligationSet;
 
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
@@ -33,10 +33,24 @@ public class OpenmrsEnforceServiceContext {
 	private HashMap<String,Obligation> fulfilledObs;
 	private HashMap<String,Obligation> expiredObs;
 	
-	//obsAttributes stores the attributes of obligations from data.xml file. The key is the obligation name (action_name), the value is the list of AttributeQuery
-	private HashMap<String,List<AttributeQuery>> obsAttributes;
+	//ObligaitonSets stores the obligationSet which triggered by the same user and needed to be fulfilled together to get the decreased 
+	//budget back. The key is the setId, the value is a list of obligation uuid.
+	private HashMap<String,List<Obligation>> oblsSets;
 	
-	//assignedPatientInternalIds stores the assigned patients' ids of the user (doctor), the key is the userId, the value is a set which contians the assigned patients' patient_id
+	//userObs stores the obligations which need to be done by other users. The key is the user id which belongs to the assigned user of this
+	//obligation, the value is a list of obligations which belongs to this user. 
+	private HashMap<String, List<Obligation>> userObs;
+	
+	//roleObs stores the obligations which need to be done by any user of the particular role. The key is the role name. the value is a list 
+	//of obligations which belongs to this role. 
+	private HashMap<String, List<Obligation>> roleObs;
+	
+//	//obsAttributes stores the attributes of obligations from data.xml file. The key is the obligation name (action_name), the value is the
+//	//list of AttributeQuery
+//	private HashMap<String,List<AttributeQuery>> obsAttributes;
+	
+	//assignedPatientInternalIds stores the assigned patients' ids of the user (doctor), the key is the userId, the value is a set which 
+	//contians the assigned patients' patient_id
 	private HashMap<String, HashSet<String>> AssigendPatientInternalIds = null;
 	
 	
@@ -54,9 +68,12 @@ public class OpenmrsEnforceServiceContext {
 		activeObs = new HashMap<String,Obligation>();
 		fulfilledObs = new HashMap<String,Obligation>();
 		expiredObs = new HashMap<String,Obligation>();
+		oblsSets = new HashMap<String,List<Obligation>>();
+		userObs = new HashMap<String, List<Obligation>>();
+		roleObs = new HashMap<String, List<Obligation>>();
 		AssigendPatientInternalIds = new HashMap<String, HashSet<String>>();
 		policies = new HashMap<String, ArrayList<Policy>>();
-		obsAttributes = new HashMap<String,List<AttributeQuery>>();
+	//	obsAttributes = new HashMap<String,List<AttributeQuery>>();
 		
 		String path = this.getClass().getClassLoader().getResource(RESOURCE_PATH).toString().substring(5);
 		dh = new XmlDataHandler(path);
@@ -201,12 +218,36 @@ public class OpenmrsEnforceServiceContext {
 		this.expiredObs = expiredObs;
 	}
 
-	public HashMap<String,List<AttributeQuery>> getObsAttributes() {
-		return obsAttributes;
+	public HashMap<String,List<Obligation>> getObligationSets() {
+		return oblsSets;
 	}
 
-	public void setObsAttributes(HashMap<String,List<AttributeQuery>> obsAttributes) {
-		this.obsAttributes = obsAttributes;
+	public void setObligationSets(HashMap<String,List<Obligation>> obligationSets) {
+		this.oblsSets = obligationSets;
+	}
+
+//	public HashMap<String,List<AttributeQuery>> getObsAttributes() {
+//		return obsAttributes;
+//	}
+//
+//	public void setObsAttributes(HashMap<String,List<AttributeQuery>> obsAttributes) {
+//		this.obsAttributes = obsAttributes;
+//	}
+
+	public HashMap<String, List<Obligation>> getUserObs() {
+		return userObs;
+	}
+
+	public void setUserObs(HashMap<String, List<Obligation>> userObs) {
+		this.userObs = userObs;
+	}
+
+	public HashMap<String, List<Obligation>> getRoleObs() {
+		return roleObs;
+	}
+
+	public void setRoleObs(HashMap<String, List<Obligation>> roleObs) {
+		this.roleObs = roleObs;
 	}
 
 	/**

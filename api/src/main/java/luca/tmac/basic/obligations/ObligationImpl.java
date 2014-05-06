@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 import org.wso2.balana.ParsingException;
 import org.wso2.balana.attr.DayTimeDurationAttribute;
 import org.wso2.balana.attr.StringAttribute;
@@ -18,24 +19,28 @@ public class ObligationImpl implements Obligation {
 	private Date startDate;
 	private String obUUID;
 	private String userId;
+	private String triggeringUserId;
 	private String decreasedBudget;
+	private String setId;
 	
 	
 	public ObligationImpl(){
 		
 	}
 
-	public ObligationImpl(String actionName,String userId, Date pStartDate, List<AttributeQuery> parameters) {
+	public ObligationImpl(String actionName,String triggeringUserId, Date pStartDate, List<AttributeQuery> parameters) {
 		this.obUUID = UUID.randomUUID().toString();
 		this.actionName = actionName;
 		this.startDate = pStartDate;
-		this.userId = userId;
+		this.triggeringUserId = triggeringUserId;
 		
 		this.attributeMap = new HashMap<String,String>();
 		for(AttributeQuery aq : parameters)
 		{
 			attributeMap.put(aq.name, aq.value);
+			
 		}
+		attributeMap.put(STATE_ATTRIBUTE_NAME, STATE_ACTIVE);
 	}
 	
 	/* (non-Javadoc)
@@ -188,6 +193,14 @@ public class ObligationImpl implements Obligation {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
+	public String getTriggeringUserId() {
+		return triggeringUserId;
+	}
+
+	public void setTriggeringUserId(String triggeringUserId) {
+		this.triggeringUserId = triggeringUserId;
+	}
+
 	public String getDecreasedBudget() {
 		return decreasedBudget;
 	}
@@ -196,13 +209,26 @@ public class ObligationImpl implements Obligation {
 		this.decreasedBudget = decreasedBudget;
 	}
 
-	@Override
+	public String getSetId() {
+		return setId;
+	}
 
+	public void setSetId(String setId) {
+		this.setId = setId;
+	}
+
+	@Override
 	public void setFulfilled(Boolean fulfilled) {
-		if(fulfilled)
+		if(fulfilled) {
 			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_FULFILLED, StringAttribute.identifier));
-		else
+			OpenmrsEnforceServiceContext.getInstance().getActiveObs().remove(this);
+			OpenmrsEnforceServiceContext.getInstance().getFulfilledObs().put(obUUID, this);
+		}
+		else {
 			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_ACTIVE, StringAttribute.identifier));
+			OpenmrsEnforceServiceContext.getInstance().getFulfilledObs().remove(this);
+			OpenmrsEnforceServiceContext.getInstance().getActiveObs().put(obUUID, this);
+		}
 	}
 
 
@@ -211,6 +237,7 @@ public class ObligationImpl implements Obligation {
 	public void setActive(Boolean active) {
 		if(active)
 			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_ACTIVE, StringAttribute.identifier));
+
 		else
 			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_EXPIRED, StringAttribute.identifier));
 		

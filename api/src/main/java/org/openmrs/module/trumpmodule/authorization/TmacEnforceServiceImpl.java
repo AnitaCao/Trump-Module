@@ -71,7 +71,8 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 	 */
     public boolean sendRequest(String privilege, User user){
     	
-    	System.out.println( "Anita !!!!!!!!!!!!!!!!!! the required privilege is : " + privilege);
+    	System.out.println( "Anita !!!!!!!!!!!!!!!!!! the required privilege is : " + privilege + ""
+    			+ "userId is : " + user.getId().toString());
     	
     	String[] parms = privilege.split(" ");
     	String actionString = parms[0].toLowerCase();
@@ -117,12 +118,11 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 		
 		//if the decision is permit, return true
 		if(rParser.getDecision().equals(ResponseParser.PERMIT_RESPONSE)){	
-			
 			return true;
 		}
 		else{
 			String message = "";
-			for (Obligation obl : rParser.getObligation().getList()) {
+			for (Obligation obl : rParser.getObligation()) {
 				if (obl.isSystemObligation())
 					message += pep.performObligation(obl) + "\n";
 			}

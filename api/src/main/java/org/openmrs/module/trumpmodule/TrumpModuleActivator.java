@@ -43,6 +43,7 @@ public class TrumpModuleActivator implements Activator {
 		SerContext.getActiveObs().clear();
 		SerContext.getExpiredObs().clear();
 		SerContext.getFulfilledObs().clear();
+		SerContext.getObligationSets().clear();
 
 	
 	}

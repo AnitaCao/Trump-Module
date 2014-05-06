@@ -89,8 +89,15 @@ public interface Obligation {
 
 	public void setUserId(String userId);
 	
+	public String getTriggeringUserId();
+
+	public void setTriggeringUserId(String triggeringUserId);
+	
 	public String getDecreasedBudget();
 
 	public void setDecreasedBudget(String decreasedBudget);
+	public String getSetId();
+
+	public void setSetId(String setId);
 
 }

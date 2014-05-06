@@ -7,12 +7,12 @@ import java.util.List;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import luca.data.AttributeQuery;
 import luca.data.DataHandler;
 import luca.data.XmlDataHandler;
 import luca.tmac.basic.obligations.ObligationImpl;
 import luca.tmac.basic.obligations.Obligation;
-import luca.tmac.basic.obligations.ObligationSet;
 
 public class ResponseParser {
 	
@@ -24,14 +24,16 @@ public class ResponseParser {
 	private long parser_id;
 	private String xacmlResponse;
 	private String decision;
-	private ObligationSet oblSet;
+	private List<Obligation> oblList;
+	//private ObligationSet oblSet;
 	
 	public ResponseParser(String response,DataHandler dh)
 	{
 		parser_id = incremental_id++;
 		xacmlResponse = response;
-		List<Obligation> obl = getObligationsFromResponse(xacmlResponse);
-		oblSet = new ObligationSet(obl,dh);
+		oblList = getObligationsFromResponse(xacmlResponse);
+		
+		//oblSet = new ObligationSet(obls,dh);
 		decision = parseDecision(xacmlResponse);
 	}
 	
@@ -46,9 +48,9 @@ public class ResponseParser {
 		return decision;
 	}
 	
-	public ObligationSet getObligation()
+	public List<Obligation> getObligation()
 	{
-		return oblSet;
+		return oblList;
 	}
 	
 	private String parseDecision(String response)
@@ -62,6 +64,14 @@ public class ResponseParser {
 	}
 	
 	
+//	public List<Obligation> getOblList() {
+//		return oblList;
+//	}
+
+	public void setOblList(List<Obligation> oblList) {
+		this.oblList = oblList;
+	}
+
 	public static List<Obligation> getObligationsFromResponse(String response) {
 
 		String xPathSelector = "//Obligations/Obligation";
