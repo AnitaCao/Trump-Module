@@ -50,29 +50,9 @@ public class UserObligationMonitor {
 			Date deadline = obl.getDeadline();
 			timer.schedule(new myTimerTask(obl, this), deadline);
 			monitorableObject.notifyObligationInsert(obl);
-			
-//			ObligationSet set = getSet(Integer.parseInt(obl.getAttribute(obl.SET_ID_ATTRIBUTE_NAME)));
-//			if(!oblSetList.contains(set))
-//				oblSetList.add(set);
-//			set.add(obl);
 		}
 	}
 
-	//return the obligationSet associated with the parameter setId 
-	public ObligationSet getSet(int id)
-	{
-		for(ObligationSet o : oblSetList)
-		{
-			if(o.getId() == id)
-			{
-				return o;
-			}
-		}
-		
-		ObligationSet o = new ObligationSet(new ArrayList<Obligation>(),dh,id);
-		return o;
-	}
-	
 	
 	public void loadListFromDb() {
 		List<Obligation> list = getListFromDb(); //get obligations from data.xml file. 

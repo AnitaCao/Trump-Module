@@ -33,7 +33,6 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 	
 	
 	//private static final Log LOG = LogFactory.getLog(TmacEnforceServiceImpl.class);
-	//private static final String RESOURCE_PATH = "data.xml";
 
 	//private static final long serialVersionUID = -8561161513239681330L;
 	private OpenmrsTmacPEP pep;
@@ -49,6 +48,8 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 		
 		dh = OpenmrsEnforceServiceContext.getInstance().getDh();
 		pep = new OpenmrsTmacPEP(dh,this);
+		
+		//add new subject attribute finder and risk attribute finder to PEP
 		pep.addAttributeFinderToPDP(new OpenmrsSubjectAttributeFinderModule((dh),parameters,methodName));
 		pep.addAttributeFinderToPDP(new OpenmrsRiskAttributeFinderModule(dh,new StandardBudgetCalculator()));
 		pep.createPDP();
@@ -108,19 +109,14 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 				"obtain_permission");
 
 		responseParserId = rParser.getParserId();
-		//List<Obligation> oblList = rParser.getObligation().getList();
-		
-//		String oblText = "";
-//		for (Obligation obl : oblList) {
-//			oblText += obl.toString() + "\n";
-//		}
-//		
 		
 		//if the decision is permit, return true
 		if(rParser.getDecision().equals(ResponseParser.PERMIT_RESPONSE)){	
 			return true;
 		}
-		else{
+		else{  
+			//if the decision is not permit, get the obligations from the rule in policy.xml file(if there is any obligation),
+			//perform the system obligations.
 			String message = "";
 			for (Obligation obl : rParser.getObligation()) {
 				if (obl.isSystemObligation())
@@ -136,14 +132,14 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
     	return messages;
     }
     
-    /**
-     * get user obligation list 
-     * @return List<Obligation> 
-     */
-    public List<Obligation> getObligationList(){
-    	List<Obligation> obList = pep.obligationMonitor.getList();
-    	return obList;
-    }
+//    /**
+//     * get user obligation list 
+//     * @return List<Obligation> 
+//     */
+//    public List<Obligation> getObligationList(){
+//    	List<Obligation> obList = pep.obligationMonitor.getList();
+//    	return obList;
+//    }
 
 
 	public void notifyDeadline(Obligation obl) {

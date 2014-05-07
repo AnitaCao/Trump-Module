@@ -1,6 +1,5 @@
 package luca.tmac.basic;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.wso2.balana.XACMLConstants;
@@ -16,7 +15,6 @@ import luca.tmac.basic.data.uris.TeamAttributeURI;
 import luca.tmac.basic.obligations.ObligationIds;
 import luca.tmac.basic.obligations.Obligation;
 import luca.tmac.basic.obligations.ObligationMonitorable;
-import luca.tmac.basic.obligations.ObligationSet;
 import luca.tmac.basic.obligations.UserObligationMonitor;
 
 public class TmacPEP {
@@ -74,10 +72,10 @@ public class TmacPEP {
 	public HashMap<String,String> acceptResponse(long parserId) {
 		ResponseParser parser = sessionParsers.get(parserId);
 		HashMap<String,String> messages = new HashMap<String,String>();
-		ObligationSet oblSet = new ObligationSet(new ArrayList<Obligation>(),dh);
+	//	ObligationSet oblSet = new ObligationSet(new ArrayList<Obligation>(),dh);
 		if (parser == null)
 			throw new IllegalArgumentException("invalid parser id");
-		for (Obligation obl : parser.getObligation().getList()) {
+		for (Obligation obl : parser.getObligation()) {
 			
 			if (obl.isSystemObligation()) {
 				String message = performObligation(obl);
@@ -85,7 +83,7 @@ public class TmacPEP {
 				//message += performObligation(obl) +"\n";
 			} else {
 				//if it's not system obligation which means it's a user obligation
-				oblSet.add(obl); //add user obligation to obligation set. 
+				//oblSet.add(obl); //add user obligation to obligation set. 
 				obligationMonitor.addObligation(obl); //add obligation to database
 			}
 		}
