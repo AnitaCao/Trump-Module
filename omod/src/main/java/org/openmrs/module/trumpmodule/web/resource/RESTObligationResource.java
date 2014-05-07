@@ -155,36 +155,39 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 	protected PageableResult doSearch(RequestContext context) {
 		
 		String userId = context.getRequest().getParameter("userid");
-		if(Context.getAuthenticatedUser().getId().toString().equalsIgnoreCase(userId)){
-			List<Obligation> userObsList = new ArrayList<Obligation>();
-			if (userId != null) {
-				userObsList = OpenmrsContext.getUserObs().get(userId);
-				if (userObsList == null)
-					return new EmptySearchResult();
+		if(userId!=null){
+			if(Context.getAuthenticatedUser().getId().toString().equalsIgnoreCase(userId)){
+				List<Obligation> userObsList = new ArrayList<Obligation>();
 				
-				return new NeedsPaging<Obligation>(userObsList, context);
+					userObsList = OpenmrsContext.getUserObs().get(userId);
+					if (userObsList == null)
+						return new EmptySearchResult();
+					
+					return new NeedsPaging<Obligation>(userObsList, context);
+				
 			}
 		}
-		
 		String roleName = context.getRequest().getParameter("role");
-		Set<Role> roles = Context.getAuthenticatedUser().getAllRoles();
-		
-		boolean flag = false;
-		for(Role r : roles){
-			if(r.getName().equalsIgnoreCase(roleName)){
-				flag = true;
-				break;
+		if(roleName!=null){
+			Set<Role> roles = Context.getAuthenticatedUser().getAllRoles();
+			
+			boolean flag = false;
+			for(Role r : roles){
+				if(r.getName().equalsIgnoreCase(roleName)){
+					flag = true;
+					break;
+				}
 			}
-		}
-		
-		if(flag){
-			List<Obligation> roleObsList = new ArrayList<Obligation>();
-			if (roleName != null) {
-				roleObsList = OpenmrsContext.getRoleObs().get(roleName);
-				if (roleObsList == null)
-					return new EmptySearchResult();
+			
+			if(flag){
+				List<Obligation> roleObsList = new ArrayList<Obligation>();
 				
-				return new NeedsPaging<Obligation>(roleObsList, context);
+					roleObsList = OpenmrsContext.getRoleObs().get(roleName);
+					if (roleObsList == null)
+						return new EmptySearchResult();
+					
+					return new NeedsPaging<Obligation>(roleObsList, context);
+				
 			}
 		}
 		

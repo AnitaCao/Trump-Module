@@ -30,8 +30,8 @@ public class OpenmrsTmacPEP extends TmacPEP {
 	private HashMap<String,String> messages;
 	
 	OpenmrsEnforceServiceContext SerContext = OpenmrsEnforceServiceContext.getInstance();
-	private List<Obligation> userObsList = new ArrayList<Obligation>();
-	private List<Obligation> roleObsList = new ArrayList<Obligation>();
+//	private List<Obligation> userObsList = new ArrayList<Obligation>();
+//	private List<Obligation> roleObsList = new ArrayList<Obligation>();
 	
 	public OpenmrsTmacPEP(DataHandler parDataHandler,
 			ObligationMonitorable monitorable) {
@@ -110,35 +110,41 @@ public class OpenmrsTmacPEP extends TmacPEP {
 							
 							obligation.setUserId(userId); //set userId to the assigned user's Id, means this user will do the obligation
 							
-							userObsList.add(obligation);
-							
 							//put this obligation to the userObs in context class
 							if(SerContext.getUserObs().containsKey(userId)){  
 								SerContext.getUserObs().get(userId).add(obligation);
-							}else SerContext.getUserObs().put(userId, userObsList);
+							}else {
+								List<Obligation> userObsList = new ArrayList<Obligation>();
+								userObsList.add(obligation);
+								SerContext.getUserObs().put(userId, userObsList);
+							}
 							
 						}else if(attributeMap.containsKey("roleName")){  //if the obligation is assigned to a specific role
 							
 							//if it's a obligation to role, then don't need to set userId, just leave it null. 
-							
-							roleObsList.add(obligation);
 							
 							//put this obligation to the roleObs in context class
 							String roleName = attributeMap.get("roleName");
 							
 							if(SerContext.getRoleObs().containsKey(roleName)){
 								SerContext.getRoleObs().get(roleName).add(obligation);
-							}else SerContext.getRoleObs().put(roleName, roleObsList);
+							}else {
+								List<Obligation> roleObsList = new ArrayList<Obligation>();
+								roleObsList.add(obligation);
+								SerContext.getRoleObs().put(roleName, roleObsList);
+								}
 						
-						}else {   //if the obligation not assigned to any role or any other user, which means the current user has to do the obligation
-							
-							userObsList.add(obligation);
+						}else if(!attributeMap.containsKey("requiredUserId")&&!attributeMap.containsKey("roleName")){   //if the obligation not assigned to any role or any other user, which means the current user has to do the obligation
 						
 							obligation.setUserId(currentUser.getId().toString());  //currentUser id is the userId, and it is also the triggerringUserId
 							
 							if(SerContext.getUserObs().containsKey(currentUser.getId().toString())){
 								SerContext.getUserObs().get(currentUser.getId().toString()).add(obligation);
-							}else SerContext.getUserObs().put(currentUser.getId().toString(), userObsList);
+							}else {
+								List<Obligation> userObsList = new ArrayList<Obligation>();
+								userObsList.add(obligation);
+								SerContext.getUserObs().put(currentUser.getId().toString(), userObsList);
+								}
 							}
 							
 					}else{    //if the obligation is not a rest obligation, currently, we just defined rest obligation and email obligation,
