@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.openmrs.BaseOpenmrsData;
+import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 
 import luca.data.AttributeQuery;
 import luca.tmac.basic.obligations.Obligation;
@@ -15,6 +16,7 @@ import luca.tmac.basic.obligations.ObligationImpl;
 public class RESTObligation extends BaseOpenmrsData implements Serializable, Obligation {
 	private Integer id;
 	private ObligationImpl ob;
+	private OpenmrsUserObligationMonitor openmrsOblMonitor = null;
 	
 	/**
 	 * 
@@ -84,6 +86,11 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 	
 	public void setFulfilled(Boolean fulfilled) {
 		ob.setFulfilled(fulfilled);
+		openmrsOblMonitor.updateBudget(ob,ob.getUserId());
+		System.err.println("Anita, the size of fulfilledObs is : "+ OpenmrsEnforceServiceContext.getInstance().getFulfilledObs().size());
+		System.err.println("Anita, the size of userObs is : "+ OpenmrsEnforceServiceContext.getInstance().getUserObs().size());
+		System.err.println("Anita, the size of roleObs is : "+ OpenmrsEnforceServiceContext.getInstance().getRoleObs().size());
+		System.err.println("Anita, the size of oblsSets is : "+ OpenmrsEnforceServiceContext.getInstance().getObligationSets().size());
 	}
 
 
@@ -194,5 +201,12 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 	public void setSetId(String setId) {
 		ob.setSetId(setId);
 	}
+	
+	public OpenmrsUserObligationMonitor getOpenmrsOblMonitor() {
+		return openmrsOblMonitor;
+	}
 
+	public void setOpenmrsOblMonitor(OpenmrsUserObligationMonitor openmrsOblMonitor) {
+		this.openmrsOblMonitor = openmrsOblMonitor;
+	}
 }

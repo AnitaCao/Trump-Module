@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
+import org.openmrs.module.trumpmodule.obligations.OpenmrsUserObligationMonitor;
 import org.wso2.balana.ParsingException;
 import org.wso2.balana.attr.DayTimeDurationAttribute;
 import org.wso2.balana.attr.StringAttribute;
@@ -22,6 +23,7 @@ public class ObligationImpl implements Obligation {
 	private String triggeringUserId;
 	private String decreasedBudget;
 	private String setId;
+	
 	
 	
 	public ObligationImpl(){
@@ -223,6 +225,11 @@ public class ObligationImpl implements Obligation {
 			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_FULFILLED, StringAttribute.identifier));
 			OpenmrsEnforceServiceContext.getInstance().getActiveObs().remove(this);
 			OpenmrsEnforceServiceContext.getInstance().getFulfilledObs().put(obUUID, this);
+			OpenmrsEnforceServiceContext.getInstance().getObligationSets().get(setId).remove(this);
+			
+			if(OpenmrsEnforceServiceContext.getInstance().getObligationSets().get(setId).isEmpty()){
+				OpenmrsEnforceServiceContext.getInstance().getObligationSets().remove(setId);
+			}
 		}
 		else {
 			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_ACTIVE, StringAttribute.identifier));
@@ -251,5 +258,7 @@ public class ObligationImpl implements Obligation {
 			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_ACTIVE, StringAttribute.identifier));
 		
 	}
+
+
 
 }
