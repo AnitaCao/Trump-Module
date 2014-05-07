@@ -4,23 +4,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import luca.tmac.basic.obligations.Obligation;
 import luca.tmac.basic.obligations.ObligationIds;
 import luca.tmac.basic.obligations.ObligationImpl;
 
+import org.openmrs.Role;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 import org.openmrs.module.trumpmodule.obligations.RESTObligation;
-import org.openmrs.module.trumpmodule.policies.Policy;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
+import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
+import org.openmrs.module.webservices.rest.web.resource.impl.EmptySearchResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
@@ -46,6 +49,8 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 			description.addProperty("actionName");
 			description.addProperty("id");
 			description.addProperty("userId");
+			description.addProperty("triggeringUserId");
+			description.addProperty("setId");
 			description.addProperty("startDate");
 			description.addProperty("deadline");
 			description.addProperty("obUUID");
@@ -69,11 +74,15 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 	@Override
 	public RESTObligation getByUniqueId(String uniqueId) {
 		Obligation ob = OpenmrsContext.getActiveObs().get(uniqueId);
-		if(ob instanceof RESTObligation) 
-			return (RESTObligation) ob;
-		// if the obligation is some other type of implementation
-		else if (ob instanceof ObligationImpl) {
-			return new RESTObligation((ObligationImpl)ob);	
+		String userId = ob.getUserId();
+		
+		if(Context.getAuthenticatedUser().getId().toString().equalsIgnoreCase(userId)){
+			if(ob instanceof RESTObligation) 
+				return (RESTObligation) ob;
+			// if the obligation is some other type of implementation
+			else if (ob instanceof ObligationImpl) {
+				return new RESTObligation((ObligationImpl)ob);	
+			}
 		}
 		// dirty: but we shouldn't end up here.
 		return null;
@@ -86,6 +95,7 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 		
 		activeObs.remove(delegate);
 		OpenmrsContext.setActiveObs(activeObs);
+		
 	}
 
 	@Override
@@ -112,9 +122,15 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 	public DelegatingResourceDescription getUpdatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		description.addRequiredProperty("fulfilled");
-		description.addRequiredProperty("active");
-		description.addRequiredProperty("expired");
 
+		return description;
+	}
+	
+	@Override
+	public DelegatingResourceDescription getCreatableProperties() {
+		DelegatingResourceDescription description = new DelegatingResourceDescription();
+		description.addRequiredProperty("fulfilled");
+		
 		return description;
 	}
 	
@@ -125,7 +141,7 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 		HashMap<String, Obligation> activeObs = OpenmrsContext.getActiveObs();
 		for(Entry<String, Obligation> e : activeObs.entrySet()){
 			Obligation ob = e.getValue();
-			if(ob.getActionName().equals(ObligationIds.REST_OBLIGATION_NAME_XML)){
+			if(ob.getActionName().contains(ObligationIds.REST_OBLIGATION_NAME_XML)){
 				restObList.add(ob);
 			} else if(ob instanceof ObligationImpl) {
 				restObList.add(ob);
@@ -134,6 +150,48 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 		return new NeedsPaging<Obligation>(restObList, context);
 	}
 
+	
+	@Override
+	protected PageableResult doSearch(RequestContext context) {
+		
+		String userId = context.getRequest().getParameter("userid");
+		if(Context.getAuthenticatedUser().getId().toString().equalsIgnoreCase(userId)){
+			List<Obligation> userObsList = new ArrayList<Obligation>();
+			if (userId != null) {
+				userObsList = OpenmrsContext.getUserObs().get(userId);
+				if (userObsList == null)
+					return new EmptySearchResult();
+				
+				return new NeedsPaging<Obligation>(userObsList, context);
+			}
+		}
+		
+		String roleName = context.getRequest().getParameter("role");
+		Set<Role> roles = Context.getAuthenticatedUser().getAllRoles();
+		
+		boolean flag = false;
+		for(Role r : roles){
+			if(r.getName().equalsIgnoreCase(roleName)){
+				flag = true;
+				break;
+			}
+		}
+		
+		if(flag){
+			List<Obligation> roleObsList = new ArrayList<Obligation>();
+			if (roleName != null) {
+				roleObsList = OpenmrsContext.getRoleObs().get(roleName);
+				if (roleObsList == null)
+					return new EmptySearchResult();
+				
+				return new NeedsPaging<Obligation>(roleObsList, context);
+			}
+		}
+		
+		return new NeedsPaging<Obligation>(new ArrayList<Obligation>(),context);
+	}
+		
+	
 	public String getDisplayString(RESTObligation rob) {
 		return rob.getObligationDisplayString();
 	}
