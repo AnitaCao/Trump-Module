@@ -2,7 +2,6 @@ package org.openmrs.module.trumpmodule.obligations;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -15,7 +14,6 @@ import luca.data.AttributeQuery;
 import luca.data.DataHandler;
 import luca.tmac.basic.data.xml.SubjectAttributeXmlName;
 import luca.tmac.basic.obligations.Obligation;
-import luca.tmac.basic.obligations.ObligationIds;
 import luca.tmac.basic.obligations.ObligationMonitorable;
 import luca.tmac.basic.obligations.UserObligationMonitor;
 
@@ -23,13 +21,7 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 	private Timer timer2;
 	private Timer timer;
 	private DataHandler dh = null;
-//	private HashMap<String,Obligation> activeObs;
-//	private HashMap<String,Obligation> fulfilledObs;
-//	private HashMap<String,Obligation> expiredObs;
-//	private HashMap<String,List<Obligation>> oblsSets;
 	private OpenmrsEnforceServiceContext SerContext;
-//	private HashMap<String, List<Obligation>> userObs;
-//	private HashMap<String, List<Obligation>> roleObs;
 	
 	
 	
@@ -44,47 +36,27 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 		monitorableObject = pm;
 		SerContext = OpenmrsEnforceServiceContext.getInstance();
 		
-//		activeObs = SerContext.getActiveObs();
-//		fulfilledObs = SerContext.getFulfilledObs();
-//		expiredObs = SerContext.getExpiredObs();
-//		oblsSets = SerContext.getObligationSets();
-		
 	}
 	
 	public void checkObligations() {
 		if(!SerContext.getActiveObs().isEmpty()){
+			
 			for(Entry<String, Obligation> e : SerContext.getActiveObs().entrySet()){
 				Obligation ob = e.getValue();
+				
+				if(ob instanceof EmailObligation)
+					timer2.schedule(new OblCheckerTimerTask(ob, this) , 0 , 60000);
+				
 				checkObligation(ob);
 			}
 		}
 	}
 	
 	public void checkObligation(Obligation ob) {
-	//	String actionName = ob.getActionName();
-		
-		//getAttributesFromDB();	
-		//get the attributes of the obligation from data.xml file.
-//		if(SerContext.getObsAttributes().containsKey(actionName)){
-//			List<AttributeQuery> attributes = SerContext.getObsAttributes().get(actionName);
-//		
-//			//HashMap<String,String> attributeMap = new HashMap<String,String>();
-//		
-//			HashMap<String,String> attributeMap = ob.getAttributeMap();
-//		
-//			for(AttributeQuery aq : attributes)
-//			{
-//				attributeMap.put(aq.name, aq.value);
-//			}
-//	
-//			ob.setAttributeMap(attributeMap);
-//		}
 		
 		Date deadline = ob.getDeadline();
-	
-		//System.err.println("Anita ! the deadline of this obligation is : " + deadline);
 		timer.schedule(new OblDeadlineTimerTask(ob, this), deadline);
-		timer2.schedule(new OblCheckerTimerTask(ob, this) , 0 , 60000);
+		
 }
 	
 	
@@ -106,33 +78,14 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 		public void run() {
 			if(SerContext.getActiveObs().containsValue(ob)){
 			//if(activeObs.contains(ob)){
-				String userId = ob.getUserId();
+				String triggeringUserId = ob.getTriggeringUserId();
 				//uuid = ob.getObUUID();
 				uuid = ob.getObUUID();
-				if(ob.isSatisfied(userId,uuid)){
+				if(ob.isSatisfied(triggeringUserId,uuid)){
 					timer2.cancel();
 					
 					SerContext.getObligationSets().remove(ob.getSetId());
-					
-					if(!SerContext.getObligationSets().containsKey(ob.getSetId())){
-						if(ob.getAttribute("setName").contains("budget_decrease_set")){
-							String currentBudget = getBudgetfromDB(userId);
-							String decreasedBudget = ob.getDecreasedBudget(); 
-							
-							//get currentBudget from database, plus the decreasedBudget stored in UserObRelation uo object, the result is the updatedBudget after fulfilling obligation 
-							String newBudget = String
-									.valueOf(Double.parseDouble(currentBudget) + Double.parseDouble(decreasedBudget));
-							
-							//modify data.xml file , update budget to database
-							
-							updateBudgetToDB(newBudget,userId);
-							
-							//check whether budget have been updated or not. 
-							String updatedBudget = getBudgetfromDB(userId);
-							System.err.println("Anita, the new budget get from database is : " + updatedBudget);
-						}
-					}
-					
+					updateBudget(ob, triggeringUserId);
 					
 					//remove from the active list, add to the fulfilled list in openmrs enfroce service context. 
 					SerContext.getActiveObs().remove(ob);
@@ -140,11 +93,6 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 					
 					ob.getAttributeMap().put(Obligation.STATE_ATTRIBUTE_NAME, Obligation.STATE_FULFILLED);
 					
-					//activeObs.remove(ob);
-					//fulfilledObs.put(uuid,ob);
-					
-//					SerContext.setActiveObs(activeObs);
-//					SerContext.setFulfilledObs(fulfilledObs);
 					
 					if(ob.getAttributeMap().containsKey("requiredUserId")){
 						
@@ -188,34 +136,12 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 				//remove from the active list, add to the expired list in openmrs enfroce service context. 
 				SerContext.getActiveObs().remove(ob);
 				SerContext.getExpiredObs().put(ob.getObUUID(),ob);
-//				SerContext.setActiveObs(activeObs);
-//				SerContext.setExpiredObs(expiredObs);
 				ob.getAttributeMap().put(Obligation.STATE_ATTRIBUTE_NAME, Obligation.STATE_EXPIRED);
 				monitorableObject.notifyDeadline(ob);
 			}
 		}
 	}
 	
-	
-//	public void getAttributesFromDB() {
-//		HashMap<String,List<AttributeQuery>> obsAttributes = new HashMap<String,List<AttributeQuery>>();
-//		List<String> ids = dh.getAttribute("obligation", new ArrayList<AttributeQuery>(), "id");
-//
-//		for (String oblId : ids) {
-//
-//			List<AttributeQuery> attributes = dh.getAttributesOf("obligation",
-//					oblId);
-//			String actionName = null;
-//			for (AttributeQuery att : attributes) {
-//				if (att.name
-//						.equals(ObligationIds.ACTION_NAME_OBLIGATION_ATTRIBUTE)) {
-//					actionName = att.value;
-//				}
-//			}
-//			obsAttributes.put(actionName, attributes);
-//			SerContext.setObsAttributes(obsAttributes);
-//		}
-//	}
 	
 	public String getBudgetfromDB(String userId){
 		ArrayList<AttributeQuery> query = new ArrayList<AttributeQuery>();
@@ -233,8 +159,25 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 			
 	}
 	
-	public void updateBudget(){
-		
+	public void updateBudget(Obligation ob, String triggeringUserId){
+		if(!SerContext.getObligationSets().containsKey(ob.getSetId())){
+			if(ob.getAttribute("setName").contains("budget_decrease_set")){
+				
+				String currentBudget = getBudgetfromDB(triggeringUserId);
+				String decreasedBudget = ob.getDecreasedBudget(); 
+				
+				//get currentBudget from database, plus the decreasedBudget stored in UserObRelation uo object, the result is the updatedBudget after fulfilling obligation 
+				String newBudget = String
+						.valueOf(Double.parseDouble(currentBudget) + Double.parseDouble(decreasedBudget));
+				
+				//modify data.xml file , update budget to database
+				updateBudgetToDB(newBudget,triggeringUserId);
+				
+				//check whether budget have been updated or not. 
+				String updatedBudget = getBudgetfromDB(triggeringUserId);
+				System.err.println("Anita, the new budget get from database is : " + updatedBudget);
+			}
+		}
 	}
 
 }		
