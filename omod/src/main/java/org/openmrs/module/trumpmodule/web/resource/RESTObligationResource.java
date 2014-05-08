@@ -74,9 +74,25 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 	@Override
 	public RESTObligation getByUniqueId(String uniqueId) {
 		Obligation ob = OpenmrsContext.getActiveObs().get(uniqueId);
+	
 		String userId = ob.getUserId();
+		boolean flag = false;
 		
-		if(Context.getAuthenticatedUser().getId().toString().equalsIgnoreCase(userId)){
+		if(userId!=null){
+			if(Context.getAuthenticatedUser().getId().toString().equalsIgnoreCase(userId)){
+				flag = true;
+			}
+		}else {
+			String roleName = ob.getAttribute("roleName");
+			Set<Role> roles = Context.getAuthenticatedUser().getAllRoles();
+			for(Role r : roles){
+				if(r.getName().equalsIgnoreCase(roleName)){
+					flag = true;
+					break;
+				}
+			}
+		}
+		if(flag){
 			if(ob instanceof RESTObligation) 
 				return (RESTObligation) ob;
 			// if the obligation is some other type of implementation
