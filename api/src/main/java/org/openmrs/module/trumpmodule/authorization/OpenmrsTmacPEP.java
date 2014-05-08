@@ -194,7 +194,8 @@ public class OpenmrsTmacPEP extends TmacPEP {
 	  if(obligation.getAttribute("setName").contains(ObligationIds.BUDGET_DECREASE_SET_XML)){
 			obligation.setSetId(setId);
 			if(SerContext.getObligationSets().containsKey(setId)){
-				SerContext.getObligationSets().get(setId).add(obligation); 
+				SerContext.getObligationSets().get(setId).add(obligation);
+				
 				System.err.println("Anita, the oblSets has contains this setId : " +setId+", and the "
 						+ "there are " + SerContext.getObligationSets().get(setId).size() + "obligations with the same setId.");
 			}else{

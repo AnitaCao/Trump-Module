@@ -17,6 +17,7 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 	private Integer id;
 	private ObligationImpl ob;
 	private OpenmrsUserObligationMonitor openmrsOblMonitor = null;
+	private OpenmrsEnforceServiceContext SerContext;
 	
 	/**
 	 * 
@@ -26,13 +27,14 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 		// our 'wrapped' obligation instance
 		ob = new ObligationImpl(actionName, userId, pStartDate, pParameters);
 		id = (int)UUID.randomUUID().getMostSignificantBits();
+		SerContext = OpenmrsEnforceServiceContext.getInstance();
 	}
 	
 	/**
 	 * Default constructor required by REST framework
 	 */
 	public RESTObligation() {
-		
+		SerContext = OpenmrsEnforceServiceContext.getInstance();
 	}
 	
 	/**
@@ -42,6 +44,7 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 	public RESTObligation(ObligationImpl ob) {
 		this.ob = ob;
 		id = (int)UUID.randomUUID().getMostSignificantBits();
+		SerContext = OpenmrsEnforceServiceContext.getInstance();
 	}
 
 	public Integer getId() {
@@ -86,7 +89,18 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 	
 	public void setFulfilled(Boolean fulfilled) {
 		ob.setFulfilled(fulfilled);
-		openmrsOblMonitor.updateBudget(ob,ob.getUserId());
+		if(fulfilled){
+			SerContext.getActiveObs().remove(getObUUID());
+			SerContext.getFulfilledObs().put(getObUUID(), this);
+			SerContext.getObligationSets().get(getSetId()).remove(this);
+			
+			if(SerContext.getObligationSets().get(getSetId()).isEmpty()){
+				SerContext.getObligationSets().remove(getSetId());
+				openmrsOblMonitor.updateBudget(ob,ob.getTriggeringUserId());
+			}
+		}
+		
+		
 		System.err.println("Anita, the size of fulfilledObs is : "+ OpenmrsEnforceServiceContext.getInstance().getFulfilledObs().size());
 		System.err.println("Anita, the size of userObs is : "+ OpenmrsEnforceServiceContext.getInstance().getUserObs().size());
 		System.err.println("Anita, the size of roleObs is : "+ OpenmrsEnforceServiceContext.getInstance().getRoleObs().size());
@@ -144,6 +158,7 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 
 	public String getObUUID() {
 		return this.getUuid();
+		//return ob.getObUUID();
 	}
 
 	public void setObUUID(String obUUID) {

@@ -6,6 +6,8 @@ import java.util.Properties;
 
 
 
+import java.util.UUID;
+
 //import javax.mail.Address;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -21,6 +23,7 @@ public class EmailObligation extends ObligationImpl {
 	public EmailObligation(String actionName, String userId, Date pStartDate,
 			List<AttributeQuery> pParameters) {
 		super(actionName,userId, pStartDate, pParameters);
+		setObUUID(UUID.randomUUID().toString());
 	}
 	
 	public String[] readEmails() {
