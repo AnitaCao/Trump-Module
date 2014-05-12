@@ -75,14 +75,21 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 	public RESTObligation getByUniqueId(String uniqueId) {
 		Obligation ob = OpenmrsContext.getActiveObs().get(uniqueId);
 	
-		String userId = ob.getUserId();
+		String userId = ob.getUserId(); //this userId is id of the user who need to fulfill the obligation, 
+										//not the triggering user's id.
 		boolean flag = false;
 		
 		if(userId!=null){
+			//only when current user is the user who need to fulfill the obligation, he can access the detail
+			//of the obligation.
 			if(Context.getAuthenticatedUser().getId().toString().equalsIgnoreCase(userId)){
 				flag = true;
 			}
 		}else {
+			
+			//when the obligation being assigned to a specific role, there is no userId being assigned, which 
+			//means we need to check whether the user has the required role or not. He can only access the 
+			//detail of the obligation when he has the required role.
 			String roleName = ob.getAttribute("roleName");
 			Set<Role> roles = Context.getAuthenticatedUser().getAllRoles();
 			for(Role r : roles){
@@ -92,10 +99,11 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 				}
 			}
 		}
+		//if the user has the right to access, then return the obligation to user.
 		if(flag){
 			if(ob instanceof RESTObligation) 
 				return (RESTObligation) ob;
-			// if the obligation is some other type of implementation
+			// if the obligation is some other type of implementation.
 			else if (ob instanceof ObligationImpl) {
 				return new RESTObligation((ObligationImpl)ob);	
 			}
@@ -206,7 +214,6 @@ public class RESTObligationResource extends DataDelegatingCrudResource<RESTOblig
 				
 			}
 		}
-		
 		return new NeedsPaging<Obligation>(new ArrayList<Obligation>(),context);
 	}
 		

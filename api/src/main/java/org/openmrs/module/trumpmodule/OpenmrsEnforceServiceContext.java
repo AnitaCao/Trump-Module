@@ -13,7 +13,6 @@ import luca.data.DataHandler;
 import luca.data.XmlDataHandler;
 import luca.tmac.basic.data.xml.SubjectAttributeXmlName;
 import luca.tmac.basic.obligations.Obligation;
-import luca.tmac.basic.obligations.ObligationSet;
 
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
@@ -45,12 +44,9 @@ public class OpenmrsEnforceServiceContext {
 	//of obligations which belongs to this role. 
 	private HashMap<String, List<Obligation>> roleObs;
 	
-//	//obsAttributes stores the attributes of obligations from data.xml file. The key is the obligation name (action_name), the value is the
-//	//list of AttributeQuery
-//	private HashMap<String,List<AttributeQuery>> obsAttributes;
 	
 	//assignedPatientInternalIds stores the assigned patients' ids of the user (doctor), the key is the userId, the value is a set which 
-	//contians the assigned patients' patient_id
+	//contains the assigned patients' patient_id
 	private HashMap<String, HashSet<String>> AssigendPatientInternalIds = null;
 	
 	
@@ -73,7 +69,6 @@ public class OpenmrsEnforceServiceContext {
 		roleObs = new HashMap<String, List<Obligation>>();
 		AssigendPatientInternalIds = new HashMap<String, HashSet<String>>();
 		policies = new HashMap<String, ArrayList<Policy>>();
-	//	obsAttributes = new HashMap<String,List<AttributeQuery>>();
 		
 		String path = this.getClass().getClassLoader().getResource(RESOURCE_PATH).toString().substring(5);
 		dh = new XmlDataHandler(path);
@@ -225,14 +220,6 @@ public class OpenmrsEnforceServiceContext {
 	public void setObligationSets(HashMap<String,List<Obligation>> obligationSets) {
 		this.oblsSets = obligationSets;
 	}
-
-//	public HashMap<String,List<AttributeQuery>> getObsAttributes() {
-//		return obsAttributes;
-//	}
-//
-//	public void setObsAttributes(HashMap<String,List<AttributeQuery>> obsAttributes) {
-//		this.obsAttributes = obsAttributes;
-//	}
 
 	public HashMap<String, List<Obligation>> getUserObs() {
 		return userObs;

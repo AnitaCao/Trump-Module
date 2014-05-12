@@ -100,7 +100,6 @@ public class RESTObligation extends BaseOpenmrsData implements Serializable, Obl
 			}
 		}
 		
-		
 		System.err.println("Anita, the size of fulfilledObs is : "+ OpenmrsEnforceServiceContext.getInstance().getFulfilledObs().size());
 		System.err.println("Anita, the size of userObs is : "+ OpenmrsEnforceServiceContext.getInstance().getUserObs().size());
 		System.err.println("Anita, the size of roleObs is : "+ OpenmrsEnforceServiceContext.getInstance().getRoleObs().size());

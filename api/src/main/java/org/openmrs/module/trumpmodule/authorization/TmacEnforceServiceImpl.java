@@ -132,24 +132,16 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
     	return messages;
     }
     
-//    /**
-//     * get user obligation list 
-//     * @return List<Obligation> 
-//     */
-//    public List<Obligation> getObligationList(){
-//    	List<Obligation> obList = pep.obligationMonitor.getList();
-//    	return obList;
-//    }
 
 
 	public void notifyDeadline(Obligation obl) {
-		// TODO Auto-generated method stub
+		obl.getAttributeMap().put(Obligation.STATE_ATTRIBUTE_NAME, Obligation.STATE_EXPIRED);
 		
 	}
 
 
 	public void notifyFulfillment(Obligation obl) {
-		// TODO Auto-generated method stub
+		obl.getAttributeMap().put(Obligation.STATE_ATTRIBUTE_NAME, Obligation.STATE_FULFILLED);
 		
 	}
 

@@ -3,10 +3,8 @@ package luca.tmac.basic.obligations;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
-import org.openmrs.module.trumpmodule.obligations.OpenmrsUserObligationMonitor;
 import org.wso2.balana.ParsingException;
 import org.wso2.balana.attr.DayTimeDurationAttribute;
 import org.wso2.balana.attr.StringAttribute;
@@ -31,7 +29,7 @@ public class ObligationImpl implements Obligation {
 	}
 
 	public ObligationImpl(String actionName,String triggeringUserId, Date pStartDate, List<AttributeQuery> parameters) {
-		SerContext = OpenmrsEnforceServiceContext.getInstance();
+		setSerContext(OpenmrsEnforceServiceContext.getInstance());
 		//this.obUUID = UUID.randomUUID().toString();
 		this.actionName = actionName;
 		this.startDate = pStartDate;
@@ -224,18 +222,10 @@ public class ObligationImpl implements Obligation {
 	public void setFulfilled(Boolean fulfilled) {
 		if(fulfilled) {
 			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_FULFILLED, StringAttribute.identifier));
-//			SerContext.getActiveObs().remove(this);
-//			SerContext.getFulfilledObs().put(obUUID, this);
-//			SerContext.getObligationSets().get(setId).remove(this);
-//			
-//			if(SerContext.getObligationSets().get(setId).isEmpty()){
-//				SerContext.getObligationSets().remove(setId);
-//			}
 		}
+		
 		else {
 			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_ACTIVE, StringAttribute.identifier));
-//			SerContext.getFulfilledObs().remove(this);
-//			SerContext.getActiveObs().put(obUUID, this);
 		}
 	}
 
@@ -258,6 +248,14 @@ public class ObligationImpl implements Obligation {
 		else
 			setAttribute(new AttributeQuery(STATE_ATTRIBUTE_NAME, STATE_ACTIVE, StringAttribute.identifier));
 		
+	}
+
+	public OpenmrsEnforceServiceContext getSerContext() {
+		return SerContext;
+	}
+
+	public void setSerContext(OpenmrsEnforceServiceContext serContext) {
+		SerContext = serContext;
 	}
 
 

@@ -44,6 +44,8 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 			for(Entry<String, Obligation> e : SerContext.getActiveObs().entrySet()){
 				Obligation ob = e.getValue();
 				
+				//if the obligation is an emailObligation, we need to constantly check email
+				//to see if it has been fulfilled or not.
 				if(ob instanceof EmailObligation)
 					timer2.schedule(new OblCheckerTimerTask(ob, this) , 0 , 60000);
 				
@@ -52,8 +54,12 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 		}
 	}
 	
+	/**
+	 * check obligation to see if it has been expired or not.
+	 * @param ob
+	 */
 	public void checkObligation(Obligation ob) {
-		
+
 		Date deadline = ob.getDeadline();
 		timer.schedule(new OblDeadlineTimerTask(ob, this), deadline);
 		
@@ -77,9 +83,7 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 		  
 		public void run() {
 			if(SerContext.getActiveObs().containsValue(ob)){
-			//if(activeObs.contains(ob)){
 				String triggeringUserId = ob.getTriggeringUserId();
-				//uuid = ob.getObUUID();
 				uuid = ob.getObUUID();
 				if(ob.isSatisfied(triggeringUserId,uuid)){
 					timer2.cancel();
@@ -87,11 +91,12 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 					SerContext.getObligationSets().remove(ob.getSetId());
 					updateBudget(ob, triggeringUserId);
 					
-					//remove from the active list, add to the fulfilled list in openmrs enfroce service context. 
+					//remove from the active list, add to the fulfilled list in openmrsEnfroceServiceContext class. 
 					SerContext.getActiveObs().remove(ob);
 					SerContext.getFulfilledObs().put(uuid, ob);
 					
-					ob.getAttributeMap().put(Obligation.STATE_ATTRIBUTE_NAME, Obligation.STATE_FULFILLED);
+					//change the state of the obligation to fulfilled.
+					//ob.getAttributeMap().put(Obligation.STATE_ATTRIBUTE_NAME, Obligation.STATE_FULFILLED);
 					
 					
 					if(ob.getAttributeMap().containsKey("requiredUserId")){
@@ -136,7 +141,7 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 				//remove from the active list, add to the expired list in openmrs enfroce service context. 
 				SerContext.getActiveObs().remove(ob);
 				SerContext.getExpiredObs().put(ob.getObUUID(),ob);
-				ob.getAttributeMap().put(Obligation.STATE_ATTRIBUTE_NAME, Obligation.STATE_EXPIRED);
+				//ob.getAttributeMap().put(Obligation.STATE_ATTRIBUTE_NAME, Obligation.STATE_EXPIRED);
 				monitorableObject.notifyDeadline(ob);
 			}
 		}
@@ -144,6 +149,7 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 	
 	
 	public String getBudgetfromDB(String userId){
+		
 		ArrayList<AttributeQuery> query = new ArrayList<AttributeQuery>();
 		query.add(new AttributeQuery(SubjectAttributeXmlName.ID, userId,StringAttribute.identifier));
 		List<String> budgets = dh.getAttribute(SubjectAttributeXmlName.SUBJECT_TABLE, query, "budget");
@@ -160,13 +166,18 @@ public class OpenmrsUserObligationMonitor extends UserObligationMonitor {
 	}
 	
 	public void updateBudget(Obligation ob, String triggeringUserId){
+		
+		//if there is no such setId in obligationSets, which means the obligations in this set have been
+		//fulfilled already, then we need to increase the budget back.
 		if(!SerContext.getObligationSets().containsKey(ob.getSetId())){
+			
 			if(ob.getAttribute("setName").contains("budget_decrease_set")){
 				
 				String currentBudget = getBudgetfromDB(triggeringUserId);
 				String decreasedBudget = ob.getDecreasedBudget(); 
 				
-				//get currentBudget from database, plus the decreasedBudget stored in UserObRelation uo object, the result is the updatedBudget after fulfilling obligation 
+				//get currentBudget from database, plus the decreasedBudget, the result is the updatedBudget
+				//after fulfilling obligation 
 				String newBudget = String
 						.valueOf(Double.parseDouble(currentBudget) + Double.parseDouble(decreasedBudget));
 				

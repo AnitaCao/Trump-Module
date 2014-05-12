@@ -32,42 +32,24 @@
 		<budget>1.0</budget>
 	</user> -->
 
+	<!-- user anita has the budget 0.6  -->
 	<user>
 		<id>4</id>
-		<first_name>Francesca</first_name>
-		<last_name>Rossi</last_name>
-		<DoB>1982-07-14</DoB>
-		<role>nurse</role>
-		<assigned_patient>2</assigned_patient>
-		<trustworthiness>0.6</trustworthiness>
 		<budget>0.6</budget>
-	</user>
-
-	<user>
-		<id>15</id>
-		<first_name>Liang</first_name>
-		<last_name>Chen</last_name>
-		<DoB>1983-05-05</DoB>
-		<role>doctor</role>
-		<budget>1.0</budget>
+		<assigned_patient>11111111111</assigned_patient> <!-- find out from database -->
 	</user>
 	
-	<!-- user jack has the budget 0.6 -->
+	<!-- user jack has the budget 3.0 -->
 	<user>
 		<id>3</id>
-		<budget>3.0</budget>
+		<budget>0.8</budget>
 		
 		<!-- <assigned_patient>100-8</assigned_patient> the patient identifier Id  -->
 		
 		<assigned_patient>270b233a-b10c-11e3-8699-f259e5739077</assigned_patient>
 	</user>
 	
-	<!-- user anita has the budget 1.0 and trustworthiness :0.7 -->
-	<user>
-		<id>4</id>
-		<budget>1.0</budget>
-		<trustworthiness>0.7</trustworthiness>
-	</user>
+	
 	
 	<team>
 		<id>1</id>
@@ -196,7 +178,7 @@
         <team>1</team>
         <setId>1</setId>
     </obligation>
-<obligation>
+<!-- <obligation>
         <id>4</id>
         <action_name>user:rest</action_name>
        
@@ -204,9 +186,25 @@
        
     </obligation>
     
+<obligation>
+        <id>5</id>
+        <action_name>user:rest</action_name>
+       
+        <duration>P1DT10M</duration>
+       
+    </obligation>
+    
+<obligation>
+        <id>6</id>
+        <action_name>user:rest:for:other:user</action_name>
+       
+        <duration>P1DT10M</duration>
+       
+    </obligation> -->
+    
     
  <obligation>
-        <id>5</id>
+        <id>7</id>
         <action_name>user:send:email</action_name>
       <!--   <start_time>2014-03-6T12:40:29+00:00</start_time> -->
         <duration>P1DT10M</duration>    <!-- PT10M means 10 mins -->

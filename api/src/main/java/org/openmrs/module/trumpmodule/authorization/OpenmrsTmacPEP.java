@@ -11,13 +11,10 @@ import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 import org.openmrs.module.trumpmodule.obligations.EmailObligation;
 import org.openmrs.module.trumpmodule.obligations.OpenmrsUserObligationMonitor;
 import org.openmrs.module.trumpmodule.obligations.RESTObligation;
-import org.wso2.balana.attr.StringAttribute;
 
-import luca.data.AttributeQuery;
 import luca.data.DataHandler;
 import luca.tmac.basic.ResponseParser;
 import luca.tmac.basic.TmacPEP;
-import luca.tmac.basic.data.xml.SubjectAttributeXmlName;
 import luca.tmac.basic.obligations.Obligation;
 import luca.tmac.basic.obligations.ObligationIds;
 import luca.tmac.basic.obligations.ObligationImpl;
@@ -30,8 +27,6 @@ public class OpenmrsTmacPEP extends TmacPEP {
 	private HashMap<String,String> messages;
 	
 	OpenmrsEnforceServiceContext SerContext = OpenmrsEnforceServiceContext.getInstance();
-//	private List<Obligation> userObsList = new ArrayList<Obligation>();
-//	private List<Obligation> roleObsList = new ArrayList<Obligation>();
 	
 	public OpenmrsTmacPEP(DataHandler parDataHandler,
 			ObligationMonitorable monitorable) {
@@ -94,21 +89,28 @@ public class OpenmrsTmacPEP extends TmacPEP {
 					//get the attributeMap of the obl from policy
 					HashMap<String,String> attributeMap = obl.getAttributeMap();
 					
-					if(obl.getActionName().contains(ObligationIds.REST_OBLIGATION_NAME_XML)){   //if the obligation is a rest obligation
+					//if the obligation is a rest obligation
+					if(obl.getActionName().contains(ObligationIds.REST_OBLIGATION_NAME_XML)){   
 						
-						obligation = new RESTObligation((ObligationImpl)obl);			//create a new RESTObligation by raping this obligation
+						//create a new RESTObligation by raping this obligation
+						obligation = new RESTObligation((ObligationImpl)obl);			
 						
-						((RESTObligation) obligation).setOpenmrsOblMonitor(openmrsOblMonitor);  //set the obligationMonitor for using it lately to update the budget. 
+						//set the obligationMonitor for using it lately to update the budget.
+						((RESTObligation) obligation).setOpenmrsOblMonitor(openmrsOblMonitor);   
 						
-						obligation.setTriggeringUserId(currentUser.getId().toString());  //set the triggeringUserId to the currentUser id
+						//set the triggeringUserId to the currentUser id
+						obligation.setTriggeringUserId(currentUser.getId().toString());  
 						
-						setOblSetId(obligation,setId);   //put the obligation to a specific set according to the setName attributes from the obligation
+						//put the obligation to a specific set according to the setName attributes from the obligation
+						setOblSetId(obligation,setId);   
 						
-						if(attributeMap.containsKey("requiredUserId")){  //if the obligation is assigned to other user
+						//if the obligation is assigned to other user
+						if(attributeMap.containsKey("requiredUserId")){  
 							
 							String userId = attributeMap.get("requiredUserId");  
 							
-							obligation.setUserId(userId); //set userId to the assigned user's Id, means this user will do the obligation
+							//set userId to the assigned user's Id, means this user will do the obligation
+							obligation.setUserId(userId); 
 							
 							//put this obligation to the userObs in context class
 							if(SerContext.getUserObs().containsKey(userId)){  
@@ -134,9 +136,13 @@ public class OpenmrsTmacPEP extends TmacPEP {
 								SerContext.getRoleObs().put(roleName, roleObsList);
 								}
 						
-						}else if(!attributeMap.containsKey("requiredUserId")&&!attributeMap.containsKey("roleName")){   //if the obligation not assigned to any role or any other user, which means the current user has to do the obligation
+							 
+						}else 
+							//if the obligation not assigned to any role or any other user, which means the current user has to do the obligation
+							if(!attributeMap.containsKey("requiredUserId")&&!attributeMap.containsKey("roleName")){
 						
-							obligation.setUserId(currentUser.getId().toString());  //currentUser id is the userId, and it is also the triggerringUserId
+							//currentUser id is the userId, and it is also the triggerringUserId
+							obligation.setUserId(currentUser.getId().toString());  
 							
 							if(SerContext.getUserObs().containsKey(currentUser.getId().toString())){
 								SerContext.getUserObs().get(currentUser.getId().toString()).add(obligation);
@@ -147,8 +153,8 @@ public class OpenmrsTmacPEP extends TmacPEP {
 								}
 							}
 							
-					}else{    //if the obligation is not a rest obligation, currently, we just defined rest obligation and email obligation,
-						      //so we create a EmailObligation.
+					}else{  //if the obligation is not a rest obligation, currently, we just defined rest obligation and email obligation,
+						    //so we create a EmailObligation.
 						obligation = new EmailObligation(obl.getActionName(),currentUser.getId().toString(),obl.getStartDate(),null);
 						obligation.setAttributeMap(attributeMap);
 						obligation.setUserId(currentUser.getId().toString());//userid and triggeringUiserId are the same.
@@ -168,19 +174,11 @@ public class OpenmrsTmacPEP extends TmacPEP {
 			System.err.println("the size of the roleObs is : " + SerContext.getRoleObs().size());
 			System.err.println("the size of the oblSets is : " + SerContext.getObligationSets().size());
 		}
-		openmrsOblMonitor.checkObligations();   //check if obligation is being fulfilled or not 
+		//check if obligation has been fulfilled or not 
+		openmrsOblMonitor.checkObligations();   
 		return messages;
 	}
 
-  
-  public void updateBudget(String currentBudget){
-	
-	List<AttributeQuery> attributes = new ArrayList<AttributeQuery>();
-	attributes.add(new AttributeQuery(SubjectAttributeXmlName.BUDGET, currentBudget,
-			StringAttribute.identifier));
-	dh.modifyAttribute(SubjectAttributeXmlName.SUBJECT_TABLE, currentUser.getId().toString(), attributes);
-	
-  }
   
   /**
    * put obligation to specific set according to the setName attribute from the obligation attributMap. 
@@ -204,7 +202,7 @@ public class OpenmrsTmacPEP extends TmacPEP {
 				SerContext.getObligationSets().put(setId,obls);
 			}
 		}else {
-			//if the obligation dont belong to the "budget_decrease_set", create a new set, and add it to the hashmap in context class
+			//if the obligation dont belong to the "budget_decrease_set", create a new set, and add it to the hash map in context class
 			String newSetId = String.valueOf(UUID.randomUUID().getMostSignificantBits());
 			obligation.setSetId(newSetId);
 			List<Obligation> obls = new ArrayList<Obligation>();

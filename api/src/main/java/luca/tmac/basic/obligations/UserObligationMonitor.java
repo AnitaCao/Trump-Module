@@ -70,9 +70,8 @@ public class UserObligationMonitor {
 
 		for (String oblId : ids) {
 
-			// in the db i don't need to write the deadline value cause i can
-			// compute it with the start_time and the duration
-			// both of those are saved in the db
+			// in the db we don't need to write the deadline value because we can compute it with the start_time 
+			//and the duration, both of those are saved in the db.
 
 			List<AttributeQuery> attributes = dh.getAttributesOf("obligation",
 					oblId);
@@ -100,14 +99,6 @@ public class UserObligationMonitor {
 				}
 			}
 			
-			// TODO: Chris: here we need to check what kind of obligation this is,
-			// probably by using the XML name, and create the appropriate subclass. The
-			// ArrayList will take anything that is an Obligation, but we need to call
-			// the correct constructor so need the exact type here.
-//			if(actionName.equals(ObligationIds.EMAIL_OBLIGATION_NAME_XML)){
-//				EmailObligation emailOb = new EmailObligation(actionName, startTime, newAttList);
-//			}
-			//oblList.add(new Obligation(actionName, startTime, newAttList));
 		}
 		return oblList;
 	}

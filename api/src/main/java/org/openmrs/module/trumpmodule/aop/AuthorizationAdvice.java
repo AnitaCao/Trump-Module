@@ -76,8 +76,8 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 				
 			    if(pepService.isAuthorized(privilege, user)){
 			    	
-			    	//Step 1 : get obligation and perform system obligation 
-			    	HashMap<String,String> messages = pepService.acceptResponse(method.getName());//system obligation will be performed automatically 
+			    	//get obligation and perform system obligation, system obligation will be performed automatically
+			    	HashMap<String,String> messages = pepService.acceptResponse(method.getName()); 
 			    	
 			    	for(String ss : messages.keySet()){
 				    	System.err.println("Anita! Obligations : "+ss + " ," +messages.get(ss));
