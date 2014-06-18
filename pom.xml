@@ -124,16 +124,26 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>webservices.rest-omod</artifactId>
-            <version>2.5-SNAPSHOT</version>
+            <version>2.6-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>webservices.rest-omod-common</artifactId>
-            <version>2.5-SNAPSHOT</version>
+            <version>2.6-SNAPSHOT</version>
             <classifier>tests</classifier>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.openmrs.api</groupId>
+        	<artifactId>openmrs-api</artifactId>
+        	<exclusions>
+        		<exclusion>
+        			<artifactId>xercesImpl</artifactId>
+        			<groupId>xerces</groupId>
+        		</exclusion>
+        	</exclusions>
         </dependency>
     </dependencies>
 </project>
