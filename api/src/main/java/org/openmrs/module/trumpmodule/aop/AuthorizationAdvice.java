@@ -73,23 +73,28 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 				
 				if (privilege == null || privilege.isEmpty())
 					return;
-				
-			    if(pepService.isAuthorized(privilege, user)){
+				int status = pepService.isAuthorized(privilege, user);
+			    if(status != TmacEnforceServiceImpl.DENY){
 			    	
-			    	//get obligation and perform system obligation, system obligation will be performed automatically
-			    	HashMap<String,String> messages = pepService.acceptResponse(method.getName()); 
-			    	
-			    	for(String ss : messages.keySet()){
-				    	System.err.println("Anita! Obligations : "+ss + " ," +messages.get(ss));
-			    	}
-			    	
-			    	System.out.println("Anita ! the size of the active obligation is : " + SerContext.getActiveObs().size());
-			    	
-			    	System.out.println(user.getUsername() + "Anita !!!!!!! is Authorized !!!");
-			    	
-			    	if(!requireAll){ 
-			    		return; 
-			    		}
+//			    	if(status == TmacEnforceServiceImpl.ALLOW){
+//				    	//get obligation and perform system obligation, system obligation will be performed automatically
+//				    	HashMap<String,String> messages = pepService.acceptResponse(method.getName()); 
+//				    	
+//				    	for(String ss : messages.keySet()){
+//					    	System.err.println("Anita! Obligations : "+ss + " ," +messages.get(ss));
+//				    	}
+//				    	
+//				    	System.out.println("Anita ! the size of the active obligation is : " + SerContext.getActiveObs().size());
+//				    	
+//				    	System.out.println(user.getUsername() + "Anita !!!!!!! is Authorized !!!");
+//				    	
+//				    	if(!requireAll){ 
+//				    		return; 
+//				    	}
+//			    	} else {
+//			    		return;
+//			    	}
+			    	return; // just for testing the provenance part.
 			    }
 			    else {
 					if (requireAll) {

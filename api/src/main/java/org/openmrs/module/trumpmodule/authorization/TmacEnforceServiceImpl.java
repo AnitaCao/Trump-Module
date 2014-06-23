@@ -39,6 +39,10 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 	private DataHandler dh;
 	private long responseParserId;
 	
+	public static final int ALLOW_NO_SUCH_PERMISSION = 1;
+	public static final int ALLOW = 2;
+	public static final int DENY = 3;
+	
 	String userID;
 	
 	//messages stores the system obligation performing result messages. 
@@ -54,14 +58,13 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 		pep.addAttributeFinderToPDP(new OpenmrsRiskAttributeFinderModule(dh,new StandardBudgetCalculator()));
 		pep.createPDP();
 		
+		
 	}
 
 
-	public boolean isAuthorized(String priviledge, User user) throws APIException {
+	public int isAuthorized(String priviledge, User user) throws APIException {
 		
-		boolean isAuthorized = false;
-		isAuthorized = sendRequest(priviledge, user);	
-		return isAuthorized;
+		return sendRequest(priviledge, user);	
 	}
 	
 	/**
@@ -70,7 +73,7 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 	 * @param user
 	 * @return boolean
 	 */
-    public boolean sendRequest(String privilege, User user){
+    public int sendRequest(String privilege, User user){
     	
     	System.out.println( "Anita !!!!!!!!!!!!!!!!!! the required privilege is : " + privilege + ""
     			+ "userId is : " + user.getId().toString());
@@ -96,9 +99,11 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 		
 		if (permission_ids == null || permission_ids.size() == 0) {
 			
-			System.out.println("Anita ! the persission is empty : " + permission_ids.size());
-			
-			return false;
+//			System.out.println("Anita ! the persission is empty : " + permission_ids.size());
+//			
+//			return false;
+
+			return ALLOW_NO_SUCH_PERMISSION;
 		}
 		permission = permission_ids.get(0);
 		
@@ -112,7 +117,7 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 		
 		//if the decision is permit, return true
 		if(rParser.getDecision().equals(ResponseParser.PERMIT_RESPONSE)){	
-			return true;
+			return ALLOW;
 		}
 		else{  
 			//if the decision is not permit, get the obligations from the rule in policy.xml file(if there is any obligation),
@@ -123,7 +128,7 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 					message += pep.performObligation(obl) + "\n";
 			}
 			System.err.println("the deny reason (from system obligation ) is  : " + message );
-			return false;
+			return DENY;
 		}
     }
     
@@ -147,7 +152,6 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 
 
 	public void notifyObligationInsert(Obligation obl) {
-		// TODO Auto-generated method stub
 		
 	}
 
