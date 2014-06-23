@@ -7,19 +7,24 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.openmrs.OpenmrsData;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 import org.openmrs.util.OpenmrsUtil;
 
+import uk.ac.dotrural.prov.jena.ProvenanceBundle;
+
+import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.tdb.TDBFactory;
 
-import uk.ac.dotrural.prov.jena.ProvenanceBundle;
 
 public class ProvenanceAdvice implements MethodInterceptor {
 	
 	/**
 	 * List of all method name prefixes that result in INFO-level log messages
 	 */
-	private static final String[] SETTER_METHOD_PREFIXES = {"create" };
+	private static final String[] SETTER_METHOD_PREFIXES = {"create" ,"save"};
 	private static final String NS = "http://trump-india-uk.org/prov/";
 	private static final String ACTIVITY_NS = "action";
 	
@@ -28,48 +33,53 @@ public class ProvenanceAdvice implements MethodInterceptor {
 	
 	// agent namespace
 	private static final String AGENT = "agent";
+	
+	OpenmrsEnforceServiceContext openmrsContext = OpenmrsEnforceServiceContext.getInstance();
+	private String directory = openmrsContext.getProvenanceDirectory();
 
 	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable {
 		Method method = invocation.getMethod();
 		String name = method.getName();
-		
+		// data object resulting from this captured method invocation that we will store provenance about
+		Object result = null;
 		// decide what type of logging we're doing with the current method and loglevel
-		boolean isSetterTypeOfMethod = OpenmrsUtil.stringStartsWith(name, SETTER_METHOD_PREFIXES);		
 		
 		// used for the execution time calculations
 		long startTime = System.currentTimeMillis();
 		
+		Dataset dataset = TDBFactory.createDataset(directory);
+		
 		ProvenanceBundle provBundle = new ProvenanceBundle(NS);
 		
-		if (isSetterTypeOfMethod) {
+		if (OpenmrsUtil.stringStartsWith(name, SETTER_METHOD_PREFIXES)) {
+			
+			
+			
 			String activityURI = provBundle.createActivity();
 			Resource activity = provBundle.getResource(activityURI);
+			// add statement describing when the activity started
+			provBundle.addStartedAtTime(activity, startTime);
 			
 			// create a new action property, if it doesn't already exist, which is just the name of the invoked method
 			Property actionProp = provBundle.getModel().createProperty(NS, ACTIVITY_NS);
 			activity.addProperty(actionProp, name);
 			
-			// TODO we're not recording stuff from the method invocation YET
-			// WE CAN DO THE FOLLOWING STEP BEFORE EXECUTING THE METHOD:
-			
-			// 1. agent - comes from the logged in user or the user who is invoking the method 
+			// agent - comes from the logged in user or the user who is invoking the method 
 			User user = Context.getAuthenticatedUser();
 			String agentURI = provBundle.createAgent(NS + AGENT + user.getUuid());
 			Resource agent = provBundle.getResource(agentURI);
 			
 			// NOW: we need to execute the method to actually get the created entity details
-			OpenmrsData result = null;
-			try {
-				result = (OpenmrsData) invocation.proceed();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			result = (OpenmrsData) invocation.proceed();
 
+			//insert to TDB
+			dataset.begin(ReadWrite.WRITE);
+			
 			// entity - comes from the uuid of the newly created patient (the entity is not an agent, it represents the new record)
 			// we are recording the fact that some agent (i.e. the logged in user) is doing an activity (i.e. createPatient) which is resulting in some
 			// entity being created (i.e. a new patient record with a UUID) - i.e. from the result we just got
-			String entityURI = provBundle.createEntity(NS + ENTITY_PATIENT + result.getUuid());
+			String entityURI = provBundle.createEntity(NS + ENTITY_PATIENT + ((OpenmrsData) result).getUuid());
 			Resource entity = provBundle.getResource(entityURI);
 			
 			// record the relationship between the entity and the activity
@@ -81,13 +91,20 @@ public class ProvenanceAdvice implements MethodInterceptor {
 			// record the relationship between the entity and the agent
 			provBundle.addWasAttributedTo(entity, agent);
 			
+			// add statement describing when the activity ended.
+			provBundle.addEndedAtTime(activity, System.currentTimeMillis());
 			
+			provBundle.getModel().write(System.out);
 				
-		//insert to TDB
+			
+			dataset.end();
+			
+		} else {
+			// if we're not interested in capturing provenance for this method, still let it proceed
+			result = invocation.proceed();
 		}
 		
-		
-		return null;
+		return result;
 	}
 }
 	
