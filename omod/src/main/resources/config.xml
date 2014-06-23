@@ -109,6 +109,10 @@
 		<point>org.openmrs.api.PatientService</point>
 		<class>org.openmrs.module.trumpmodule.aop.AuthorizationAdvice</class>
 	</advice>
+	<advice>
+		<point>org.openmrs.api.PatientService</point>
+		<class>org.openmrs.module.trumpmodule.aop.ProvenanceAdvice</class>
+	</advice>
 	
 </module>
 
