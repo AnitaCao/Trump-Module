@@ -98,10 +98,15 @@ public class OpenmrsEnforceServiceContext {
 		return path + File.separator + "user_policies";
 	}
 
+	public String getProvenanceDirectory(){
+		String path = System.getProperty("user.dir");
+		return path + File.separator + "provenance";
+	}
+	
 	public void setPolicies(HashMap<String, ArrayList<Policy>> policies) {
 		this.policies = policies;
 	}
-
+	
 	/**
 	 * In this method, we resolve the ids of users and assigned patients specified in the data.xml file, to 
 	 * openmrs "internal" database identifiers
