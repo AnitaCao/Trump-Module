@@ -55,7 +55,7 @@ public class OpenmrsTmacPEP extends TmacPEP {
 		if (parser == null)
 			throw new IllegalArgumentException("invalid parser id");
 		
-		if(methodName.equalsIgnoreCase("getPatientByUuid")){
+		//if(methodName.equalsIgnoreCase("getPatientByUuid")){
 			List<Obligation> obls = parser.getObligation(); //get obligation list from the rule in policy.xml file
 			
 			String setId = null;
@@ -175,7 +175,7 @@ public class OpenmrsTmacPEP extends TmacPEP {
 			System.err.println("the size of the userObs is : " + SerContext.getUserObs().size());
 			System.err.println("the size of the roleObs is : " + SerContext.getRoleObs().size());
 			System.err.println("the size of the oblSets is : " + SerContext.getObligationSets().size());
-		}
+		//}
 		//check if obligation has been fulfilled or not 
 		openmrsOblMonitor.checkObligations();   
 		return messages;
