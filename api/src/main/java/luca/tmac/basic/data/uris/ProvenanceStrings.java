@@ -5,9 +5,13 @@ public class ProvenanceStrings {
 	public static final String NS = "http://trump-india-uk.org/prov/";
 	public static final String ACTIVITY_NS = "action";
 	
-	// entity types
+	// entity namespace
 	public static final String ENTITY_PATIENT = "patient/";
 	public static final String ENTITY_PATIENT_ASSIGNMENT = "patientassignment/";
+	// entity property namespace
+	public static final String PATIENT_NAME = "patient_name";
+	public static final String DOCTOR_ID = "doctor_id";
+	public static final String PATIENT_UUID = "patient_uuid";
 	
 	// agent namespace
 	public static final String AGENT = "agent/";
