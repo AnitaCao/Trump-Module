@@ -80,7 +80,14 @@ public class PolicyResource extends DataDelegatingCrudResource<Policy> {
 		// this means that users can only upload policies belonging to themselves
 		// which makes sense.
 		delegate.setUserId(personId);
-		policies.get(personId).add(delegate);
+		if(policies.containsKey(personId)){
+			policies.get(personId).add(delegate);
+		}else {
+			ArrayList<Policy> ps = new ArrayList<Policy>();
+			ps.add(delegate);
+			policies.put(personId, ps);
+		}
+		
 		OpenmrsContext.setPolicies(policies);
 		
 		// every time we save a policy, we should write them to disk
