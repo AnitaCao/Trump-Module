@@ -9,6 +9,7 @@ import java.util.List;
 import luca.tmac.basic.data.uris.ProvenanceStrings;
 
 import org.openmrs.OpenmrsData;
+import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
@@ -41,7 +42,8 @@ public class PatientAssignmentResource extends DataDelegatingCrudResource<Patien
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
 		if (rep instanceof DefaultRepresentation) {
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
-			description.addProperty("patientName");
+			//description.addProperty("patientName");
+			description.addProperty("patientUUID");
 			description.addProperty("doctorId");
 			description.addSelfLink();
 			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
@@ -89,59 +91,15 @@ public class PatientAssignmentResource extends DataDelegatingCrudResource<Patien
 
 	@Override
 	public PatientAssignment save(PatientAssignment delegate) {
-		OpenmrsEnforceServiceContext openmrsContext = OpenmrsEnforceServiceContext.getInstance();
-		String directory = openmrsContext.getProvenanceDirectory();
-		Dataset dataset= TDBFactory.createDataset(directory);
-
-		long startTime = System.currentTimeMillis();
-		//Model model = dataset.getDefaultModel();
-//		GraphStore graphStore = GraphStoreFactory.create(dataset);
-//		UpdateRequest request = UpdateFactory.create();
-//		String subject = delegate.getUserId();
-//		String predicate = "rdf:type";
-		ProvenanceBundle provBundle = new ProvenanceBundle(ProvenanceStrings.NS);
-
-		String activityURI = provBundle.createActivity();
-		com.hp.hpl.jena.rdf.model.Resource activity = provBundle.getResource(activityURI);
-		// add statement describing when the activity started
-		provBundle.addStartedAtTime(activity, startTime);
-
-
-		// create a new action property, if it doesn't already exist, which is just the name of the invoked method
-		Property actionProp = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.ACTIVITY_NS);
-		activity.addProperty(actionProp, "assignPatient");
-
-		// agent - comes from the logged in user or the user who is invoking the method 
-		User user = Context.getAuthenticatedUser();
-		String agentURI = provBundle.createAgent(ProvenanceStrings.NS + ProvenanceStrings.AGENT + user.getUuid());
-		com.hp.hpl.jena.rdf.model.Resource agent = provBundle.getResource(agentURI);
-
-		String agent2URI = provBundle.createAgent(ProvenanceStrings.NS + ProvenanceStrings.AGENT + delegate.getDoctorId());
-		com.hp.hpl.jena.rdf.model.Resource agent2 = provBundle.getResource(agent2URI);
-
-		String agent3URI = provBundle.createAgent(ProvenanceStrings.NS + ProvenanceStrings.AGENT + delegate.getPatientUUID());
-		com.hp.hpl.jena.rdf.model.Resource agent3 = provBundle.getResource(agent3URI);
-
-		String entityURI = provBundle.createEntity(ProvenanceStrings.NS + ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT + delegate.getUuid());
-		com.hp.hpl.jena.rdf.model.Resource entity = provBundle.getResource(entityURI);
-		// record the relationship between the entity and the activity
-		provBundle.addWasGeneratedBy(entity, activity);
-
-		// record the relationship between the activity and the agent
-		provBundle.addWasAssociatedWith(activity, agent);
-
-		// record the relationship between the entity and the agent
-		provBundle.addWasAttributedTo(entity, agent);
-
-
-		// add statement describing when the activity ended.
-		provBundle.addEndedAtTime(activity, System.currentTimeMillis());
-
-		Model model = dataset.getDefaultModel();
-
-		model.add(provBundle.getModel());
-
-		dataset.close();
+		
+		//Patient patient = Context.getPatientService().getPatientByUuid(delegate.getPatientUUID());
+		
+		//String patientName = patient.getGivenName()+" "+patient.getMiddleName()+" " +patient.getFamilyName();
+		
+		//delegate.setPatientName(patientName);
+		
+		delegate.setPatientName("dave"); //just for test
+		
 
 		return delegate;
 
@@ -163,14 +121,13 @@ public class PatientAssignmentResource extends DataDelegatingCrudResource<Patien
 
 	@Override
 	public PatientAssignment newDelegate() {
-		// TODO Auto-generated method stub
-		return null;
+		return new PatientAssignment();
 	}
 
 	@Override
 	public PatientAssignment getByUniqueId(String uniqueId) {
-		// TODO get from TDB
-		return null;
+		//TODO need to change here to getting by uuid
+		return new PatientAssignment();
 	}
 
 	@Override
