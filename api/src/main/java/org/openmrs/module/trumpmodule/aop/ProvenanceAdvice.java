@@ -7,9 +7,11 @@ import luca.tmac.basic.data.uris.ProvenanceStrings;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.openmrs.OpenmrsData;
+import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
+import org.openmrs.module.trumpmodule.patientassignment.PatientAssignment;
 import org.openmrs.util.OpenmrsUtil;
 
 import uk.ac.dotrural.prov.jena.ProvenanceBundle;
@@ -60,51 +62,82 @@ public class ProvenanceAdvice implements MethodInterceptor {
 			
 			String activityURI = provBundle.createActivity();
 			Resource activity = provBundle.getResource(activityURI);
+			
 			// add statement describing when the activity started
 			provBundle.addStartedAtTime(activity, startTime);
 
-			// create a new action property, if it doesn't already exist, which
-			// is just the name of the invoked method
-			Property actionProp = provBundle.getModel().createProperty(
-					ProvenanceStrings.NS, ProvenanceStrings.ACTIVITY_NS);
-			activity.addProperty(actionProp, name);
-
-			// agent - comes from the logged in user or the user who is invoking
-			// the method
+			// agent - comes from the logged in user or the user who is invoking the method
 			User user = Context.getAuthenticatedUser();
 			String agentURI = provBundle.createAgent(ProvenanceStrings.NS
-					+ ProvenanceStrings.AGENT + user.getUuid());
+					+ ProvenanceStrings.AGENT + user.getId());
 			Resource agent = provBundle.getResource(agentURI);
+			
+			provBundle.addWasStartedBy(activity, agent); 
 
 			// NOW: we need to execute the method to actually get the created
 			// entity details
 			result = (OpenmrsData) invocation.proceed();
+			
+			if(result instanceof Patient){
+				
+				// create a new action property, if it doesn't already exist, which is just the name of the invoked method
+				Property actionProp = provBundle.getModel().createProperty(
+						ProvenanceStrings.NS, ProvenanceStrings.ACTIVITY_NS);
+				activity.addProperty(actionProp, name);
 
-			// entity - comes from the uuid of the newly created patient (the
-			// entity is not an agent, it represents the new record)
-			// we are recording the fact that some agent (i.e. the logged in
-			// user) is doing an activity (i.e. createPatient) which is
-			// resulting in some
-			// entity being created (i.e. a new patient record with a UUID) -
-			// i.e. from the result we just got
-			String entityURI = provBundle.createEntity(ProvenanceStrings.NS
-					+ ProvenanceStrings.ENTITY_PATIENT
-					+ ((OpenmrsData) result).getUuid());
-			Resource entity = provBundle.getResource(entityURI);
-
-			// record the relationship between the entity and the activity
-			provBundle.addWasGeneratedBy(entity, activity);
-
-			// record the relationship between the activity and the agent
-			provBundle.addWasAssociatedWith(activity, agent);
-
-			// record the relationship between the entity and the agent
-			provBundle.addWasAttributedTo(entity, agent);
+				// entity - comes from the uuid of the newly created patient (the  entity is not an agent, it represents the new record)
+				// we are recording the fact that some agent (i.e. the logged in user) is doing an activity (i.e. createPatient) which is
+				// resulting in some entity being created (i.e. a new patient record with a UUID) -
+				// i.e. from the result we just got
+				String entityURI = provBundle.createEntity(ProvenanceStrings.NS
+						+ ProvenanceStrings.ENTITY_PATIENT
+						+ ((OpenmrsData) result).getUuid());
+				Resource entity = provBundle.getResource(entityURI);
+	
+				// record the relationship between the entity and the activity
+				provBundle.addWasGeneratedBy(entity, activity);
+	
+				// record the relationship between the activity and the agent
+				//provBundle.addWasAssociatedWith(activity, agent);
+				
+				
+				// record the relationship between the entity and the agent
+				provBundle.addWasAttributedTo(entity, agent);
+			
+			}else if (result instanceof PatientAssignment){
+				
+				PatientAssignment pa = (PatientAssignment)result;
+				
+				Property actionProp = provBundle.getModel().createProperty( ProvenanceStrings.NS, ProvenanceStrings.ACTIVITY_NS);
+				activity.addProperty(actionProp, "do_patient_assignment");
+				
+				String entityURI = provBundle.createEntity(ProvenanceStrings.NS
+						+ ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT
+						+ ((PatientAssignment) result).getUuid());
+				Resource entity = provBundle.getResource(entityURI);
+				
+				Property entityProp = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.PATIENT_NAME);
+				entity.addProperty(entityProp, pa.getPatientName());
+				
+//				Property entityProp1 = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.DOCTOR_ID);
+//				entity.addProperty(entityProp1, pa.getDoctorId());
+//				
+//				Property entityProp2 = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.PATIENT_UUID);
+//				entity.addProperty(entityProp2, pa.getPatientUUID());
+				
+				String agentURI1 = provBundle.createAgent(ProvenanceStrings.NS + ProvenanceStrings.AGENT + pa.getDoctorId());
+				Resource agent1 = provBundle.getResource(agentURI1);
+				String agentURI2 = provBundle.createAgent(ProvenanceStrings.NS + ProvenanceStrings.AGENT + pa.getPatientUUID());
+				Resource agent2 = provBundle.getResource(agentURI2);
+				
+				provBundle.addWasAssignedTo(agent1, agent2);
+				
+			}
 
 			// add statement describing when the activity ended.
 			provBundle.addEndedAtTime(activity, System.currentTimeMillis());
 
-			// provBundle.getModel().write(System.out);
+			provBundle.getModel().write(System.out);
 
 			Model model = dataset.getDefaultModel();
 
