@@ -2,14 +2,13 @@ package org.openmrs.module.trumpmodule.patientassignment;
 
 
 import java.io.Serializable;
-import java.util.UUID;
 import org.openmrs.BaseOpenmrsData;
 
 public class PatientAssignment extends BaseOpenmrsData implements Serializable {
     
      private static final long serialVersionUID = 1L;
      private Integer id;
-     private UUID patientUUID;
+     private String patientUUID;
      private String patientName;
      private String doctorId; //assigned to this doctor, actually this doctorId is an userId
      private String userId; //who did this assignment
@@ -23,7 +22,7 @@ public class PatientAssignment extends BaseOpenmrsData implements Serializable {
           this.id = new Long(System.currentTimeMillis() / 1000L).intValue();
      }
     
-     public PatientAssignment(UUID patientUUID, String userId) {
+     public PatientAssignment(String patientUUID, String userId) {
           this.patientUUID = patientUUID;
          this.userId = userId;
 
@@ -56,11 +55,11 @@ public class PatientAssignment extends BaseOpenmrsData implements Serializable {
          
      }
 
-     public UUID getPatientUUID() {
+     public String getPatientUUID() {
           return patientUUID;
      }
 
-     public void setPatientUUID(UUID patientUUID) {
+     public void setPatientUUID(String patientUUID) {
           this.patientUUID = patientUUID;
      }
 
