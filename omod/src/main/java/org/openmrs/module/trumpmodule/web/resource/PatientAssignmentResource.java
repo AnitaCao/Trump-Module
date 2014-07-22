@@ -28,11 +28,7 @@ import com.hp.hpl.jena.tdb.TDBFactory;
 
 
 @Resource(name ="v1/trumpmodule/patientassignment", supportedClass = PatientAssignment.class, supportedOpenmrsVersions = {"1.8.*", "1.9.*"})
-public class PatientAssignmentsResource extends DataDelegatingCrudResource<PatientAssignment> {
-
-
-	
-	
+public class PatientAssignmentResource extends DataDelegatingCrudResource<PatientAssignment> {
 	
 	
 	private Dataset dataset;
