@@ -78,7 +78,7 @@ public class ProvenanceAdvice implements MethodInterceptor {
 			// entity details
 			result = (OpenmrsData) invocation.proceed();
 			
-			if(result instanceof Patient){
+			//if(result instanceof Patient){
 				
 				// create a new action property, if it doesn't already exist, which is just the name of the invoked method
 				Property actionProp = provBundle.getModel().createProperty(
@@ -104,35 +104,35 @@ public class ProvenanceAdvice implements MethodInterceptor {
 				// record the relationship between the entity and the agent
 				provBundle.addWasAttributedTo(entity, agent);
 			
-			}else if (result instanceof PatientAssignment){
-				
-				PatientAssignment pa = (PatientAssignment)result;
-				
-				Property actionProp = provBundle.getModel().createProperty( ProvenanceStrings.NS, ProvenanceStrings.ACTIVITY_NS);
-				activity.addProperty(actionProp, "do_patient_assignment");
-				
-				String entityURI = provBundle.createEntity(ProvenanceStrings.NS
-						+ ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT
-						+ ((PatientAssignment) result).getUuid());
-				Resource entity = provBundle.getResource(entityURI);
-				
-				Property entityProp = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.PATIENT_NAME);
-				entity.addProperty(entityProp, pa.getPatientName());
-				
-//				Property entityProp1 = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.DOCTOR_ID);
-//				entity.addProperty(entityProp1, pa.getDoctorId());
+//			}else if (result instanceof PatientAssignment){
 //				
-//				Property entityProp2 = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.PATIENT_UUID);
-//				entity.addProperty(entityProp2, pa.getPatientUUID());
-				
-				String agentURI1 = provBundle.createAgent(ProvenanceStrings.NS + ProvenanceStrings.AGENT + pa.getDoctorId());
-				Resource agent1 = provBundle.getResource(agentURI1);
-				String agentURI2 = provBundle.createAgent(ProvenanceStrings.NS + ProvenanceStrings.AGENT + pa.getPatientUUID());
-				Resource agent2 = provBundle.getResource(agentURI2);
-				
-				provBundle.addWasAssignedTo(agent1, agent2);
-				
-			}
+//				PatientAssignment pa = (PatientAssignment)result;
+//				
+//				Property actionProp = provBundle.getModel().createProperty( ProvenanceStrings.NS, ProvenanceStrings.ACTIVITY_NS);
+//				activity.addProperty(actionProp, "do_patient_assignment");
+//				
+//				String entityURI = provBundle.createEntity(ProvenanceStrings.NS
+//						+ ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT
+//						+ ((PatientAssignment) result).getUuid());
+//				Resource entity = provBundle.getResource(entityURI);
+//				
+//				Property entityProp = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.PATIENT_NAME);
+//				entity.addProperty(entityProp, pa.getPatientName());
+//				
+////				Property entityProp1 = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.DOCTOR_ID);
+////				entity.addProperty(entityProp1, pa.getDoctorId());
+////				
+////				Property entityProp2 = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.PATIENT_UUID);
+////				entity.addProperty(entityProp2, pa.getPatientUUID());
+//				
+//				String agentURI1 = provBundle.createAgent(ProvenanceStrings.NS + ProvenanceStrings.AGENT + pa.getDoctorId());
+//				Resource agent1 = provBundle.getResource(agentURI1);
+//				String agentURI2 = provBundle.createAgent(ProvenanceStrings.NS + ProvenanceStrings.AGENT + pa.getPatientUUID());
+//				Resource agent2 = provBundle.getResource(agentURI2);
+//				
+//				provBundle.addWasAssignedTo(agent1, agent2);
+//				
+//			}
 
 			// add statement describing when the activity ended.
 			provBundle.addEndedAtTime(activity, System.currentTimeMillis());
