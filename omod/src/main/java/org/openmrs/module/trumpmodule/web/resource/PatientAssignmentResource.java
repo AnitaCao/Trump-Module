@@ -93,6 +93,7 @@ public class PatientAssignmentResource extends DataDelegatingCrudResource<Patien
 		dataset = TDBFactory.createDataset(directory);
 		ProvenanceBundle provBundle = new ProvenanceBundle(ProvenanceStrings.NS);
 		
+		delegate.setPatientName("DAVE");
 		//insert to TDB
 		String activityURI = provBundle.createActivity();
 		com.hp.hpl.jena.rdf.model.Resource activity = provBundle.getResource(activityURI);
