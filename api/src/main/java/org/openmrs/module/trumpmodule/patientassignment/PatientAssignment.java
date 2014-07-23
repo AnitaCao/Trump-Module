@@ -2,7 +2,9 @@ package org.openmrs.module.trumpmodule.patientassignment;
 
 
 import java.io.Serializable;
+
 import org.openmrs.BaseOpenmrsData;
+import org.openmrs.api.context.Context;
 
 public class PatientAssignment extends BaseOpenmrsData implements Serializable {
     
@@ -20,11 +22,12 @@ public class PatientAssignment extends BaseOpenmrsData implements Serializable {
           // Ruby on Rails ) and since we are not using the database, we don't get this. But we are
           // only going to use UUID anyway so it shouldn't be a problem.
           this.id = new Long(System.currentTimeMillis() / 1000L).intValue();
+          this.userId = Context.getAuthenticatedUser().getId().toString();
      }
     
-     public PatientAssignment(String patientUUID, String userId) {
+     public PatientAssignment(String patientUUID, String doctorId) {
           this.patientUUID = patientUUID;
-         this.userId = userId;
+         this.doctorId = doctorId;
 
      }
     
