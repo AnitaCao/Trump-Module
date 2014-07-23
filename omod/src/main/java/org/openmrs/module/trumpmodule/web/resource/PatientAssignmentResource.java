@@ -2,11 +2,11 @@ package org.openmrs.module.trumpmodule.web.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import luca.tmac.basic.data.uris.ProvenanceStrings;
 
-import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 import org.openmrs.module.trumpmodule.patientassignment.PatientAssignment;
@@ -24,9 +24,18 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import uk.ac.dotrural.prov.jena.ProvenanceBundle;
 
 import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.tdb.TDBFactory;
+import com.sun.mail.iap.Literal;
 
 
 @Resource(name ="v1/trumpmodule/patientassignment", supportedClass = PatientAssignment.class, supportedOpenmrsVersions = {"1.8.*", "1.9.*"})
@@ -173,8 +182,64 @@ public class PatientAssignmentResource extends DataDelegatingCrudResource<Patien
 	@Override
 	public PatientAssignment getByUniqueId(String uniqueId) {
 		
-		//TODO need to change here to getting by uuid
-		return new PatientAssignment();
+		String patient_name = null;
+		String patient_uuid = null;
+		String doctor_id = null;
+		
+		String sp = " PREFIX agent: <" + ProvenanceStrings.NS
+				+ ProvenanceStrings.AGENT_USER + ">" + " PREFIX pA: <"
+				+ ProvenanceStrings.NS
+				+ ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT + ">"
+				+ " PREFIX p: <" + ProvenanceStrings.NS
+				+ ProvenanceStrings.ENTITY_PATIENT + ">" + " PREFIX RDF: <"
+				+ ProvenanceStrings.RDF + ">" + " PREFIX PROV: <"
+				+ ProvenanceStrings.PROV + ">" + " PREFIX NS: <"
+				+ ProvenanceStrings.NS + ">" + " SELECT * " + " WHERE {"
+				+ "	pA:" + uniqueId + " ?property ?value }";
+
+		dataset = TDBFactory.createDataset(directory);
+		Query query = QueryFactory.create(sp);
+		QueryExecution qexec = QueryExecutionFactory.create(query, dataset);
+		ResultSet results = qexec.execSelect();
+		while (results.hasNext()) {
+
+			QuerySolution row = results.next();
+
+			Iterator columns = row.varNames();
+
+			while (columns.hasNext()) {
+
+				RDFNode cell = row.get((String) columns.next());
+
+				if (cell.isResource()) {
+					com.hp.hpl.jena.rdf.model.Resource resource = cell.asResource();
+					String resourceString = resource.toString();
+					if (resourceString.contains("doctor_id")) {
+						doctor_id = row.get((String) columns.next()).toString();
+						// System.out.println("doctor_id is :" + doctor_id);
+
+					} else if (resourceString.contains("patient_uuid")) {
+						patient_uuid = row.get((String) columns.next()).toString();
+						// System.out.println("patient_uuid is :" + patient_uuid);
+						
+					} else if (resourceString.contains("patient_name")) {
+						patient_name = row.get((String) columns.next()).toString();
+						// System.out.println("patient_name is :"+ patient_name);
+					}
+				} else {
+					System.out.println(cell.toString());
+				}
+			}
+		}
+		
+		PatientAssignment pa = new PatientAssignment();
+		pa.setDoctorId(doctor_id);
+		pa.setPatientName(patient_name);
+		pa.setPatientUUID(patient_uuid);
+		pa.setUserId(Context.getAuthenticatedUser().getId().toString());
+		
+		// ResultSetFormatter.out(results);
+		return pa;
 	}
 
 	@Override
