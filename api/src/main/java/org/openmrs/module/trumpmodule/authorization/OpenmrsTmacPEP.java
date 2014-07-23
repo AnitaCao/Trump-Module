@@ -11,41 +11,71 @@ import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 import org.openmrs.module.trumpmodule.obligations.EmailObligation;
 import org.openmrs.module.trumpmodule.obligations.OpenmrsUserObligationMonitor;
 import org.openmrs.module.trumpmodule.obligations.RESTObligation;
+import org.wso2.balana.XACMLConstants;
 
 import luca.data.DataHandler;
 import luca.tmac.basic.ResponseParser;
-import luca.tmac.basic.TmacPEP;
+import luca.tmac.basic.TmacPDP;
+import luca.tmac.basic.data.AbstractAttributeFinderModule;
+import luca.tmac.basic.data.uris.ActionAttributeURI;
+import luca.tmac.basic.data.uris.PermissionAttributeURI;
+import luca.tmac.basic.data.uris.RiskAttributeURI;
+import luca.tmac.basic.data.uris.SubjectAttributeURI;
+import luca.tmac.basic.data.uris.TaskAttributeURI;
+import luca.tmac.basic.data.uris.TeamAttributeURI;
 import luca.tmac.basic.obligations.Obligation;
 import luca.tmac.basic.obligations.ObligationIds;
 import luca.tmac.basic.obligations.ObligationImpl;
 import luca.tmac.basic.obligations.ObligationMonitorable;
+import luca.tmac.basic.obligations.UserObligationMonitor;
 
-public class OpenmrsTmacPEP extends TmacPEP {
+public class OpenmrsTmacPEP  {
 	
 	private OpenmrsUserObligationMonitor openmrsOblMonitor;
 	private User currentUser = Context.getAuthenticatedUser(); //currentUser is the triggering user of the obligation
 	private HashMap<String,String> messages;
 	
+	public TmacPDP pdp;
+	public UserObligationMonitor obligationMonitor;
+	public DataHandler dh;
+	public HashMap<Long, ResponseParser> sessionParsers;
+	public ObligationMonitorable monitorable;
+
 	OpenmrsEnforceServiceContext SerContext = OpenmrsEnforceServiceContext.getInstance();
 	
 	public OpenmrsTmacPEP(DataHandler parDataHandler,
 			ObligationMonitorable monitorable) {
-		super(parDataHandler, monitorable);
+		this.monitorable = monitorable;
+		dh = parDataHandler;
+		pdp = new TmacPDP(dh, getTopLevelPolicyDirectory(),  getUserPolicyDirectory());
+		
+		sessionParsers = new HashMap<Long, ResponseParser>();
 		
 		openmrsOblMonitor = new OpenmrsUserObligationMonitor(new ArrayList<Obligation>(),monitorable,dh);
 	}
 	
-	@Override
+	
 	public String getUserPolicyDirectory() {
 		return OpenmrsEnforceServiceContext.getInstance().getUserPolicyDirectory();
 	}
 
-	@Override
+	
 	public String getTopLevelPolicyDirectory() {
 		return OpenmrsEnforceServiceContext.getInstance().getTopLevelPolicyDirectory();
 	}
 	
+	/**
+	 * Register a new attribute finder module with the PDP associated with this PEP.
+	 * @param m - the attribute finder module.
+	 */
+	public void addAttributeFinderToPDP(AbstractAttributeFinderModule m)
+	{
+		pdp.addFinderModule(m);
+	}
 	
+	public void createPDP(){
+		pdp.createPDP();
+	}
 
 	public HashMap<String,String> acceptResponse(long parserId,String methodName) {
 		ResponseParser parser = sessionParsers.get(parserId);
@@ -237,5 +267,102 @@ public class OpenmrsTmacPEP extends TmacPEP {
 			
 		}
 		else throw new IllegalArgumentException("system obligation not supported:" + obl.getActionName());
+	}
+	
+	public String createXACMLRequest(String username, String permission,
+			String team, String task, String requestType) {
+
+		String subjectCategory = "";
+		String permissionCategory = "";
+		String teamCategory = "";
+		String taskCategory = "";
+		String actionCategory = "";
+		String envCategory = "";
+
+		if (username != null && !username.equals(""))
+			subjectCategory = "<Attributes Category=\""
+					+ SubjectAttributeURI.SUBJECT_CATEGORY_URI
+					+ "\">\n"
+					+ "<Attribute AttributeId=\""
+					+ SubjectAttributeURI.ID_URI
+					+ "\" IncludeInResult=\"false\">\n"
+					+ "<AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">"
+					+ username + "</AttributeValue>\n" + "</Attribute>\n"
+					+ "</Attributes>\n";
+
+		if (permission != null && !permission.equals(""))
+			permissionCategory = "<Attributes Category=\""
+					+ PermissionAttributeURI.PERMISSION_CATEGORY_URI
+					+ "\">\n"
+					+ "<Attribute AttributeId=\""
+					+ PermissionAttributeURI.PERMISSION_ID_URI
+					+ "\" IncludeInResult=\"false\">\n"
+					+ "<AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">"
+					+ permission + "</AttributeValue>\n" + "</Attribute>\n"
+					+ "</Attributes>\n";
+
+		if (team != null && !team.equals(""))
+			teamCategory = "<Attributes Category=\""
+					+ TeamAttributeURI.TEAM_CATEGORY_URI
+					+ "\">\n"
+					+ "<Attribute AttributeId=\""
+					+ TeamAttributeURI.ID_URI
+					+ "\" IncludeInResult=\"false\">\n"
+					+ "<AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">"
+					+ team + "</AttributeValue>\n" + "</Attribute>\n"
+					+ "</Attributes>\n";
+
+		if (task != null && !task.equals(""))
+			taskCategory = "<Attributes Category=\""
+					+ TaskAttributeURI.TASK_CATEGORY_URI
+					+ "\">\n"
+					+ "<Attribute AttributeId=\""
+					+ TaskAttributeURI.ID_URI
+					+ "\" IncludeInResult=\"false\">\n"
+					+ "<AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">"
+					+ task + "</AttributeValue>\n" + "</Attribute>\n"
+					+ "</Attributes>\n";
+
+		if (requestType != null && !requestType.equals(""))
+			actionCategory = "<Attributes Category=\""
+					+ ActionAttributeURI.ACTION_CATEGORY_URI
+					+ "\">\n"
+					+ "<Attribute AttributeId=\""
+					+ ActionAttributeURI.ACTION_ID_URI
+					+ "\" IncludeInResult=\"false\">\n"
+					+ "<AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">"
+					+ requestType + "</AttributeValue>\n" + "</Attribute>\n"
+					+ "</Attributes>\n";
+
+		envCategory = "<Attributes Category=\"" + XACMLConstants.ENT_CATEGORY
+				+ "\">\n" + "</Attributes>\n";
+
+		String riskCategory = "<Attributes Category=\""
+				+ RiskAttributeURI.RISK_CATEGORY_URI + "\">\n"
+				+ "</Attributes>\n";
+
+		String request = "<Request xmlns=\"urn:oasis:names:tc:xacml:3.0:core:schema:wd-17\" CombinedDecision=\"false\" ReturnPolicyIdList=\"false\">\n"
+				+ subjectCategory
+				+ permissionCategory
+				+ teamCategory
+				+ taskCategory
+				+ actionCategory
+				+ envCategory
+				+ riskCategory
+				+ "</Request>";
+
+		return request;
+	}
+	
+	public ResponseParser requestAccess(String username, String permission,
+			String team, String task, String requestType) {
+		String request = createXACMLRequest(username, permission, team, task,
+				requestType);
+		String response = pdp.evaluate(request);
+		ResponseParser rParser = new ResponseParser(response,dh);
+		System.out.println("Anita , 2 the decision is : " + rParser.getDecision());
+		if(rParser.getDecision().equalsIgnoreCase("Permit"))
+				sessionParsers.put(rParser.getParserId(), rParser);
+		return rParser;
 	}
 }

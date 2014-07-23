@@ -14,14 +14,11 @@ import luca.tmac.basic.obligations.Obligation;
 import luca.tmac.basic.obligations.ObligationMonitorable;
 
 
-
-
-
-
 //import org.apache.commons.logging.Log;
 //import org.apache.commons.logging.LogFactory;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
+import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 import org.openmrs.module.trumpmodule.TmacEnforceService;
 import org.openmrs.module.trumpmodule.dataFinder.OpenmrsRiskAttributeFinderModule;
@@ -29,7 +26,7 @@ import org.openmrs.module.trumpmodule.dataFinder.OpenmrsSubjectAttributeFinderMo
 import org.wso2.balana.attr.StringAttribute;
 
 
-public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMonitorable {
+public class TmacEnforceServiceImpl extends BaseOpenmrsService implements TmacEnforceService,ObligationMonitorable {
 	
 	
 	//private static final Log LOG = LogFactory.getLog(TmacEnforceServiceImpl.class);
@@ -134,6 +131,7 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
     
     public HashMap<String,String> acceptResponse(String methodName){
     	HashMap<String, String> messages = pep.acceptResponse(responseParserId,methodName);
+    	
     	return messages;
     }
     
@@ -152,6 +150,20 @@ public class TmacEnforceServiceImpl implements TmacEnforceService,ObligationMoni
 
 
 	public void notifyObligationInsert(Obligation obl) {
+		
+	}
+
+
+	@Override
+	public void onShutdown() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onStartup() {
+		// TODO Auto-generated method stub
 		
 	}
 

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import luca.data.AttributeQuery;
@@ -16,6 +17,7 @@ import luca.tmac.basic.obligations.Obligation;
 
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.trumpmodule.patientassignment.PatientAssignment;
 import org.openmrs.module.trumpmodule.policies.Policy;
 import org.openmrs.module.trumpmodule.policies.PolicyFileHandler;
 import org.wso2.balana.attr.StringAttribute;
