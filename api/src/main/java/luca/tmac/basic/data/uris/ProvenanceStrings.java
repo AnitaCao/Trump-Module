@@ -30,4 +30,13 @@ public class ProvenanceStrings {
 	public static final String PROV = "http://www.w3.org/ns/prov#" ;
 	public static final String XSD = "http://www.w3.org/2001/XMLSchema#" ;
 	public static final String RDFs ="http://www.w3.org/2000/01/rdf-schema#" ;
+	
+	// query prefix 
+	public static final String QUERY_PREFIX = 
+			  " PREFIX agent: <" + ProvenanceStrings.NS + ProvenanceStrings.AGENT_USER + ">"
+			+ " PREFIX pA: <" + ProvenanceStrings.NS + ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT + ">"
+			+ " PREFIX p: <" + ProvenanceStrings.NS + ProvenanceStrings.ENTITY_PATIENT + ">" 
+			+ " PREFIX RDF: <" + ProvenanceStrings.RDF + ">" 
+			+ " PREFIX PROV: <" + ProvenanceStrings.PROV + ">" 
+			+ " PREFIX NS: <" + ProvenanceStrings.NS + ">";
 }

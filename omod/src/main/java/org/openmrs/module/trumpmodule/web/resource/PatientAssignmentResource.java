@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import luca.tmac.basic.data.uris.ProvenanceStrings;
 
+import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 import org.openmrs.module.trumpmodule.patientassignment.PatientAssignment;
@@ -46,15 +47,15 @@ public class PatientAssignmentResource extends
 			.getInstance();
 	private String directory = openmrsContext.getProvenanceDirectory();
 
-	private String prefix = " PREFIX agent: <" + ProvenanceStrings.NS
-			+ ProvenanceStrings.AGENT_USER + ">" + " PREFIX pA: <"
-			+ ProvenanceStrings.NS
-			+ ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT + ">"
-			+ " PREFIX p: <" + ProvenanceStrings.NS
-			+ ProvenanceStrings.ENTITY_PATIENT + ">" + " PREFIX RDF: <"
-			+ ProvenanceStrings.RDF + ">" + " PREFIX PROV: <"
-			+ ProvenanceStrings.PROV + ">" + " PREFIX NS: <"
-			+ ProvenanceStrings.NS + ">";
+//	private String prefix = " PREFIX agent: <" + ProvenanceStrings.NS
+//			+ ProvenanceStrings.AGENT_USER + ">" + " PREFIX pA: <"
+//			+ ProvenanceStrings.NS
+//			+ ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT + ">"
+//			+ " PREFIX p: <" + ProvenanceStrings.NS
+//			+ ProvenanceStrings.ENTITY_PATIENT + ">" + " PREFIX RDF: <"
+//			+ ProvenanceStrings.RDF + ">" + " PREFIX PROV: <"
+//			+ ProvenanceStrings.PROV + ">" + " PREFIX NS: <"
+//			+ ProvenanceStrings.NS + ">";
 
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(
@@ -107,19 +108,17 @@ public class PatientAssignmentResource extends
 	@Override
 	public PatientAssignment save(PatientAssignment delegate) {
 
-		// Patient patient =
-		// Context.getPatientService().getPatientByUuid(delegate.getPatientUUID());
+		Patient patient = Context.getPatientService().getPatientByUuid(delegate.getPatientUUID());
 
-		// String patientName =
-		// patient.getGivenName()+" "+patient.getMiddleName()+" "
-		// +patient.getFamilyName();
+		String patientName = patient.getGivenName()+" "+patient.getMiddleName()+" " +patient.getFamilyName();
 
-		// delegate.setPatientName(patientName);
+		delegate.setPatientName(patientName);
+		
 		long startTime = System.currentTimeMillis();
 		dataset = TDBFactory.createDataset(directory);
 		ProvenanceBundle provBundle = new ProvenanceBundle(ProvenanceStrings.NS);
 
-		delegate.setPatientName("DAVE");
+		//delegate.setPatientName("DAVE"); //just for test.
 		// insert to TDB
 
 		// 1. the activity has an property : action_name
@@ -215,7 +214,7 @@ public class PatientAssignmentResource extends
 		String doctor_id = null;
 		String patientassignment_uuid = null;
 
-		String queryString = prefix + "SELECT ?property ?value " + "WHERE {"
+		String queryString = ProvenanceStrings.QUERY_PREFIX + "SELECT ?property ?value " + "WHERE {"
 				+ "?pa NS:patientassignment_uuid " + "'"+uniqueId+"'" + " . "
 				+ "?pa ?property ?value}";
 
@@ -266,6 +265,10 @@ public class PatientAssignmentResource extends
 			}
 		}
 
+		// unlike saving everything to OpenmrsServiceContext class, we are getting information from TDB, 
+		// which means we can't get the object, we can only get the information of the object, so we need
+		// to new an instance and set the information by passing the obtained information to the new 
+		// instance. Am I right ?
 		PatientAssignment pa = new PatientAssignment();
 		pa.setDoctorId(doctor_id);
 		pa.setPatientName(patient_name);
@@ -282,7 +285,7 @@ public class PatientAssignmentResource extends
 		List<PatientAssignment> patientAssignments = new ArrayList<PatientAssignment>();
 		List<String> uuidList = new ArrayList<String>();
 
-		String queryString = prefix + "SELECT ?s " + "WHERE {"
+		String queryString = ProvenanceStrings.QUERY_PREFIX + "SELECT ?s " + "WHERE {"
 				+ "?s a PROV:Entity .}";
 
 		dataset = TDBFactory.createDataset(directory);
@@ -301,7 +304,7 @@ public class PatientAssignmentResource extends
 		}
 
 		for (int i = 0; i < lists.size(); i++) {
-			String queryString2 = prefix + "SELECT *" + "WHERE {" + "<"
+			String queryString2 = ProvenanceStrings.QUERY_PREFIX + "SELECT *" + "WHERE {" + "<"
 					+ lists.get(i) + "> NS:patientassignment_uuid ?value .}";
 			Query query2 = QueryFactory.create(queryString2);
 			QueryExecution qexec2 = QueryExecutionFactory.create(query2,dataset);
