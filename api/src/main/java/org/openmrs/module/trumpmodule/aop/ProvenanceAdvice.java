@@ -1,6 +1,7 @@
 package org.openmrs.module.trumpmodule.aop;
 
 import java.lang.reflect.Method;
+import java.util.UUID;
 
 import luca.tmac.basic.data.uris.ProvenanceStrings;
 
@@ -46,19 +47,17 @@ public class ProvenanceAdvice implements MethodInterceptor {
 			//insert to TDB
 			
 			//1. activity has one property: action_name
-			String activityURI = provBundle.createActivity();
+			String activityURI = provBundle.createActivity(ProvenanceStrings.NS +ProvenanceStrings.ACTIVITY_PATIENT + UUID.randomUUID().getMostSignificantBits());
 			Resource activity = provBundle.getResource(activityURI);
 			
 			// create a new action property, if it doesn't already exist, which
 			// is just the name of the invoked method
-			Property actionProp = provBundle.getModel().createProperty(
-					ProvenanceStrings.NS, ProvenanceStrings.ACTIVITY_NS);
+			Property actionProp = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.ACTIVITY_NAME);
 			activity.addProperty(actionProp, name);
 
 			//2. agent - comes from the logged in user or the user who is invoking the method
 			User user = Context.getAuthenticatedUser();
-			String agentURI = provBundle.createAgent(ProvenanceStrings.NS
-					+ ProvenanceStrings.AGENT_USER + user.getId());
+			String agentURI = provBundle.createAgent(ProvenanceStrings.NS + ProvenanceStrings.AGENT_USER + user.getId());
 			Resource agent = provBundle.getResource(agentURI);
 
 			// NOW: we need to execute the method to actually get the created
@@ -73,9 +72,7 @@ public class ProvenanceAdvice implements MethodInterceptor {
 			// resulting in some entity being created (i.e. a new patient record
 			// with a UUID) -
 			// i.e. from the result we just got
-			String entityURI = provBundle.createEntity(ProvenanceStrings.NS
-					+ ProvenanceStrings.ENTITY_PATIENT
-					+ ((OpenmrsData) result).getId());
+			String entityURI = provBundle.createEntity(ProvenanceStrings.NS + ProvenanceStrings.ENTITY_PATIENT + ((OpenmrsData) result).getId());
 			
 			Resource entity = provBundle.getResource(entityURI);
 			// entity has an property : patient_uuid

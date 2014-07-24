@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import luca.tmac.basic.data.uris.ProvenanceStrings;
 
@@ -30,43 +31,55 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.tdb.TDBFactory;
-import com.sun.mail.iap.Literal;
 
+@Resource(name = "v1/trumpmodule/patientassignment", supportedClass = PatientAssignment.class, supportedOpenmrsVersions = {
+		"1.8.*", "1.9.*" })
+public class PatientAssignmentResource extends
+		DataDelegatingCrudResource<PatientAssignment> {
 
-@Resource(name ="v1/trumpmodule/patientassignment", supportedClass = PatientAssignment.class, supportedOpenmrsVersions = {"1.8.*", "1.9.*"})
-public class PatientAssignmentResource extends DataDelegatingCrudResource<PatientAssignment> {
-	
-	
 	private Dataset dataset;
-	OpenmrsEnforceServiceContext openmrsContext = OpenmrsEnforceServiceContext.getInstance();
+	OpenmrsEnforceServiceContext openmrsContext = OpenmrsEnforceServiceContext
+			.getInstance();
 	private String directory = openmrsContext.getProvenanceDirectory();
-	
+
+	private String prefix = " PREFIX agent: <" + ProvenanceStrings.NS
+			+ ProvenanceStrings.AGENT_USER + ">" + " PREFIX pA: <"
+			+ ProvenanceStrings.NS
+			+ ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT + ">"
+			+ " PREFIX p: <" + ProvenanceStrings.NS
+			+ ProvenanceStrings.ENTITY_PATIENT + ">" + " PREFIX RDF: <"
+			+ ProvenanceStrings.RDF + ">" + " PREFIX PROV: <"
+			+ ProvenanceStrings.PROV + ">" + " PREFIX NS: <"
+			+ ProvenanceStrings.NS + ">";
+
 	@Override
-	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
+	public DelegatingResourceDescription getRepresentationDescription(
+			Representation rep) {
 		if (rep instanceof DefaultRepresentation) {
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("patientUUID");
 			description.addProperty("doctorId");
 			description.addSelfLink();
-			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
+			description.addLink("full", ".?v="
+					+ RestConstants.REPRESENTATION_FULL);
 			return description;
-		}else if (rep instanceof FullRepresentation){
+		} else if (rep instanceof FullRepresentation) {
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("patientName");
 			description.addProperty("doctorId");
 			description.addProperty("patientUUID");
 			description.addProperty("userId");
+			description.addProperty("patientassignmentUUID");
 
 			description.addProperty("auditInfo", findMethod("getAuditInfo"));
 			description.addSelfLink();
 			return description;
 		}
-		return null;    
+		return null;
 	}
 
 	@Override
@@ -91,63 +104,78 @@ public class PatientAssignmentResource extends DataDelegatingCrudResource<Patien
 		return Arrays.asList(Representation.DEFAULT);
 	}
 
-
 	@Override
 	public PatientAssignment save(PatientAssignment delegate) {
-		
-		//Patient patient = Context.getPatientService().getPatientByUuid(delegate.getPatientUUID());
-		
-		//String patientName = patient.getGivenName()+" "+patient.getMiddleName()+" " +patient.getFamilyName();
-		
-		//delegate.setPatientName(patientName);
+
+		// Patient patient =
+		// Context.getPatientService().getPatientByUuid(delegate.getPatientUUID());
+
+		// String patientName =
+		// patient.getGivenName()+" "+patient.getMiddleName()+" "
+		// +patient.getFamilyName();
+
+		// delegate.setPatientName(patientName);
 		long startTime = System.currentTimeMillis();
 		dataset = TDBFactory.createDataset(directory);
 		ProvenanceBundle provBundle = new ProvenanceBundle(ProvenanceStrings.NS);
-		
+
 		delegate.setPatientName("DAVE");
-		//insert to TDB
-		
-		//1. the activity has an property : action_name
-		String activityURI = provBundle.createActivity();
-		com.hp.hpl.jena.rdf.model.Resource activity = provBundle.getResource(activityURI);
-		
-		Property actionProp = provBundle.getModel().createProperty( ProvenanceStrings.NS, ProvenanceStrings.ACTIVITY_NS);
+		// insert to TDB
+
+		// 1. the activity has an property : action_name
+		String activityURI = provBundle.createActivity(ProvenanceStrings.NS
+				+ ProvenanceStrings.ACTIVITY_PATIENT_ASSIGNMENT
+				+ UUID.randomUUID().getMostSignificantBits());
+		com.hp.hpl.jena.rdf.model.Resource activity = provBundle
+				.getResource(activityURI);
+
+		Property actionProp = provBundle.getModel().createProperty(
+				ProvenanceStrings.NS, ProvenanceStrings.ACTIVITY_NAME);
 		activity.addProperty(actionProp, "do_patient_assignment");
 
-		
-		//2.  agent - comes from the logged in user or the user who is invoking the method
+		// 2. agent - comes from the logged in user or the user who is invoking
+		// the method
 		String agentURI = provBundle.createAgent(ProvenanceStrings.NS
 				+ ProvenanceStrings.AGENT_USER + delegate.getUserId());
-		com.hp.hpl.jena.rdf.model.Resource agent = provBundle.getResource(agentURI);
-		
-		
-		//3. the entity is patientAssignment
+		com.hp.hpl.jena.rdf.model.Resource agent = provBundle
+				.getResource(agentURI);
+
+		// 3. the entity is patientAssignment
 		String entityURI = provBundle.createEntity(ProvenanceStrings.NS
-				+ ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT + delegate.getUuid());
-		com.hp.hpl.jena.rdf.model.Resource entity = provBundle.getResource(entityURI);
-		
-		
-		//patientAssignment entity has 3 property : patient_name, patient_uuid and doctor_id
-		Property entityProp1 = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.PATIENT_NAME);
+				+ ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT
+				+ delegate.getId());
+		com.hp.hpl.jena.rdf.model.Resource entity = provBundle
+				.getResource(entityURI);
+
+		// patientAssignment entity has 3 property : patient_name, patient_uuid
+		// and doctor_id
+		Property entityProp1 = provBundle.getModel().createProperty(
+				ProvenanceStrings.NS, ProvenanceStrings.PATIENT_NAME);
 		entity.addProperty(entityProp1, delegate.getPatientName());
-		
-		Property entityProp2 = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.PATIENT_UUID);
+
+		Property entityProp2 = provBundle.getModel().createProperty(
+				ProvenanceStrings.NS, ProvenanceStrings.PATIENT_UUID);
 		entity.addProperty(entityProp2, delegate.getPatientUUID());
-		
-		Property entityProp3 = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.DOCTOR_ID);
+
+		Property entityProp3 = provBundle.getModel().createProperty(
+				ProvenanceStrings.NS, ProvenanceStrings.DOCTOR_ID);
 		entity.addProperty(entityProp3, delegate.getDoctorId());
-		
-		
+
+		Property entityProp4 = provBundle.getModel()
+				.createProperty(ProvenanceStrings.NS,
+						ProvenanceStrings.PATIENT_ASSIGNMENT_UUID);
+		entity.addProperty(entityProp4, delegate.getUuid());
+
 		// add statement describing when the activity started
 		provBundle.addStartedAtTime(activity, startTime);
 		// add statement describing when the activity ended.
 		provBundle.addEndedAtTime(activity, System.currentTimeMillis());
-		
-		//the activity was started by the agent. 
+
+		// the activity was started by the agent.
 		provBundle.addWasStartedBy(activity, agent);
-		//the entity was generated by the activity
+		// the entity was generated by the activity
 		provBundle.addWasGeneratedBy(entity, activity);
-		//the entity was attributed to the agent
+		// the entity was attributed to the agent
 		provBundle.addWasAttributedTo(entity, agent);
 
 		provBundle.getModel().write(System.out);
@@ -157,7 +185,7 @@ public class PatientAssignmentResource extends DataDelegatingCrudResource<Patien
 		model.add(provBundle.getModel());
 
 		dataset.close();
-		
+
 		return delegate;
 
 	}
@@ -181,24 +209,18 @@ public class PatientAssignmentResource extends DataDelegatingCrudResource<Patien
 
 	@Override
 	public PatientAssignment getByUniqueId(String uniqueId) {
-		
+
 		String patient_name = null;
 		String patient_uuid = null;
 		String doctor_id = null;
-		
-		String sp = " PREFIX agent: <" + ProvenanceStrings.NS
-				+ ProvenanceStrings.AGENT_USER + ">" + " PREFIX pA: <"
-				+ ProvenanceStrings.NS
-				+ ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT + ">"
-				+ " PREFIX p: <" + ProvenanceStrings.NS
-				+ ProvenanceStrings.ENTITY_PATIENT + ">" + " PREFIX RDF: <"
-				+ ProvenanceStrings.RDF + ">" + " PREFIX PROV: <"
-				+ ProvenanceStrings.PROV + ">" + " PREFIX NS: <"
-				+ ProvenanceStrings.NS + ">" + " SELECT * " + " WHERE {"
-				+ "	pA:" + uniqueId + " ?property ?value }";
+		String patientassignment_uuid = null;
+
+		String queryString = prefix + "SELECT ?property ?value " + "WHERE {"
+				+ "?pa NS:patientassignment_uuid " + "'"+uniqueId+"'" + " . "
+				+ "?pa ?property ?value}";
 
 		dataset = TDBFactory.createDataset(directory);
-		Query query = QueryFactory.create(sp);
+		Query query = QueryFactory.create(queryString);
 		QueryExecution qexec = QueryExecutionFactory.create(query, dataset);
 		ResultSet results = qexec.execSelect();
 		while (results.hasNext()) {
@@ -212,47 +234,96 @@ public class PatientAssignmentResource extends DataDelegatingCrudResource<Patien
 				RDFNode cell = row.get((String) columns.next());
 
 				if (cell.isResource()) {
-					com.hp.hpl.jena.rdf.model.Resource resource = cell.asResource();
+					com.hp.hpl.jena.rdf.model.Resource resource = cell
+							.asResource();
 					String resourceString = resource.toString();
 					if (resourceString.contains("doctor_id")) {
 						doctor_id = row.get((String) columns.next()).toString();
 						// System.out.println("doctor_id is :" + doctor_id);
 
 					} else if (resourceString.contains("patient_uuid")) {
-						patient_uuid = row.get((String) columns.next()).toString();
-						// System.out.println("patient_uuid is :" + patient_uuid);
-						
+						patient_uuid = row.get((String) columns.next())
+								.toString();
+						// System.out.println("patient_uuid is :" +
+						// patient_uuid);
+
 					} else if (resourceString.contains("patient_name")) {
-						patient_name = row.get((String) columns.next()).toString();
-						// System.out.println("patient_name is :"+ patient_name);
+						patient_name = row.get((String) columns.next())
+								.toString();
+						// System.out.println("patient_name is :"+
+						// patient_name);
+					} else if (resourceString
+							.contains("patientassignment_uuid")) {
+						patientassignment_uuid = row.get(
+								(String) columns.next()).toString();
+						// System.out.println("patientassignment_uuid is :"+
+						// patientassignment_uuid);
+
 					}
 				} else {
 					System.out.println(cell.toString());
 				}
 			}
 		}
-		
+
 		PatientAssignment pa = new PatientAssignment();
 		pa.setDoctorId(doctor_id);
 		pa.setPatientName(patient_name);
 		pa.setPatientUUID(patient_uuid);
+		pa.setUuid(patientassignment_uuid);
 		pa.setUserId(Context.getAuthenticatedUser().getId().toString());
-		
+
 		// ResultSetFormatter.out(results);
 		return pa;
 	}
 
 	@Override
-	public NeedsPaging<PatientAssignment> doGetAll(RequestContext context){
+	public NeedsPaging<PatientAssignment> doGetAll(RequestContext context) {
 		List<PatientAssignment> patientAssignments = new ArrayList<PatientAssignment>();
+		List<String> uuidList = new ArrayList<String>();
 
-		return new NeedsPaging<PatientAssignment>(patientAssignments,context);
+		String queryString = prefix + "SELECT ?s " + "WHERE {"
+				+ "?s a PROV:Entity .}";
+
+		dataset = TDBFactory.createDataset(directory);
+		Query query = QueryFactory.create(queryString);
+		QueryExecution qexec = QueryExecutionFactory.create(query, dataset);
+		ResultSet results = qexec.execSelect();
+		
+		List<String> lists = new ArrayList<String>();
+		
+		while (results.hasNext()) {
+			QuerySolution row = results.next();
+			String things = row.get("s").toString();
+			if (things.contains("patientassignment")) {
+				lists.add(things);
+			}
+		}
+
+		for (int i = 0; i < lists.size(); i++) {
+			String queryString2 = prefix + "SELECT *" + "WHERE {" + "<"
+					+ lists.get(i) + "> NS:patientassignment_uuid ?value .}";
+			Query query2 = QueryFactory.create(queryString2);
+			QueryExecution qexec2 = QueryExecutionFactory.create(query2,dataset);
+			ResultSet results2 = qexec2.execSelect();
+
+			while (results2.hasNext()) {
+				QuerySolution row = results2.next();
+				RDFNode thing = row.get("value");
+				uuidList.add(thing.toString());
+			}
+		}
+		
+		for(int i = 0; i<uuidList.size(); i++){
+			patientAssignments.add(getByUniqueId(uuidList.get(i)));
+		}
+
+		return new NeedsPaging<PatientAssignment>(patientAssignments, context);
 	}
-
 
 	public String getDisplayString(PatientAssignment patientAssignment) {
-		return patientAssignment.getPatientName() + " assigned to : " + patientAssignment.getDoctorId();
+		return patientAssignment.getPatientName() + " assigned to : "
+				+ patientAssignment.getDoctorId();
 	}
-
 
 }
