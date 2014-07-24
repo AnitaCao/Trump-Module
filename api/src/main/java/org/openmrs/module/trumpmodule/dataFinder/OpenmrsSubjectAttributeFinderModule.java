@@ -12,6 +12,13 @@ import org.wso2.balana.attr.StringAttribute;
 import org.wso2.balana.cond.EvaluationResult;
 import org.wso2.balana.ctx.EvaluationCtx;
 
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.tdb.TDBFactory;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -24,7 +31,10 @@ import luca.data.AttributeQuery;
 import luca.data.DataHandler;
 import luca.tmac.basic.data.AbstractAttributeFinderModule;
 import luca.tmac.basic.data.xml.SubjectAttributeXmlName;
+import luca.tmac.basic.data.uris.ProvenanceStrings;
 import luca.tmac.basic.data.uris.SubjectAttributeURI;
+
+import com.hp.hpl.jena.query.Dataset;
 
 
 public class OpenmrsSubjectAttributeFinderModule extends AbstractAttributeFinderModule {
@@ -140,19 +150,61 @@ public class OpenmrsSubjectAttributeFinderModule extends AbstractAttributeFinder
 			
 		}else if(attributeURI.toString().equals(SubjectAttributeURI.ASSIGNED_PATIENT_URI))
 		{
-			if(methodName.equalsIgnoreCase("getPatient")){
-				HashMap<String, HashSet<String>> assigendPatientIds = 
-						OpenmrsEnforceServiceContext.getInstance().getAssigendPatientInternalIds();
-				HashSet<String> set = assigendPatientIds.get(user.getId().toString());
-				for(String ss : set){
-					values.add(StringAttribute.getInstance(ss));
+			if (methodName.equalsIgnoreCase("getPatient")) {
+
+				// TODO Get assigned patient uuid from TDB, not from
+				// OpenmrsEnforceServiceContext.
+				// So here, we need to select the patientuuid from TDB. We know
+				// the doctorId (which
+				// is actually the userId, because current user is the one who
+				// want to get the
+				// assigned patient information, so we need to check if the
+				// wanted patient is
+				// assigned to this user or not), here we need to get the
+				// patientuuid according
+				// to the doctorId.
+				OpenmrsEnforceServiceContext openmrsContext = OpenmrsEnforceServiceContext.getInstance();
+				String directory = openmrsContext.getProvenanceDirectory();
+				Dataset dataset = TDBFactory.createDataset(directory);
+
+				String queryString = ProvenanceStrings.QUERY_PREFIX
+						+ "SELECT *" 
+						+ "WHERE {" + "?pa NS:doctor_id " + "'"+user.getId().toString()+"'" + " ."
+						+ "?pa NS:patient_uuid ?patient_uuid ." 
+						+ "}";
+				Query q = QueryFactory.create(queryString);
+				QueryExecution qexec = QueryExecutionFactory.create(q, dataset);
+				ResultSet results = qexec.execSelect();
+				// ResultSetFormatter.out(results);
+				while (results.hasNext()) {
+					String patient_uuid = results.next().get("patient_uuid")
+							.toString();
+					//System.out.println(patient_uuid);
+					values.add(StringAttribute.getInstance(patient_uuid));
 				}
 				try {
 					bag = new BagAttribute(new URI(StringAttribute.identifier), values);
 				} catch (URISyntaxException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
+//-----------------------go to openmrsEnforceServiceContext to get the assignedPatient uuid list-------------
+				
+//				HashMap<String, HashSet<String>> assigendPatientIds = 
+//						OpenmrsEnforceServiceContext.getInstance().getAssigendPatientInternalIds();
+//				
+//				HashSet<String> set = assigendPatientIds.get(user.getId().toString());
+//				
+//				for(String ss : set){
+//					values.add(StringAttribute.getInstance(ss));
+//				}
+//				try {
+//					bag = new BagAttribute(new URI(StringAttribute.identifier), values);
+//				} catch (URISyntaxException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//-----------------------------------------------------------------------------------------------------------
 			}else{
 				attributeType = StringAttribute.identifier;
 				attribute = SubjectAttributeXmlName.ASSIGNED_PATIENT;
