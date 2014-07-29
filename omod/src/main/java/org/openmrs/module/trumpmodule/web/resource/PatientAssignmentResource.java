@@ -47,16 +47,6 @@ public class PatientAssignmentResource extends
 			.getInstance();
 	private String directory = openmrsContext.getProvenanceDirectory();
 
-//	private String prefix = " PREFIX agent: <" + ProvenanceStrings.NS
-//			+ ProvenanceStrings.AGENT_USER + ">" + " PREFIX pA: <"
-//			+ ProvenanceStrings.NS
-//			+ ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT + ">"
-//			+ " PREFIX p: <" + ProvenanceStrings.NS
-//			+ ProvenanceStrings.ENTITY_PATIENT + ">" + " PREFIX RDF: <"
-//			+ ProvenanceStrings.RDF + ">" + " PREFIX PROV: <"
-//			+ ProvenanceStrings.PROV + ">" + " PREFIX NS: <"
-//			+ ProvenanceStrings.NS + ">";
-
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(
 			Representation rep) {
@@ -192,7 +182,57 @@ public class PatientAssignmentResource extends
 	@Override
 	protected void delete(PatientAssignment delegate, String reason,
 			RequestContext context) throws ResponseException {
-		// TODO Auto-generated method stub
+		// when we do delete patientAssignment, we do not actually delete it from TDB, 
+		// we do invalidating this patientAssignment entity.
+		
+		long startTime = System.currentTimeMillis();
+		dataset = TDBFactory.createDataset(directory);
+		ProvenanceBundle provBundle = new ProvenanceBundle(ProvenanceStrings.NS);
+
+		// insert to TDB
+		// 1. the activity has an property : action_name
+		String activityURI = provBundle.createActivity(ProvenanceStrings.NS
+				+ ProvenanceStrings.ACTIVITY_UNDO_PATIENT_ASSIGNMENT
+				+ UUID.randomUUID().getMostSignificantBits());
+		com.hp.hpl.jena.rdf.model.Resource activity = provBundle
+				.getResource(activityURI);
+
+		Property actionProp = provBundle.getModel().createProperty(
+				ProvenanceStrings.NS, ProvenanceStrings.ACTIVITY_NAME);
+		activity.addProperty(actionProp, "undo_patient_assignment");
+
+		// 2. agent - comes from the logged in user or the user who is invoking
+		// the method
+		String agentURI = provBundle.createAgent(ProvenanceStrings.NS
+				+ ProvenanceStrings.AGENT_USER + delegate.getUserId());
+		com.hp.hpl.jena.rdf.model.Resource agent = provBundle
+				.getResource(agentURI);
+
+		// 3. the entity is patientAssignment
+		// here we need to get the patientAssignment entity from TDB according 
+		// to the uuid of the patientAssignment which we want to delete.
+		String entityURI = provBundle.createEntity(ProvenanceStrings.NS
+				+ ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT + delegate.getId());
+		com.hp.hpl.jena.rdf.model.Resource entity = provBundle
+				.getResource(entityURI);
+
+		// add statement describing when the activity started
+		provBundle.addStartedAtTime(activity, startTime);
+		// add statement describing when the activity ended.
+		provBundle.addEndedAtTime(activity, System.currentTimeMillis());
+		// the activity was started by the agent.
+		provBundle.addWasStartedBy(activity, agent);
+		
+		provBundle.addWasInvalidatedBy(entity, activity);
+		
+		provBundle.getModel().write(System.out);
+
+		Model model = dataset.getDefaultModel();
+
+		model.add(provBundle.getModel());
+
+		dataset.close();
+		
 	}
 
 	@Override
