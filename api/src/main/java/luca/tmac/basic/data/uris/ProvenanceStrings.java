@@ -6,8 +6,8 @@ public class ProvenanceStrings {
 	
 	//activity namespace
 	public static final String ACTIVITY_PATIENT = "save_patient/" ;
-	public static final String ACTIVITY_PATIENT_ASSIGNMENT = "do_patientassignment/";
-	public static final String ACTIVITY_UNDO_PATIENT_ASSIGNMENT = "undo_patientassignment/";
+	public static final String ACTIVITY_ASSIGN_PATIENT = "assign_patient/";
+	public static final String ACTIVITY_UNASSIGN_PATIENT = "unassign_patient/";
 	
 	// entity namespace
 	public static final String ENTITY_PATIENT = "patient/";
