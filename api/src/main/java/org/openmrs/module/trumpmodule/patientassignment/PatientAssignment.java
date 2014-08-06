@@ -14,7 +14,7 @@ public class PatientAssignment extends BaseOpenmrsData implements Serializable {
      private String doctorId; //assigned to this doctor, actually this doctorId is an userId
      private String userId; //who did this assignment
      private String patientassignmentUUID;
-     private boolean isInvalidated;
+     private boolean invalidated;
     
      public PatientAssignment(){
           // TODO - fix this - super dirty generation of a not very unique integer ID just to keep
@@ -29,7 +29,7 @@ public class PatientAssignment extends BaseOpenmrsData implements Serializable {
      public PatientAssignment(String patientUUID, String doctorId) {
           this.patientUUID = patientUUID;
          this.doctorId = doctorId;
-         this.isInvalidated = false;
+         this.invalidated = false;
 
      }
     
@@ -75,12 +75,18 @@ public class PatientAssignment extends BaseOpenmrsData implements Serializable {
 		this.setUuid(patientassignmentUUID);
 	}
 
-	public boolean isInvalidated() {
-		return isInvalidated;
+	public Boolean getInvalidated() {
+		return isInvalidated();
 	}
 
-	public void setInvalidated(boolean isInvalidated) {
-		this.isInvalidated = isInvalidated;
+
+	public Boolean isInvalidated() {
+		return this.invalidated;
 	}
-    
+	
+	public void setInvalidated(boolean invalidated) {
+		this.invalidated = invalidated;
+	}
+	
+
 }
