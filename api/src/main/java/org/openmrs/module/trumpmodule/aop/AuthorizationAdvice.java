@@ -14,16 +14,14 @@ import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 import org.openmrs.module.trumpmodule.authorization.TmacEnforceServiceImpl;
 import org.springframework.aop.MethodBeforeAdvice;
 
-
 public class AuthorizationAdvice implements MethodBeforeAdvice {
-	
-	
 	
 	/**
 	 * Logger for this class and subclasses
 	 */
 	protected final Log log = LogFactory.getLog(AuthorizationAdvice.class);
 	OpenmrsEnforceServiceContext SerContext = OpenmrsEnforceServiceContext.getInstance();
+	
 	
 	/**
 	 * Allows us to check whether a user is authorized to access a particular method.
@@ -43,6 +41,7 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 		
 		//get current user 
 		User user = Context.getAuthenticatedUser();
+		System.out.println("current user is : " + user.getUserId().toString());
 		
 		if (log.isDebugEnabled()) {
 			log.debug("User " + user);
@@ -58,67 +57,57 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 		System.out.println("!!!!!requireAll: " + requireAll);
 		if (!privileges.isEmpty()) {		
 			
-			
 			//JUST FOR TESTING: we need to hack the before method here for our method to get through without checking privileges 
 			if(method.getName().equalsIgnoreCase("getpatients") && args.length>3){
 				return ;
 			}
-			
-			
 			//TmacEnforceServiceImpl pepService = Context.getService(TmacEnforceServiceImpl.class);
 			TmacEnforceServiceImpl pepService = new TmacEnforceServiceImpl(args,method.getName());
 			
-			
 			for (String privilege : privileges) {
-				
-				if (privilege == null || privilege.isEmpty())
-					return;
+				if (privilege == null || privilege.isEmpty()) return;
+
 				int status = pepService.isAuthorized(privilege, user);
-			    if(status != TmacEnforceServiceImpl.DENY){
-	//-----------------------------------------------------------------------------		    	
-			    	if(status == TmacEnforceServiceImpl.ALLOW){
-				    	//get obligation and perform system obligation, system obligation will be performed automatically
-				    	HashMap<String,String> messages = pepService.acceptResponse(method.getName()); 
-				    	
-				    	for(String ss : messages.keySet()){
-					    	System.err.println("Anita! Obligations : "+ss + " ," +messages.get(ss));
-				    	}
-				    	
-				    	System.out.println("Anita ! the size of the active obligation is : " + SerContext.getActiveObs().size());
-				    	
-				    	System.out.println(user.getUsername() + "Anita !!!!!!! is Authorized !!!");
-				    	
-				    	if(!requireAll){ 
-				    		return; 
-				    	}
-			    	} else {
-			    		return;
-			    	}
-			    	
-	//----------------------------------------------------------------------------
-			    	return; // just for testing the provenance part.
-			    }
-			    else {
+
+				if (status != TmacEnforceServiceImpl.DENY) {
+					
+					if (status == TmacEnforceServiceImpl.ALLOW) {
+						// get obligation and perform system obligation, system obligation will be performed automatically
+						HashMap<String, String> messages = pepService.acceptResponse(method.getName());
+
+						for (String ss : messages.keySet()) {
+							System.err.println("Anita! Obligations : " + ss + " ," + messages.get(ss));
+						}
+
+						System.out.println("Anita ! the size of the active obligation is : " + SerContext.getActiveObs().size());
+						System.out.println(user.getUsername() + "Anita !!!!!!! is Authorized !!!");
+
+						if (!requireAll) {
+							return;
+						}
+					} else {
+						return;// here, we ignore the privileges we don't want to check.
+					}
+					//return; 
+					
+				} else {
 					if (requireAll) {
-						// if all are required, the first miss causes them
-						// to "fail"
+						// if all are required, the first miss causes them to "fail"
 						throwUnauthorized(user, method, privilege);
 					}
-			    }
-			}
-			if (requireAll == false) {
-				// If there's no match, then we know there are privileges and
-				// that the user didn't have any of them. The user is not
-				// authorized to access the method
-				System.out.println("1 Anita. Calling me !");
-				throwUnauthorized(user, method, privileges);
-				
+				}
+			
+				if (requireAll == false) {
+					// If there's no match, then we know there are privileges and that the user 
+					// didn't have any of them. The user is not authorized to access the method
+					System.out.println("1 Anita. Calling me !");
+					throwUnauthorized(user, method, privileges);
+				}
 			}
 		}
+		
 		else if (attributes.hasAuthorizedAnnotation(method)) {
-			
-			// if there are no privileges defined, just require that 
-			// the user be authenticated
+			// if there are no privileges defined, just require that the user be authenticated
 			if (Context.isAuthenticated() == false)
 				throwUnauthorized(user, method);
 		}		
