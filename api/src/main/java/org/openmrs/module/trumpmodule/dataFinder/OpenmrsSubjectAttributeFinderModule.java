@@ -22,7 +22,6 @@ import com.hp.hpl.jena.tdb.TDBFactory;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -150,19 +149,15 @@ public class OpenmrsSubjectAttributeFinderModule extends AbstractAttributeFinder
 			
 		}else if(attributeURI.toString().equals(SubjectAttributeURI.ASSIGNED_PATIENT_URI))
 		{
-			if (methodName.equalsIgnoreCase("getPatient")) {
+			if (methodName.startsWith("getPatient")) {
 
 				// TODO Get assigned patient uuid from TDB, not from
 				// OpenmrsEnforceServiceContext.
 				// So here, we need to select the patientuuid from TDB. We know
-				// the doctorId (which
-				// is actually the userId, because current user is the one who
-				// want to get the
-				// assigned patient information, so we need to check if the
-				// wanted patient is
-				// assigned to this user or not), here we need to get the
-				// patientuuid according
-				// to the doctorId.
+				// the doctorId (which is actually the userId, because current user is the one who
+				// want to get the assigned patient information, so we need to check if the
+				// wanted patient is assigned to this user or not), here we need to get the
+				// patientuuid according to the doctorId.
 				OpenmrsEnforceServiceContext openmrsContext = OpenmrsEnforceServiceContext.getInstance();
 				String directory = openmrsContext.getProvenanceDirectory();
 				Dataset dataset = TDBFactory.createDataset(directory);
