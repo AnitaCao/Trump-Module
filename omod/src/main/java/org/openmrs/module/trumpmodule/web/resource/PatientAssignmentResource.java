@@ -21,6 +21,8 @@ import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudR
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.EmptySearchResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
+import org.openmrs.module.webservices.rest.web.response.ObjectNotFoundException;
+import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
 import uk.ac.dotrural.prov.jena.ProvenanceBundle;
@@ -36,6 +38,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.tdb.TDBFactory;
+import com.sun.mail.iap.Response;
 
 @Resource(name = "v1/trumpmodule/patientassignment", supportedClass = PatientAssignment.class, supportedOpenmrsVersions = {
 		"1.8.*", "1.9.*" })
@@ -54,7 +57,7 @@ public class PatientAssignmentResource extends
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("patientUUID");
 			description.addProperty("doctorId");
-			//description.addProperty("isInvalidated");
+			description.addProperty("invalidated");
 			description.addProperty("display", findMethod("getDisplayString"));
 			description.addSelfLink();
 			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
@@ -65,7 +68,7 @@ public class PatientAssignmentResource extends
 			description.addProperty("patientUUID");
 			description.addProperty("userId");
 			description.addProperty("patientassignmentUUID");
-			//description.addProperty("isInvalidated");
+			description.addProperty("invalidated");
 			description.addProperty("display", findMethod("getDisplayString"));
 
 			description.addProperty("auditInfo", findMethod("getAuditInfo"));
@@ -159,8 +162,10 @@ public class PatientAssignmentResource extends
 	
 			dataset.close();
 			return delegate;
+		}else {
+			throw new ResourceDoesNotSupportOperationException("This patient assignment has already exist! ");
 		}
-		return null;
+		
 
 	}
 
@@ -225,7 +230,9 @@ public class PatientAssignmentResource extends
 			model.add(provBundle.getModel());
 
 			dataset.close();
-		}
+		}else 
+			//throw new ObjectNotFoundException();
+			throw new ResourceDoesNotSupportOperationException("This patient assignment has already been invalidated or not exist! ");
 		
 	}
 
@@ -245,7 +252,7 @@ public class PatientAssignmentResource extends
 
 		String patient_uuid = null;
 		String doctor_id = null;
-		boolean isInvalidated = false;
+		boolean invalidated = false;
 
 		String queryString = ProvenanceStrings.QUERY_PREFIX + "SELECT *  WHERE {"
 				+ "pA:" +uniqueId + " ?property ?value}";
@@ -276,7 +283,7 @@ public class PatientAssignmentResource extends
 						patient_uuid = row.get((String) columns.next()).toString();
 
 					} else if (resourceString.contains("wasInvalidatedBy")){
-						isInvalidated = true;
+						invalidated = true;
 					}
 				} else {
 					System.out.println(cell.toString());
@@ -292,8 +299,9 @@ public class PatientAssignmentResource extends
 		pa.setDoctorId(doctor_id);
 		pa.setPatientUUID(patient_uuid);
 		pa.setPatientassignmentUUID(uniqueId);
-		pa.setInvalidated(isInvalidated);
+		pa.setInvalidated(invalidated);
 		pa.setUserId(Context.getAuthenticatedUser().getId().toString());
+		pa.setInvalidated(invalidated);
 
 		//ResultSetFormatter.out(results);
 		
@@ -335,7 +343,7 @@ public class PatientAssignmentResource extends
 
 	public String getDisplayString(PatientAssignment patientAssignment) {
 		return "Patient : "+patientAssignment.getPatientUUID() + " assigned to Doctor: "
-				+ patientAssignment.getDoctorId();
+				+ patientAssignment.getDoctorId() + ".  NOTE: This assignment isInvalidated :" + patientAssignment.getInvalidated();
 	}
 	
 	public boolean checkExist(String doctorId, String patientUUID){
@@ -454,5 +462,5 @@ public class PatientAssignmentResource extends
 		
 		return new NeedsPaging<PatientAssignment>(paList, context);
 	}
-
+	
 }
