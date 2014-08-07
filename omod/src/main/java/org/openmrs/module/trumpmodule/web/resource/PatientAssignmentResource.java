@@ -379,7 +379,7 @@ public class PatientAssignmentResource extends
 	@Override
 	protected PageableResult doSearch(RequestContext context) {
 		List<PatientAssignment> paList = new ArrayList<PatientAssignment>();
-		String containInvalidated = context.getRequest().getParameter("contain_invalidated");
+		String includeInvalidated = context.getRequest().getParameter("include_invalidated");
 		String q = null;
 		// search specific patient assignment by the given doctorid, this will return a list of patient assignment which involves 
 		// the doctor.
@@ -388,7 +388,7 @@ public class PatientAssignmentResource extends
 		if(doctorId!=null){
 			// if the parameter is true, means we want the invalidated patientassignment as well as the uninvalidated ones.
 			// if the parameter is false, means we only want the uninvalidated ones.
-			if(containInvalidated.equals("true")){
+			if(includeInvalidated.equals("true")){
 				q = ProvenanceStrings.QUERY_PREFIX
 						+ "SELECT *" 
 						+ "WHERE {" 
@@ -412,7 +412,7 @@ public class PatientAssignmentResource extends
 		// the patient.
 		String patientUUID = context.getRequest().getParameter("patientuuid");
 		if(patientUUID!=null){
-			if(containInvalidated.equals("true")){
+			if(includeInvalidated.equals("true")){
 				q = ProvenanceStrings.QUERY_PREFIX
 						+ "SELECT *" 
 						+ "WHERE {" 
