@@ -21,7 +21,6 @@ import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudR
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.EmptySearchResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
-import org.openmrs.module.webservices.rest.web.response.ObjectNotFoundException;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
@@ -38,7 +37,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.tdb.TDBFactory;
-import com.sun.mail.iap.Response;
 
 @Resource(name = "v1/trumpmodule/patientassignment", supportedClass = PatientAssignment.class, supportedOpenmrsVersions = {
 		"1.8.*", "1.9.*" })
@@ -163,7 +161,7 @@ public class PatientAssignmentResource extends
 			dataset.close();
 			return delegate;
 		}else {
-			throw new ResourceDoesNotSupportOperationException("This patient assignment has already exist! ");
+			throw new ResourceDoesNotSupportOperationException("This patient assignment already exist! ");
 		}
 		
 
@@ -184,7 +182,6 @@ public class PatientAssignmentResource extends
 			// when we do delete patientAssignment, we do not actually delete it
 			// from TDB, we do invalidating this patientAssignment entity.
 			
-
 			long startTime = System.currentTimeMillis();
 			dataset = TDBFactory.createDataset(directory);
 			ProvenanceBundle provBundle = new ProvenanceBundle(ProvenanceStrings.NS);
@@ -303,8 +300,6 @@ public class PatientAssignmentResource extends
 		pa.setUserId(Context.getAuthenticatedUser().getId().toString());
 		pa.setInvalidated(invalidated);
 
-		//ResultSetFormatter.out(results);
-		
 		dataset.close();
 		return pa;
 	}
@@ -314,8 +309,7 @@ public class PatientAssignmentResource extends
 		List<PatientAssignment> patientAssignments = new ArrayList<PatientAssignment>();
 		List<String> uuidList = new ArrayList<String>();
 
-		String q = ProvenanceStrings.QUERY_PREFIX + "SELECT ?s " + "WHERE {"
-				+ "?s a PROV:Entity .}";
+		String q = ProvenanceStrings.QUERY_PREFIX + "SELECT ?s " + "WHERE {"+ "?s a PROV:Entity .}";
 
 		dataset = TDBFactory.createDataset(directory);
 		Query query = QueryFactory.create(q);
@@ -343,7 +337,7 @@ public class PatientAssignmentResource extends
 
 	public String getDisplayString(PatientAssignment patientAssignment) {
 		return "Patient : "+patientAssignment.getPatientUUID() + " assigned to Doctor: "
-				+ patientAssignment.getDoctorId() + ".  NOTE: This assignment isInvalidated :" + patientAssignment.getInvalidated();
+				+ patientAssignment.getDoctorId() + ".  NOTE: This assignment is active  :" + !patientAssignment.getInvalidated();
 	}
 	
 	public boolean checkExist(String doctorId, String patientUUID){
@@ -401,7 +395,7 @@ public class PatientAssignmentResource extends
 						+ "?pa NS:doctor_id " + "'"+doctorId+"'" + " ."
 						+ "?pa PROV:wasGeneratedBy ?activity ."
 						+ "?activity NS:action_name 'assign_patient' ."
-						+ "OPTIONAL { ?pa PROV:wasInvalidatedBy ?unassign_activity ."
+						+ "OPTIONAL { ?pa PROV:wasInvalidatedBy ?unassign_activity .}"
 						+ "}";
 			}else {
 				q = ProvenanceStrings.QUERY_PREFIX
@@ -410,7 +404,7 @@ public class PatientAssignmentResource extends
 						+ "?pa NS:doctor_id " + "'"+doctorId+"'" + " ."
 						+ "?pa PROV:wasGeneratedBy ?activity ."
 						+ "?activity NS:action_name 'assign_patient' ."
-						+ "FILTER NOT EXISTS { ?pa PROV:wasInvalidatedBy ?unassign_activity ."
+						+ "FILTER NOT EXISTS { ?pa PROV:wasInvalidatedBy ?unassign_activity .}"
 						+ "}";
 			}
 		}
@@ -425,7 +419,7 @@ public class PatientAssignmentResource extends
 						+ "?pa NS:patient_uuid " + "'"+patientUUID+"'" + " ."
 						+ "?pa PROV:wasGeneratedBy ?activity ."
 						+ "?activity NS:action_name 'assign_patient' ."
-						+ "OPTIONAL { ?pa PROV:wasInvalidatedBy ?unassign_activity ."
+						+ "OPTIONAL { ?pa PROV:wasInvalidatedBy ?unassign_activity .}"
 						+ "}";
 			}else {
 				q = ProvenanceStrings.QUERY_PREFIX
@@ -434,7 +428,7 @@ public class PatientAssignmentResource extends
 						+ "?pa NS:patient_uuid " + "'"+patientUUID+"'" + " ."
 						+ "?pa PROV:wasGeneratedBy ?activity ."
 						+ "?activity NS:action_name 'assign_patient' ."
-						+ "FILTER NOT EXISTS { ?pa PROV:wasInvalidatedBy ?unassign_activity ."
+						+ "FILTER NOT EXISTS { ?pa PROV:wasInvalidatedBy ?unassign_activity .}"
 						+ "}";
 			}
 		}
