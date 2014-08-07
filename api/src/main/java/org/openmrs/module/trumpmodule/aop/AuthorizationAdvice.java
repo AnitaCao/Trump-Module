@@ -1,5 +1,6 @@
 package org.openmrs.module.trumpmodule.aop;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,30 +35,50 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 	 */
 	@SuppressWarnings( { "unchecked" })
 	public void before(Method method, Object[] args, Object target) throws Throwable {
+		
+		// These four lines are only applicable to OpenMRS core methods
+		AuthorizedAnnotationAttributes attributes = new AuthorizedAnnotationAttributes();
+		Collection<String> privileges = attributes.getAttributes(method);  //get the strings such as "view patient", which is a combination of action and resource in Luca's code
+		boolean requireAll = attributes.getRequireAll(method);
+		boolean hasAuthorizedAnnotation = attributes.hasAuthorizedAnnotation(method);
+
+		
+		checkAccessRequest(method, args, privileges, requireAll,
+				hasAuthorizedAnnotation);		
+		
+	}
+
+	/**
+	 * This method can be used anywhere in the system to check access requests. It is used by the 
+	 * AOP before() method when checking OpenMRS method requests.
+	 * 
+	 * To use this outside of OpenMRS AOP layer, you need to provide the method being checked, its arguments,
+	 * the priveleges required, and whether the requireAll rule applies to the privileges - 
+	 * this information is used to check against XACML policy.
+	 * 
+	 * TODO: hasAuthorizedAnnotation - don't know, set to true. Dirty hack. 
+	 * 
+	 * @param method
+	 * @param args
+	 * @param privileges
+	 * @param requireAll
+	 * @param hasAuthorizedAnnotation
+	 * @throws FileNotFoundException
+	 */
+	public void checkAccessRequest(Method method, Object[] args,
+			Collection<String> privileges, boolean requireAll,
+			boolean hasAuthorizedAnnotation) throws FileNotFoundException {
 		if (log.isDebugEnabled()) {
 			log.debug("Calling authorization advice before " + method.getName());
 		}
 		System.err.println("Calling authorization advice before " + method.getName());
 		
-		//get current user 
-		User user = Context.getAuthenticatedUser();
-		System.out.println("current user is : " + user.getUserId().toString());
+		User user = getCurrentUser();
 		
-		if (log.isDebugEnabled()) {
-			log.debug("User " + user);
-			if (user != null) {
-				log.debug("has roles " + user.getAllRoles());
-			}
-		}
-		
-		AuthorizedAnnotationAttributes attributes = new AuthorizedAnnotationAttributes();
-		Collection<String> privileges = attributes.getAttributes(method);  //get the strings such as "view patient", which is a combination of action and resource in Luca's code
-		
-		boolean requireAll = attributes.getRequireAll(method);
 		System.out.println("!!!!!requireAll: " + requireAll);
 		if (!privileges.isEmpty()) {		
 			
-			//JUST FOR TESTING: we need to hack the before method here for our method to get through without checking privileges 
+			//TODO: JUST FOR TESTING: we need to hack the before method here for our method to get through without checking privileges 
 			if(method.getName().equalsIgnoreCase("getpatients") && args.length>3){
 				return ;
 			}
@@ -106,12 +127,25 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 			}
 		}
 		
-		else if (attributes.hasAuthorizedAnnotation(method)) {
+		else if (hasAuthorizedAnnotation) {
 			// if there are no privileges defined, just require that the user be authenticated
 			if (Context.isAuthenticated() == false)
 				throwUnauthorized(user, method);
-		}		
+		}
+	}
+
+	private User getCurrentUser() {
+		//get current user 
+		User user = Context.getAuthenticatedUser();
+		System.out.println("current user is : " + user.getUserId().toString());
 		
+		if (log.isDebugEnabled()) {
+			log.debug("User " + user);
+			if (user != null) {
+				log.debug("has roles " + user.getAllRoles());
+			}
+		}
+		return user;
 	}
 	
 	/**

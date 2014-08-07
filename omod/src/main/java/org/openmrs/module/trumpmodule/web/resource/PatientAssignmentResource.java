@@ -1,4 +1,6 @@
 package org.openmrs.module.trumpmodule.web.resource;
+import java.io.FileNotFoundException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -9,6 +11,7 @@ import luca.tmac.basic.data.uris.ProvenanceStrings;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
+import org.openmrs.module.trumpmodule.aop.AuthorizationAdvice;
 import org.openmrs.module.trumpmodule.patientassignment.PatientAssignment;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
@@ -26,6 +29,8 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
 import uk.ac.dotrural.prov.jena.ProvenanceBundle;
 
+import java.util.Collection;
+
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -42,7 +47,12 @@ import com.hp.hpl.jena.tdb.TDBFactory;
 		"1.8.*", "1.9.*" })
 public class PatientAssignmentResource extends
 		DataDelegatingCrudResource<PatientAssignment> {
-
+	
+	private static final String CREATE_ASSIGNMENT = "Create Assignment";
+	private static final String DELETE_ASSIGNMENT = "Delete Assignment";
+	private static final String UPDATE_ASSIGNMENT = "Update Assignment";
+	private static final String VIEW_ASSIGNMENT = "View Assignment";
+	
 	private Dataset dataset;
 	OpenmrsEnforceServiceContext openmrsContext = OpenmrsEnforceServiceContext
 			.getInstance();
@@ -100,6 +110,14 @@ public class PatientAssignmentResource extends
 
 	@Override
 	public PatientAssignment save(PatientAssignment delegate) {
+		
+		// every method will need to define the priveleges required, and also
+		// make the call the the access control code
+		// these three lines will appear in every method we want to check access for
+		Collection<String> requiredPrivileges = new ArrayList<String>();
+		requiredPrivileges.add(this.CREATE_ASSIGNMENT);
+		checkAccessRequest(new Object[]{delegate}, requiredPrivileges, this.getClass().getEnclosingMethod());
+		
 		
 		if (!checkExist(delegate.getDoctorId(),delegate.getPatientUUID())) {
 			long startTime = System.currentTimeMillis();
@@ -165,6 +183,22 @@ public class PatientAssignmentResource extends
 		}
 		
 
+	}
+
+	/**
+	 * Checks access requests for methods on this class using XACML layer
+	 * @param args
+	 * @param requiredPrivileges
+	 * @param method
+	 */
+	private void checkAccessRequest(Object[] args,
+			Collection<String> requiredPrivileges, Method method) {
+		try {
+			new AuthorizationAdvice().checkAccessRequest(method, 
+					args, requiredPrivileges, true, true);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
