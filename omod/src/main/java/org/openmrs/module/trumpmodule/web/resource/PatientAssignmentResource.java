@@ -116,7 +116,8 @@ public class PatientAssignmentResource extends
 		// these three lines will appear in every method we want to check access for
 		Collection<String> requiredPrivileges = new ArrayList<String>();
 		requiredPrivileges.add(this.CREATE_ASSIGNMENT);
-		checkAccessRequest(new Object[]{delegate}, requiredPrivileges, this.getClass().getEnclosingMethod());
+		requiredPrivileges.add(this.UPDATE_ASSIGNMENT);
+		checkAccessRequest("savePatientAssignment",new Object[]{delegate}, requiredPrivileges);
 		
 		
 		if (!checkExist(delegate.getDoctorId(),delegate.getPatientUUID())) {
@@ -191,11 +192,9 @@ public class PatientAssignmentResource extends
 	 * @param requiredPrivileges
 	 * @param method
 	 */
-	private void checkAccessRequest(Object[] args,
-			Collection<String> requiredPrivileges, Method method) {
+	private void checkAccessRequest(String methodName,Object[] args, Collection<String> requiredPrivileges) {
 		try {
-			new AuthorizationAdvice().checkAccessRequest(method, 
-					args, requiredPrivileges, true, true);
+			new AuthorizationAdvice().checkAccessRequest(methodName,args, requiredPrivileges, true, true);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -211,6 +210,10 @@ public class PatientAssignmentResource extends
 		
 		System.err.println("the patientassignment uuid is:"+ delegate.getPatientassignmentUUID());
 		System.out.println("the patient uuid is:"+ delegate.getPatientUUID());
+		
+		Collection<String> requiredPrivileges = new ArrayList<String>();
+		requiredPrivileges.add(this.DELETE_ASSIGNMENT);
+		checkAccessRequest("deletePatientAssignment",new Object[]{delegate,reason,context}, requiredPrivileges);
 		
 		if (checkExist(delegate.getDoctorId(),delegate.getPatientUUID())) {
 			// when we do delete patientAssignment, we do not actually delete it
@@ -280,6 +283,10 @@ public class PatientAssignmentResource extends
 
 	@Override
 	public PatientAssignment getByUniqueId(String uniqueId) {
+		
+		Collection<String> requiredPrivileges = new ArrayList<String>();
+		requiredPrivileges.add(this.VIEW_ASSIGNMENT);
+		checkAccessRequest("searchPatientAssignment",new Object[]{uniqueId}, requiredPrivileges);
 
 		String patient_uuid = null;
 		String doctor_id = null;
@@ -340,6 +347,10 @@ public class PatientAssignmentResource extends
 
 	@Override
 	public NeedsPaging<PatientAssignment> doGetAll(RequestContext context) {
+		Collection<String> requiredPrivileges = new ArrayList<String>();
+		requiredPrivileges.add(this.VIEW_ASSIGNMENT);
+		checkAccessRequest("searchPatientAssignment",new Object[]{context}, requiredPrivileges);
+		
 		List<PatientAssignment> patientAssignments = new ArrayList<PatientAssignment>();
 		List<String> uuidList = new ArrayList<String>();
 
@@ -412,6 +423,9 @@ public class PatientAssignmentResource extends
 	
 	@Override
 	protected PageableResult doSearch(RequestContext context) {
+		Collection<String> requiredPrivileges = new ArrayList<String>();
+		requiredPrivileges.add(this.VIEW_ASSIGNMENT);
+		checkAccessRequest("searchPatientAssignment",new Object[]{context}, requiredPrivileges);
 		List<PatientAssignment> paList = new ArrayList<PatientAssignment>();
 		String includeInvalidated = context.getRequest().getParameter("include_invalidated");
 		String q = null;
