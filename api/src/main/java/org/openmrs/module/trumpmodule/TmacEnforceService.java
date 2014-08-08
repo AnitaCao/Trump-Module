@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public interface TmacEnforceService extends OpenmrsService{
-	public int isAuthorized(String priviledge, User user) throws APIException;
+	public int isAuthorized(String priviledge, User user);
 	
 	//public List<String> getObligations() throws APIException;
 	
-	public int sendRequest(String privilege, User user);
+	//public int sendRequest(String privilege, User user);
 	public HashMap<String,String> acceptResponse(String methodName);
 }
