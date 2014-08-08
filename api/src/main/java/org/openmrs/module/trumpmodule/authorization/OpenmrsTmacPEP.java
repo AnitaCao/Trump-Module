@@ -273,7 +273,7 @@ public class OpenmrsTmacPEP  {
 			String team, String task, String requestType) {
 
 		String subjectCategory = "";
-		String permissionCategory = "";
+		//String permissionCategory = "";
 		String teamCategory = "";
 		String taskCategory = "";
 		String actionCategory = "";
@@ -290,16 +290,16 @@ public class OpenmrsTmacPEP  {
 					+ username + "</AttributeValue>\n" + "</Attribute>\n"
 					+ "</Attributes>\n";
 
-		if (permission != null && !permission.equals(""))
-			permissionCategory = "<Attributes Category=\""
-					+ PermissionAttributeURI.PERMISSION_CATEGORY_URI
-					+ "\">\n"
-					+ "<Attribute AttributeId=\""
-					+ PermissionAttributeURI.PERMISSION_ID_URI
-					+ "\" IncludeInResult=\"false\">\n"
-					+ "<AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">"
-					+ permission + "</AttributeValue>\n" + "</Attribute>\n"
-					+ "</Attributes>\n";
+//		if (permission != null && !permission.equals(""))
+//			permissionCategory = "<Attributes Category=\""
+//					+ PermissionAttributeURI.PERMISSION_CATEGORY_URI
+//					+ "\">\n"
+//					+ "<Attribute AttributeId=\""
+//					+ PermissionAttributeURI.PERMISSION_ID_URI
+//					+ "\" IncludeInResult=\"false\">\n"
+//					+ "<AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">"
+//					+ permission + "</AttributeValue>\n" + "</Attribute>\n"
+//					+ "</Attributes>\n";
 
 		if (team != null && !team.equals(""))
 			teamCategory = "<Attributes Category=\""
@@ -343,7 +343,7 @@ public class OpenmrsTmacPEP  {
 
 		String request = "<Request xmlns=\"urn:oasis:names:tc:xacml:3.0:core:schema:wd-17\" CombinedDecision=\"false\" ReturnPolicyIdList=\"false\">\n"
 				+ subjectCategory
-				+ permissionCategory
+				//+ permissionCategory
 				+ teamCategory
 				+ taskCategory
 				+ actionCategory

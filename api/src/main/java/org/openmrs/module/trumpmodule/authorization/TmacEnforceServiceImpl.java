@@ -14,6 +14,7 @@ import luca.tmac.basic.obligations.Obligation;
 import luca.tmac.basic.obligations.ObligationMonitorable;
 
 
+
 //import org.apache.commons.logging.Log;
 //import org.apache.commons.logging.LogFactory;
 import org.openmrs.User;
@@ -54,14 +55,6 @@ public class TmacEnforceServiceImpl extends BaseOpenmrsService implements TmacEn
 		pep.addAttributeFinderToPDP(new OpenmrsSubjectAttributeFinderModule((dh),parameters,methodName));
 		pep.addAttributeFinderToPDP(new OpenmrsRiskAttributeFinderModule(dh,new StandardBudgetCalculator()));
 		pep.createPDP();
-		
-		
-	}
-
-
-	public int isAuthorized(String priviledge, User user) throws APIException {
-		
-		return sendRequest(priviledge, user);	
 	}
 	
 	/**
@@ -70,8 +63,8 @@ public class TmacEnforceServiceImpl extends BaseOpenmrsService implements TmacEn
 	 * @param user
 	 * @return boolean
 	 */
-    public int sendRequest(String privilege, User user){
-    	
+	@Override
+	public int isAuthorized(String privilege, User user) {
     	System.out.println( "Anita !!!!!!!!!!!!!!!!!! the required privilege is : " + privilege + ""
     			+ "userId is : " + user.getId().toString());
     	
@@ -90,19 +83,15 @@ public class TmacEnforceServiceImpl extends BaseOpenmrsService implements TmacEn
 		attributeQuery.add(new AttributeQuery(
 				PermissionAttributeXmlName.RESOURCE_TYPE, resourceString,   
 				StringAttribute.identifier));
-		permission_ids = dh.getAttribute(
-				PermissionAttributeXmlName.PERMISSION_TABLE,
-				attributeQuery, PermissionAttributeXmlName.ID);
-		
-		if (permission_ids == null || permission_ids.size() == 0) {
-			
-//			System.out.println("Anita ! the persission is empty : " + permission_ids.size());
+//		permission_ids = dh.getAttribute(
+//				PermissionAttributeXmlName.PERMISSION_TABLE,
+//				attributeQuery, PermissionAttributeXmlName.ID);
+//		
+//		if (permission_ids == null || permission_ids.size() == 0) {
 //			
-//			return false;
-
-			return ALLOW_NO_SUCH_PERMISSION;
-		}
-		permission = permission_ids.get(0);
+//			return ALLOW_NO_SUCH_PERMISSION;
+//		}
+//		permission = permission_ids.get(0);
 		
 		//the request type is "obtain_permission"
 		userID = user.getId().toString();
@@ -166,6 +155,7 @@ public class TmacEnforceServiceImpl extends BaseOpenmrsService implements TmacEn
 		// TODO Auto-generated method stub
 		
 	}
+
 
 
 
