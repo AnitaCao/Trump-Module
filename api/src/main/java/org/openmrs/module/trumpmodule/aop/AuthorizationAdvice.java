@@ -38,14 +38,15 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 		
 		// These four lines are only applicable to OpenMRS core methods
 		AuthorizedAnnotationAttributes attributes = new AuthorizedAnnotationAttributes();
-		Collection<String> privileges = attributes.getAttributes(method);  //get the strings such as "view patient", which is a combination of action and resource in Luca's code
+		
+		//get the strings such as "view patient", which is a combination of action and resource.
+		Collection<String> privileges = attributes.getAttributes(method);  
+		
 		boolean requireAll = attributes.getRequireAll(method);
 		boolean hasAuthorizedAnnotation = attributes.hasAuthorizedAnnotation(method);
-
-		
-		checkAccessRequest(method, args, privileges, requireAll,
+		String methodName = method.getName();
+		checkAccessRequest(methodName, args, privileges, requireAll,
 				hasAuthorizedAnnotation);		
-		
 	}
 
 	/**
@@ -65,25 +66,24 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 	 * @param hasAuthorizedAnnotation
 	 * @throws FileNotFoundException
 	 */
-	public void checkAccessRequest(Method method, Object[] args,
+	public void checkAccessRequest(String methodName, Object[] args,
 			Collection<String> privileges, boolean requireAll,
 			boolean hasAuthorizedAnnotation) throws FileNotFoundException {
 		if (log.isDebugEnabled()) {
-			log.debug("Calling authorization advice before " + method.getName());
+			log.debug("Calling authorization advice before " + methodName);
 		}
-		System.err.println("Calling authorization advice before " + method.getName());
+		System.err.println("Calling authorization advice before " + methodName);
 		
 		User user = getCurrentUser();
 		
-		System.out.println("!!!!!requireAll: " + requireAll);
 		if (!privileges.isEmpty()) {		
 			
 			//TODO: JUST FOR TESTING: we need to hack the before method here for our method to get through without checking privileges 
-			if(method.getName().equalsIgnoreCase("getpatients") && args.length>3){
+			if(methodName.equalsIgnoreCase("getpatients") && args.length>3){
 				return ;
 			}
-			//TmacEnforceServiceImpl pepService = Context.getService(TmacEnforceServiceImpl.class);
-			TmacEnforceServiceImpl pepService = new TmacEnforceServiceImpl(args,method.getName());
+			
+			TmacEnforceServiceImpl pepService = new TmacEnforceServiceImpl(args,methodName);
 			
 			for (String privilege : privileges) {
 				if (privilege == null || privilege.isEmpty()) return;
@@ -94,14 +94,14 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 					
 					if (status == TmacEnforceServiceImpl.ALLOW) {
 						// get obligation and perform system obligation, system obligation will be performed automatically
-						HashMap<String, String> messages = pepService.acceptResponse(method.getName());
+						HashMap<String, String> messages = pepService.acceptResponse(methodName);
 
 						for (String ss : messages.keySet()) {
 							System.err.println("Anita! Obligations : " + ss + " ," + messages.get(ss));
 						}
 
-						System.out.println("Anita ! the size of the active obligation is : " + SerContext.getActiveObs().size());
-						System.out.println(user.getUsername() + "Anita !!!!!!! is Authorized !!!");
+//						System.out.println("Anita ! the size of the active obligation is : " + SerContext.getActiveObs().size());
+//						System.out.println(user.getUsername() + "Anita !!!!!!! is Authorized !!!");
 
 						if (!requireAll) {
 							return;
@@ -114,7 +114,7 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 				} else {
 					if (requireAll) {
 						// if all are required, the first miss causes them to "fail"
-						throwUnauthorized(user, method, privilege);
+						throwUnauthorized(user, methodName, privilege);
 					}
 				}
 			
@@ -122,7 +122,7 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 					// If there's no match, then we know there are privileges and that the user 
 					// didn't have any of them. The user is not authorized to access the method
 					System.out.println("1 Anita. Calling me !");
-					throwUnauthorized(user, method, privileges);
+					throwUnauthorized(user, methodName, privileges);
 				}
 			}
 		}
@@ -130,7 +130,7 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 		else if (hasAuthorizedAnnotation) {
 			// if there are no privileges defined, just require that the user be authenticated
 			if (Context.isAuthenticated() == false)
-				throwUnauthorized(user, method);
+				throwUnauthorized(user, methodName);
 		}
 	}
 
@@ -155,9 +155,9 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 	 * @param method acting method
 	 * @param attrs Collection of String privilege names that the user must have
 	 */
-	private void throwUnauthorized(User user, Method method, Collection<String> attrs) {
+	private void throwUnauthorized(User user, String methodName, Collection<String> attrs) {
 		if (log.isDebugEnabled())
-			log.debug("User " + user + " is not authorized to access " + method.getName());
+			log.debug("User " + user + " is not authorized to access " + methodName);
 		throw new APIAuthenticationException("Privileges required: " + attrs+ " Sorry! User : " + user.getAllRoles()+" "+user.getUsername()+ " do not have the privilege!");
 	}
 	
@@ -168,9 +168,9 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 	 * @param method acting method
 	 * @param attrs privilege names that the user must have
 	 */
-	private void throwUnauthorized(User user, Method method, String attr) {
+	private void throwUnauthorized(User user, String methodName, String attr) {
 		if (log.isDebugEnabled())
-			log.debug("User " + user + " is not authorized to access " + method.getName());
+			log.debug("User " + user + " is not authorized to access " + methodName);
 		throw new APIAuthenticationException("Privilege required: " + attr + " Sorry! User : " + user.getName()+ " do not have the privilege!");
 	}
 	
@@ -180,9 +180,9 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 	 * @param user authenticated user
 	 * @param method acting method
 	 */
-	private void throwUnauthorized(User user, Method method) {
+	private void throwUnauthorized(User user, String methodName) {
 		if (log.isDebugEnabled())
-			log.debug("User " + user + " is not authorized to access " + method.getName());
+			log.debug("User " + user + " is not authorized to access " + methodName);
 		throw new APIAuthenticationException("Basic authentication required");
 	}
 	
