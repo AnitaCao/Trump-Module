@@ -75,7 +75,7 @@ public class OpenmrsEnforceServiceContext {
 		String path = this.getClass().getClassLoader().getResource(RESOURCE_PATH).toString().substring(5);
 		dh = new XmlDataHandler(path);
 		
-		initializedAssignedPatient();
+//		initializedAssignedPatient();
 		// load the policies into context hash from file system
 		try {
 			policies = PolicyFileHandler.loadPolicies(this.getUserPolicyDirectory());
@@ -109,35 +109,35 @@ public class OpenmrsEnforceServiceContext {
 		this.policies = policies;
 	}
 	
-	/**
-	 * In this method, we resolve the ids of users and assigned patients specified in the data.xml file, to 
-	 * openmrs "internal" database identifiers
-	 */
-	public void initializedAssignedPatient(){
-		ArrayList<AttributeQuery> query = new ArrayList<AttributeQuery>();
-		List<String> userIds = dh.getAttribute("user", query, "id");
-		for(String id : userIds){
-			ArrayList<AttributeQuery> query2 = new ArrayList<AttributeQuery>();
-			query2.add(new AttributeQuery(SubjectAttributeXmlName.ID, id ,StringAttribute.identifier));
-			
-		
-			List<String> stringAttributes = dh.getAttribute(SubjectAttributeXmlName.SUBJECT_TABLE, query2,
-					SubjectAttributeXmlName.ASSIGNED_PATIENT);
-			
-			HashSet<String> set = new HashSet<String>();
-			
-			for(String patientidentifierId : stringAttributes){
-				
-				List<Patient> patients = Context.getPatientService().getPatients(null, patientidentifierId, null,false);
-				
-				for(Patient p : patients){
-					set.add(p.getPatientId().toString());
-				}
-			}
-			
-			AssigendPatientInternalIds.put(id, set);
-		}
-	}
+//	/**
+//	 * In this method, we resolve the ids of users and assigned patients specified in the data.xml file, to 
+//	 * openmrs "internal" database identifiers
+//	 */
+//	public void initializedAssignedPatient(){
+//		ArrayList<AttributeQuery> query = new ArrayList<AttributeQuery>();
+//		List<String> userIds = dh.getAttribute("user", query, "id");
+//		for(String id : userIds){
+//			ArrayList<AttributeQuery> query2 = new ArrayList<AttributeQuery>();
+//			query2.add(new AttributeQuery(SubjectAttributeXmlName.ID, id ,StringAttribute.identifier));
+//			
+//		
+//			List<String> stringAttributes = dh.getAttribute(SubjectAttributeXmlName.SUBJECT_TABLE, query2,
+//					SubjectAttributeXmlName.ASSIGNED_PATIENT);
+//			
+//			HashSet<String> set = new HashSet<String>();
+//			
+//			for(String patientidentifierId : stringAttributes){
+//				
+//				List<Patient> patients = Context.getPatientService().getPatients(null, patientidentifierId, null,false);
+//				
+//				for(Patient p : patients){
+//					set.add(p.getPatientId().toString());
+//				}
+//			}
+//			
+//			AssigendPatientInternalIds.put(id, set);
+//		}
+//	}
 	
 	
 	public DataHandler getDh() {

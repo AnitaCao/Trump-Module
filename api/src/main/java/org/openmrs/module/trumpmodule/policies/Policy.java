@@ -1,18 +1,11 @@
 package org.openmrs.module.trumpmodule.policies;
 
 import java.io.Serializable;
-import java.util.UUID;
-
 import org.openmrs.BaseOpenmrsData;
 public class Policy extends BaseOpenmrsData implements Serializable {
 	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
-	/**
-	 * 
-	 */
 	private Integer id;
 	private String content;
 	private String policyName;
