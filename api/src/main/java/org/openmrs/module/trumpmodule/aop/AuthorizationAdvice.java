@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,6 +46,7 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 		boolean requireAll = attributes.getRequireAll(method);
 		boolean hasAuthorizedAnnotation = attributes.hasAuthorizedAnnotation(method);
 		String methodName = method.getName();
+		
 		checkAccessRequest(methodName, args, privileges, requireAll,
 				hasAuthorizedAnnotation);		
 	}
@@ -75,62 +77,66 @@ public class AuthorizationAdvice implements MethodBeforeAdvice {
 		System.err.println("Calling authorization advice before " + methodName);
 		
 		User user = getCurrentUser();
+		Set roleSET = user.getAllRoles();
 		
-		if (!privileges.isEmpty()) {		
-			
-			//TODO: JUST FOR TESTING: we need to hack the before method here for our method to get through without checking privileges 
-			if(methodName.equalsIgnoreCase("getpatients") && args.length>3){
-				return ;
-			}
-			
-			TmacEnforceServiceImpl pepService = new TmacEnforceServiceImpl(args,methodName);
-			
-			for (String privilege : privileges) {
-				if (privilege == null || privilege.isEmpty()) return;
-
-				int status = pepService.isAuthorized(privilege, user);
-
-				if (status != TmacEnforceServiceImpl.DENY) {
-					
-					if (status == TmacEnforceServiceImpl.ALLOW) {
-						// get obligation and perform system obligation, system obligation will be performed automatically
-						HashMap<String, String> messages = pepService.acceptResponse(methodName);
-
-						for (String ss : messages.keySet()) {
-							System.err.println("Anita! Obligations : " + ss + " ," + messages.get(ss));
+		if(user.getUserId()!=1){
+		
+			if (!privileges.isEmpty()) {		
+				
+				//TODO: JUST FOR TESTING: we need to hack the before method here for our method to get through without checking privileges 
+				if(methodName.equalsIgnoreCase("getpatients") && args.length>3){
+					return ;
+				}
+				
+				TmacEnforceServiceImpl pepService = new TmacEnforceServiceImpl(args,methodName);
+				
+				for (String privilege : privileges) {
+					if (privilege == null || privilege.isEmpty()) return;
+	
+					int status = pepService.isAuthorized(privilege, user);
+	
+					if (status != TmacEnforceServiceImpl.DENY) {
+						
+						if (status == TmacEnforceServiceImpl.ALLOW) {
+							// get obligation and perform system obligation, system obligation will be performed automatically
+							HashMap<String, String> messages = pepService.acceptResponse(methodName);
+	
+							for (String ss : messages.keySet()) {
+								System.err.println("Anita! Obligations : " + ss + " ," + messages.get(ss));
+							}
+	
+	//						System.out.println("Anita ! the size of the active obligation is : " + SerContext.getActiveObs().size());
+	//						System.out.println(user.getUsername() + "Anita !!!!!!! is Authorized !!!");
+	
+							if (!requireAll) {
+								return;
+							}
+						} else {
+							return;// here, we ignore the privileges we don't want to check.
 						}
-
-//						System.out.println("Anita ! the size of the active obligation is : " + SerContext.getActiveObs().size());
-//						System.out.println(user.getUsername() + "Anita !!!!!!! is Authorized !!!");
-
-						if (!requireAll) {
-							return;
-						}
+						//return; 
+						
 					} else {
-						return;// here, we ignore the privileges we don't want to check.
+						if (requireAll) {
+							// if all are required, the first miss causes them to "fail"
+							throwUnauthorized(user, methodName, privilege);
+						}
 					}
-					//return; 
-					
-				} else {
-					if (requireAll) {
-						// if all are required, the first miss causes them to "fail"
-						throwUnauthorized(user, methodName, privilege);
+				
+					if (requireAll == false) {
+						// If there's no match, then we know there are privileges and that the user 
+						// didn't have any of them. The user is not authorized to access the method
+						System.out.println("1 Anita. Calling me !");
+						throwUnauthorized(user, methodName, privileges);
 					}
-				}
-			
-				if (requireAll == false) {
-					// If there's no match, then we know there are privileges and that the user 
-					// didn't have any of them. The user is not authorized to access the method
-					System.out.println("1 Anita. Calling me !");
-					throwUnauthorized(user, methodName, privileges);
 				}
 			}
-		}
 		
-		else if (hasAuthorizedAnnotation) {
-			// if there are no privileges defined, just require that the user be authenticated
-			if (Context.isAuthenticated() == false)
-				throwUnauthorized(user, methodName);
+			else if (hasAuthorizedAnnotation) {
+				// if there are no privileges defined, just require that the user be authenticated
+				if (Context.isAuthenticated() == false)
+					throwUnauthorized(user, methodName);
+			}
 		}
 	}
 
