@@ -9,6 +9,7 @@ import org.openmrs.api.context.Context;
 public class PatientAssignment extends BaseOpenmrsData implements Serializable {
     
      private static final long serialVersionUID = 1L;
+     private String pauuid;
      private Integer id;
      private String patientUUID;
      private String doctorId; //assigned to this doctor, actually this doctorId is an userId
@@ -67,13 +68,24 @@ public class PatientAssignment extends BaseOpenmrsData implements Serializable {
           this.doctorId = doctorId;
      }
 
-	public String getPatientassignmentUUID() {
-		return this.getUuid();
-	}
+//	public String getPatientassignmentUUID() {
+//		return this.getUuid();
+//	}
+//
+//	public void setPatientassignmentUUID(String patientassignmentUUID) {
+//		this.setUuid(patientassignmentUUID);
+//		uuid = patientassignmentUUID;
+//	}
 
-	public void setPatientassignmentUUID(String patientassignmentUUID) {
-		this.setUuid(patientassignmentUUID);
-	}
+ 	public String getPauuid() {
+ 		return this.getUuid();
+ 	}
+
+ 	public void setPauuid(String pauuid) {
+ 		this.pauuid = pauuid;
+ 		this.setUuid(pauuid);
+ 	}
+  
 
 	public Boolean getInvalidated() {
 		return isInvalidated();

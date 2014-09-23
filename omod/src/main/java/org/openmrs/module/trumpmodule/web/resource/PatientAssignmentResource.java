@@ -1,6 +1,5 @@
 package org.openmrs.module.trumpmodule.web.resource;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -63,6 +62,7 @@ public class PatientAssignmentResource extends
 			Representation rep) {
 		if (rep instanceof DefaultRepresentation) {
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
+			description.addProperty("pauuid");
 			description.addProperty("patientUUID");
 			description.addProperty("doctorId");
 			description.addProperty("invalidated");
@@ -72,6 +72,7 @@ public class PatientAssignmentResource extends
 			return description;
 		} else if (rep instanceof FullRepresentation) {
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
+			description.addProperty("pauuid");
 			description.addProperty("doctorId");
 			description.addProperty("patientUUID");
 			description.addProperty("userId");
@@ -115,8 +116,9 @@ public class PatientAssignmentResource extends
 		// make the call the the access control code
 		// these three lines will appear in every method we want to check access for
 		Collection<String> requiredPrivileges = new ArrayList<String>();
-		requiredPrivileges.add(this.CREATE_ASSIGNMENT);
-		requiredPrivileges.add(this.UPDATE_ASSIGNMENT);
+		requiredPrivileges.add(PatientAssignmentResource.CREATE_ASSIGNMENT);
+		requiredPrivileges.add(PatientAssignmentResource.UPDATE_ASSIGNMENT);
+		
 		checkAccessRequest("savePatientAssignment",new Object[]{delegate}, requiredPrivileges);
 		
 		
@@ -145,7 +147,8 @@ public class PatientAssignmentResource extends
 			// 3. the entity is patientAssignment
 			String entityURI = provBundle.createEntity(ProvenanceStrings.NS
 					+ ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT
-					+ delegate.getPatientassignmentUUID());
+					//+ delegate.getPatientassignmentUUID());
+					+ delegate.getPauuid());
 			com.hp.hpl.jena.rdf.model.Resource entity = provBundle.getResource(entityURI);
 	
 			// patientAssignment entity has 2 property :  patient_uuid
@@ -171,7 +174,7 @@ public class PatientAssignmentResource extends
 			// the entity was attributed to the agent
 			provBundle.addWasAttributedTo(entity, agent);
 	
-			provBundle.getModel().write(System.out);
+			//provBundle.getModel().write(System.out);
 	
 			Model model = dataset.getDefaultModel();
 	
@@ -208,11 +211,11 @@ public class PatientAssignmentResource extends
 		// if so, we can not delete an un-exist patientAssignment or an already deleted
 		// one. 
 		
-		System.err.println("the patientassignment uuid is:"+ delegate.getPatientassignmentUUID());
-		System.out.println("the patient uuid is:"+ delegate.getPatientUUID());
+//		System.err.println("the patientassignment uuid is:"+ delegate.getPatientassignmentUUID());
+//		System.out.println("the patient uuid is:"+ delegate.getPatientUUID());
 		
 		Collection<String> requiredPrivileges = new ArrayList<String>();
-		requiredPrivileges.add(this.DELETE_ASSIGNMENT);
+		requiredPrivileges.add(PatientAssignmentResource.DELETE_ASSIGNMENT);
 		checkAccessRequest("deletePatientAssignment",new Object[]{delegate,reason,context}, requiredPrivileges);
 		
 		if (checkExist(delegate.getDoctorId(),delegate.getPatientUUID())) {
@@ -245,7 +248,8 @@ public class PatientAssignmentResource extends
 			// to the uuid of the patientAssignment which we want to delete.
 			String entityURI = provBundle.createEntity(ProvenanceStrings.NS
 					+ ProvenanceStrings.ENTITY_PATIENT_ASSIGNMENT
-					+ delegate.getPatientassignmentUUID());
+					//+ delegate.getPatientassignmentUUID());
+					+ delegate.getPauuid());
 			com.hp.hpl.jena.rdf.model.Resource entity = provBundle.getResource(entityURI);
 
 			// add statement describing when the activity started
@@ -257,7 +261,7 @@ public class PatientAssignmentResource extends
 
 			provBundle.addWasInvalidatedBy(entity, activity);
 
-			provBundle.getModel().write(System.out);
+			//provBundle.getModel().write(System.out);
 
 			Model model = dataset.getDefaultModel();
 
@@ -285,7 +289,7 @@ public class PatientAssignmentResource extends
 	public PatientAssignment getByUniqueId(String uniqueId) {
 		
 		Collection<String> requiredPrivileges = new ArrayList<String>();
-		requiredPrivileges.add(this.VIEW_ASSIGNMENT);
+		requiredPrivileges.add(PatientAssignmentResource.VIEW_ASSIGNMENT);
 		checkAccessRequest("searchPatientAssignment",new Object[]{uniqueId}, requiredPrivileges);
 
 		String patient_uuid = null;
@@ -336,7 +340,8 @@ public class PatientAssignmentResource extends
 		PatientAssignment pa = new PatientAssignment();
 		pa.setDoctorId(doctor_id);
 		pa.setPatientUUID(patient_uuid);
-		pa.setPatientassignmentUUID(uniqueId);
+		//pa.setPatientassignmentUUID(uniqueId);
+		pa.setUuid(uniqueId);
 		pa.setInvalidated(invalidated);
 		pa.setUserId(Context.getAuthenticatedUser().getId().toString());
 		pa.setInvalidated(invalidated);
@@ -348,7 +353,7 @@ public class PatientAssignmentResource extends
 	@Override
 	public NeedsPaging<PatientAssignment> doGetAll(RequestContext context) {
 		Collection<String> requiredPrivileges = new ArrayList<String>();
-		requiredPrivileges.add(this.VIEW_ASSIGNMENT);
+		requiredPrivileges.add(PatientAssignmentResource.VIEW_ASSIGNMENT);
 		checkAccessRequest("searchPatientAssignment",new Object[]{context}, requiredPrivileges);
 		
 		List<PatientAssignment> patientAssignments = new ArrayList<PatientAssignment>();
@@ -415,7 +420,8 @@ public class PatientAssignmentResource extends
 					                                       //which means it has been unassigned.
 					isInValidated = true;
 				}
-			}else isInValidated = false;
+				
+			}else isInValidated = false; //if there is no unassignTimeNode, which means this activity has not been invalidated.
 		}
 		return (exist&&!isInValidated);
 	}
@@ -424,11 +430,14 @@ public class PatientAssignmentResource extends
 	@Override
 	protected PageableResult doSearch(RequestContext context) {
 		Collection<String> requiredPrivileges = new ArrayList<String>();
-		requiredPrivileges.add(this.VIEW_ASSIGNMENT);
+		requiredPrivileges.add(PatientAssignmentResource.VIEW_ASSIGNMENT);
+		
 		checkAccessRequest("searchPatientAssignment",new Object[]{context}, requiredPrivileges);
-		List<PatientAssignment> paList = new ArrayList<PatientAssignment>();
+		
+		List<PatientAssignment> paList = new ArrayList<PatientAssignment>(); //this list is the patientAssignment list which will be shown in the rest response.
 		String includeInvalidated = context.getRequest().getParameter("include_invalidated");
 		String q = null;
+		
 		// search specific patient assignment by the given doctorid, this will return a list of patient assignment which involves 
 		// the doctor.
 		String doctorId = context.getRequest().getParameter("doctorid");
