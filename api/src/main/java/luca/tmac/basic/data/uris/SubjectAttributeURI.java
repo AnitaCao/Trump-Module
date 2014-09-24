@@ -12,5 +12,7 @@ public class SubjectAttributeURI {
 	public static final String TRUSTWORTHINESS_URI = SUBJECT_CATEGORY_URI + ":" + "trustworthiness";
 	public static final String BUDGET_URI = SUBJECT_CATEGORY_URI + ":" + "budget";
 	public static final String WANTED_PATIENT_URI = SUBJECT_CATEGORY_URI + ":" + "wanted_patient";
+	public static final String ACTION_URI = SUBJECT_CATEGORY_URI + ":" +"action";
+	public static final String RESOURCE_TYPE_URI = SUBJECT_CATEGORY_URI + ":" +"resource_type";
 	
 }

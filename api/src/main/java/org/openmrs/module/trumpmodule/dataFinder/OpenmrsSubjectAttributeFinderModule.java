@@ -30,6 +30,7 @@ import luca.data.AttributeQuery;
 import luca.data.DataHandler;
 import luca.tmac.basic.data.AbstractAttributeFinderModule;
 import luca.tmac.basic.data.xml.SubjectAttributeXmlName;
+import luca.tmac.basic.data.uris.PermissionAttributeURI;
 import luca.tmac.basic.data.uris.ProvenanceStrings;
 import luca.tmac.basic.data.uris.SubjectAttributeURI;
 
@@ -72,6 +73,9 @@ public class OpenmrsSubjectAttributeFinderModule extends AbstractAttributeFinder
 		ids.add(SubjectAttributeURI.ASSIGNED_PATIENT_URI);
 		ids.add(SubjectAttributeURI.SUBJECT_CATEGORY_URI);
 		ids.add(SubjectAttributeURI.BUDGET_URI);
+		ids.add(SubjectAttributeURI.ACTION_URI);
+		ids.add(SubjectAttributeURI.RESOURCE_TYPE_URI);
+		
 	}
 
 	@Override
@@ -105,6 +109,7 @@ public class OpenmrsSubjectAttributeFinderModule extends AbstractAttributeFinder
 		query.add(new AttributeQuery(SubjectAttributeXmlName.ID,user.getId().toString(),StringAttribute.identifier));
 	
 		BagAttribute bag = null; 
+		
 		
 		if(attributeURI.toString().equals(SubjectAttributeURI.ROLE_URI))
 		{
@@ -211,7 +216,36 @@ public class OpenmrsSubjectAttributeFinderModule extends AbstractAttributeFinder
 			attributeType = DoubleAttribute.identifier;
 			attribute = SubjectAttributeXmlName.BUDGET;
 			bag = data.getBagAttribute(SubjectAttributeXmlName.SUBJECT_TABLE, query, attribute, attributeType);
-		}
+			
+		}else if(attributeURI.toString().equals(SubjectAttributeURI.RESOURCE_TYPE_URI))
+		{
+			values.add(StringAttribute.getInstance("patientassignment"));
+			try {
+				bag = new BagAttribute(new URI(StringAttribute.identifier), values);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+			
+		}else if(attributeURI.toString().equals(SubjectAttributeURI.ACTION_URI))
+		{
+			if(methodName.equals("savePatientAssignment")){
+				System.err.println("Anita, the action is create and update !!!");
+				values.add(StringAttribute.getInstance("create"));
+				values.add(StringAttribute.getInstance("update"));
+			}else 
+				if(methodName.equals("deletePatientAssignment")){
+				values.add(StringAttribute.getInstance("delete"));
+			}else 
+				if(methodName.equals("searchPatientAssignment")){
+				values.add(StringAttribute.getInstance("view"));
+			}
+			try {
+				bag = new BagAttribute(new URI(StringAttribute.identifier), values);
+			} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}	
 		return bag;
 	}
 	
