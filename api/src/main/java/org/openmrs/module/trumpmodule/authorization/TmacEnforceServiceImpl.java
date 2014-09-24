@@ -18,12 +18,10 @@ import luca.tmac.basic.obligations.ObligationMonitorable;
 //import org.apache.commons.logging.Log;
 //import org.apache.commons.logging.LogFactory;
 import org.openmrs.User;
-import org.openmrs.api.APIException;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 import org.openmrs.module.trumpmodule.TmacEnforceService;
-import org.openmrs.module.trumpmodule.dataFinder.OpenmrsRiskAttributeFinderModule;
-import org.openmrs.module.trumpmodule.dataFinder.OpenmrsSubjectAttributeFinderModule;
+import org.openmrs.module.trumpmodule.dataFinder.*;
 import org.wso2.balana.attr.StringAttribute;
 
 
@@ -54,6 +52,7 @@ public class TmacEnforceServiceImpl extends BaseOpenmrsService implements TmacEn
 		//add new subject attribute finder and risk attribute finder to PEP
 		pep.addAttributeFinderToPDP(new OpenmrsSubjectAttributeFinderModule((dh),parameters,methodName));
 		pep.addAttributeFinderToPDP(new OpenmrsRiskAttributeFinderModule(dh,new StandardBudgetCalculator()));
+		pep.addAttributeFinderToPDP(new OpenmrsPermissionAttributeFinderModule((dh),parameters,methodName));
 		pep.createPDP();
 	}
 	

@@ -7,8 +7,6 @@ import java.util.Set;
 
 import luca.data.DataHandler;
 import luca.tmac.basic.data.AbstractAttributeFinderModule;
-import luca.tmac.basic.data.impl.PermissionAttributeFinderModule;
-
 import luca.tmac.basic.data.impl.TaskAttributeFinderModule;
 import luca.tmac.basic.data.impl.TeamAttributeFinderModule;
 
@@ -67,12 +65,13 @@ public class TmacPDP {
 		// change
 		//OpenmrsSubjectAttributeFinderModule is for find the attributes from openmrs not from the xml file
 	
-		finderModules.add(new PermissionAttributeFinderModule(dh));
+		//finderModules.add(new PermissionAttributeFinderModule(dh));
 		finderModules.add(new TaskAttributeFinderModule(dh));
 		finderModules.add(new TeamAttributeFinderModule(dh));
 		//finderModules.add(new RiskAttributeFinderModule(dh,
 		//		new StandardTrustCalculator(), new StandardRiskCalculator(),new StandardBudgetCalculator()));
 		finderModules.add(new CurrentEnvModule());
+		
 		
 	}
 
