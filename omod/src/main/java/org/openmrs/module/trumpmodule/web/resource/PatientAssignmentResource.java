@@ -76,7 +76,6 @@ public class PatientAssignmentResource extends
 			description.addProperty("doctorId");
 			description.addProperty("patientUUID");
 			description.addProperty("userId");
-			description.addProperty("patientassignmentUUID");
 			description.addProperty("invalidated");
 			description.addProperty("display", findMethod("getDisplayString"));
 
