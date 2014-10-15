@@ -14,7 +14,6 @@ public class PatientAssignment extends BaseOpenmrsData implements Serializable {
      private String patientUUID;
      private String doctorId; //assigned to this doctor, actually this doctorId is an userId
      private String userId; //who did this assignment
-     private String patientassignmentUUID;
      private boolean invalidated;
     
      public PatientAssignment(){
