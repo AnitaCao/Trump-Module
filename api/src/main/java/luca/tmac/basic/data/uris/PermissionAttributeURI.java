@@ -9,4 +9,7 @@ public class PermissionAttributeURI {
 	public static String RESOURCE_ID_URI = PERMISSION_CATEGORY_URI
 			+ ":" + "resource_id";
 	public static String ACTION_URI = PERMISSION_CATEGORY_URI + ":" + "action";
+	
+	public static String PERMISSION_ATTRIBUTES_URI = PERMISSION_CATEGORY_URI + ":" + "attributes";
+	
 }
