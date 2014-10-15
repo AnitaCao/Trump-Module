@@ -7,7 +7,9 @@ import org.wso2.balana.attr.AttributeValue;
 import org.wso2.balana.attr.BagAttribute;
 import org.wso2.balana.attr.StringAttribute;
 import org.wso2.balana.cond.EvaluationResult;
+import org.wso2.balana.ctx.Attribute;
 import org.wso2.balana.ctx.EvaluationCtx;
+import org.wso2.balana.xacml3.Attributes;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -42,7 +44,7 @@ public class OpenmrsPermissionAttributeFinderModule extends AbstractAttributeFin
 		
 		this.user = Context.getAuthenticatedUser();
 	
-		System.out.println("Anita message for you: role=" + user.getAllRoles() + "userID : " + user.getId());
+		System.out.println("Anita message for you: role=" + user.getAllRoles() + " userID : " + user.getId());
 		//set supported categories
 		categories = new HashSet<String>();
 		categories.add(PermissionAttributeURI.PERMISSION_CATEGORY_URI);
@@ -71,49 +73,67 @@ public class OpenmrsPermissionAttributeFinderModule extends AbstractAttributeFin
 		if(!getSupportedCategories().contains(category.toString()))
 			return new EvaluationResult(getEmptyBag());
 		
-		AttributeValue AttResult = findAttributes(methodName, attributeId);
+		Set<Attributes> attributesSet = context.getRequestCtx().getAttributesSet();
+		//get the required permission from the request, which actually is the privilege from the annotation.
+		Set<Attribute> permissionAttribute = null;
+		
+		for(Attributes atr : attributesSet){
+			if(atr.getCategory().toString().equalsIgnoreCase(PermissionAttributeURI.PERMISSION_CATEGORY_URI)){
+				permissionAttribute = atr.getAttributes();
+				break;
+			}
+		}
+		
+		AttributeValue AttResult = findAttributes(methodName, attributeId,permissionAttribute);
 
 		return new EvaluationResult(AttResult);
 	}
 
-	private AttributeValue findAttributes(String methodName, URI attributeURI){
+	private AttributeValue findAttributes(String methodName, URI attributeURI, Set<Attribute> attrSet){
 		List<AttributeValue> values = new ArrayList<AttributeValue>();
-		ArrayList<AttributeQuery> query = new ArrayList<AttributeQuery>();
-		query.add(new AttributeQuery(SubjectAttributeXmlName.ID,user.getId().toString(),StringAttribute.identifier));
-	
+		String actionString = null;
+    	String resourceString = null;
+    	if(!attrSet.isEmpty()){
+			for(Attribute a:attrSet){
+				String permission = ((StringAttribute)(a.getValues().get(0))).getValue();
+				String[] parms = permission.split(" ", 2);
+				actionString = parms[0];
+				resourceString = parms[1];
+			}
+		}
+		
 		BagAttribute bag = null; 
-		System.err.println("aNITA, LOOK HERE .");
-		if(attributeURI.toString().equals(PermissionAttributeURI.RESOURCE_TYPE_URI))
-		{
-			System.err.println("Anita, the type is resource_type!!!");
-			values.add(StringAttribute.getInstance("patientassignment"));
-			try {
-				bag = new BagAttribute(new URI(StringAttribute.identifier), values);
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
+		
+		if(methodName.contains("PatientAssignment")){
+			if(attributeURI.toString().equals(PermissionAttributeURI.RESOURCE_TYPE_URI))
+			{
+				values.add(StringAttribute.getInstance("patientassignment"));
+				
+			}else if(attributeURI.toString().equals(PermissionAttributeURI.ACTION_URI)){
+				if(methodName.equals("savePatientAssignment")){
+					values.add(StringAttribute.getInstance("create"));
+					values.add(StringAttribute.getInstance("update"));
+				}else 
+					if(methodName.equals("deletePatientAssignment")){
+					values.add(StringAttribute.getInstance("delete"));
+				}else 
+					if(methodName.equals("searchPatientAssignment")){
+					values.add(StringAttribute.getInstance("view"));
+				}
 			}
-		}else if(attributeURI.toString().equals(PermissionAttributeURI.ACTION_URI)){
-			System.err.println("Anita, the type is action !!!");
-			if(methodName.equals("savePatientAssignment")){
-				System.err.println("Anita, the action is create and update !!!");
-				values.add(StringAttribute.getInstance("create"));
-				values.add(StringAttribute.getInstance("update"));
-			}else 
-				if(methodName.equals("deletePatientAssignment")){
-					System.err.println("Anita, the action is delete !!!");
-				values.add(StringAttribute.getInstance("delete"));
-			}else 
-				if(methodName.equals("searchPatientAssignment")){
-					System.err.println("Anita, the action is view !!!");
-				values.add(StringAttribute.getInstance("view"));
+		}
+		else {
+			if(attributeURI.toString().equals(PermissionAttributeURI.RESOURCE_TYPE_URI)){
+				values.add(StringAttribute.getInstance(resourceString));
+			}else if(attributeURI.toString().equals(PermissionAttributeURI.ACTION_URI)){
+				values.add(StringAttribute.getInstance(actionString));
 			}
-			try {
-				bag = new BagAttribute(new URI(StringAttribute.identifier), values);
-			} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}	
+		}
+		try {
+			bag = new BagAttribute(new URI(StringAttribute.identifier), values);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
 			
 		return bag;
 	}
