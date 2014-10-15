@@ -67,21 +67,22 @@ public class TmacEnforceServiceImpl extends BaseOpenmrsService implements TmacEn
     	System.out.println( "Anita !!!!!!!!!!!!!!!!!! the required privilege is : " + privilege + ""
     			+ "userId is : " + user.getId().toString());
     	
-    	String[] parms = privilege.split(" ");
-    	String actionString = parms[0].toLowerCase();
-    	String resourceString = parms[1].toLowerCase();
+//    	String[] parms = privilege.split(" ");
+//    	String actionString = parms[0].toLowerCase();
+//    	String resourceString = parms[1].toLowerCase();
     	
     	//set all the attributes
-    	ArrayList<AttributeQuery> attributeQuery = new ArrayList<AttributeQuery>();
-    	String permission = "";
-		List<String> permission_ids = null;
-		attributeQuery.clear();
-		attributeQuery.add(new AttributeQuery(
-				PermissionAttributeXmlName.ACTION, actionString,
-				StringAttribute.identifier));
-		attributeQuery.add(new AttributeQuery(
-				PermissionAttributeXmlName.RESOURCE_TYPE, resourceString,   
-				StringAttribute.identifier));
+    	//ArrayList<AttributeQuery> permissionAttributeQuery = new ArrayList<AttributeQuery>();
+    	
+    	//String permission = "";
+		//List<String> permission_ids = null;
+//		permissionAttributeQuery.clear();
+//		permissionAttributeQuery.add(new AttributeQuery(
+//				PermissionAttributeXmlName.ACTION, actionString,
+//				StringAttribute.identifier));
+//		permissionAttributeQuery.add(new AttributeQuery(
+//				PermissionAttributeXmlName.RESOURCE_TYPE, resourceString,   
+//				StringAttribute.identifier));
 //		permission_ids = dh.getAttribute(
 //				PermissionAttributeXmlName.PERMISSION_TABLE,
 //				attributeQuery, PermissionAttributeXmlName.ID);
@@ -92,10 +93,12 @@ public class TmacEnforceServiceImpl extends BaseOpenmrsService implements TmacEn
 //		}
 //		permission = permission_ids.get(0);
 		
+		
 		//the request type is "obtain_permission"
 		userID = user.getId().toString();
+
 		ResponseParser rParser = pep.requestAccess(userID,
-				permission, "", "",
+				privilege, "", "",
 				"obtain_permission");
 
 		responseParserId = rParser.getParserId();
