@@ -13,6 +13,7 @@ import org.openmrs.module.trumpmodule.obligations.OpenmrsUserObligationMonitor;
 import org.openmrs.module.trumpmodule.obligations.RESTObligation;
 import org.wso2.balana.XACMLConstants;
 
+import luca.data.AttributeQuery;
 import luca.data.DataHandler;
 import luca.tmac.basic.ResponseParser;
 import luca.tmac.basic.TmacPDP;
@@ -273,7 +274,7 @@ public class OpenmrsTmacPEP  {
 			String team, String task, String requestType) {
 
 		String subjectCategory = "";
-		//String permissionCategory = "";
+		String permissionCategory = "";
 		String teamCategory = "";
 		String taskCategory = "";
 		String actionCategory = "";
@@ -300,7 +301,17 @@ public class OpenmrsTmacPEP  {
 //					+ "<AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">"
 //					+ permission + "</AttributeValue>\n" + "</Attribute>\n"
 //					+ "</Attributes>\n";
-
+		if (permission != null )
+		permissionCategory = "<Attributes Category=\""
+				+ PermissionAttributeURI.PERMISSION_CATEGORY_URI
+				+ "\">\n"
+				+ "<Attribute AttributeId=\""
+				+ PermissionAttributeURI.PERMISSION_ATTRIBUTES_URI
+				+ "\" IncludeInResult=\"false\">\n"
+				+ "<AttributeValue DataType=\"http://www.w3.org/2001/XMLSchema#string\">"
+				+ permission + "</AttributeValue>\n" + "</Attribute>\n"
+				+ "</Attributes>\n";
+		
 		if (team != null && !team.equals(""))
 			teamCategory = "<Attributes Category=\""
 					+ TeamAttributeURI.TEAM_CATEGORY_URI
@@ -343,7 +354,7 @@ public class OpenmrsTmacPEP  {
 
 		String request = "<Request xmlns=\"urn:oasis:names:tc:xacml:3.0:core:schema:wd-17\" CombinedDecision=\"false\" ReturnPolicyIdList=\"false\">\n"
 				+ subjectCategory
-				//+ permissionCategory
+				+ permissionCategory
 				+ teamCategory
 				+ taskCategory
 				+ actionCategory
@@ -354,9 +365,20 @@ public class OpenmrsTmacPEP  {
 		return request;
 	}
 	
-	public ResponseParser requestAccess(String username, String permission,
+//	public ResponseParser requestAccess(String username, String permission,
+//			String team, String task, String requestType) {
+//		String request = createXACMLRequest(username, permission, team, task,
+//				requestType);
+//		String response = pdp.evaluate(request);
+//		ResponseParser rParser = new ResponseParser(response,dh);
+//		System.out.println("Anita , 2 the decision is : " + rParser.getDecision());
+//		if(rParser.getDecision().equalsIgnoreCase("Permit"))
+//				sessionParsers.put(rParser.getParserId(), rParser);
+//		return rParser;
+//	}
+	public ResponseParser requestAccess(String username, String permissionString,
 			String team, String task, String requestType) {
-		String request = createXACMLRequest(username, permission, team, task,
+		String request = createXACMLRequest(username, permissionString, team, task,
 				requestType);
 		String response = pdp.evaluate(request);
 		ResponseParser rParser = new ResponseParser(response,dh);
