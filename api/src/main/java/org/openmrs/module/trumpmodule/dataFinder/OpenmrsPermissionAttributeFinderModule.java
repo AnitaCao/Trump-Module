@@ -122,6 +122,8 @@ public class OpenmrsPermissionAttributeFinderModule extends AbstractAttributeFin
 				}
 			}
 		}
+		// if the method is not about patientassignment, which means it is something from openmrs,
+		// then we use the permission attributes we got from openmrs annotation. 
 		else {
 			if(attributeURI.toString().equals(PermissionAttributeURI.RESOURCE_TYPE_URI)){
 				values.add(StringAttribute.getInstance(resourceString));

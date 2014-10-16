@@ -30,7 +30,6 @@ import luca.data.AttributeQuery;
 import luca.data.DataHandler;
 import luca.tmac.basic.data.AbstractAttributeFinderModule;
 import luca.tmac.basic.data.xml.SubjectAttributeXmlName;
-import luca.tmac.basic.data.uris.PermissionAttributeURI;
 import luca.tmac.basic.data.uris.ProvenanceStrings;
 import luca.tmac.basic.data.uris.SubjectAttributeURI;
 
@@ -124,7 +123,6 @@ public class OpenmrsSubjectAttributeFinderModule extends AbstractAttributeFinder
 			try {
 				bag = new BagAttribute(new URI(StringAttribute.identifier), values);
 			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -136,7 +134,6 @@ public class OpenmrsSubjectAttributeFinderModule extends AbstractAttributeFinder
 			try {
 				bag = new BagAttribute(new URI(StringAttribute.identifier), values);
 			} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -148,7 +145,6 @@ public class OpenmrsSubjectAttributeFinderModule extends AbstractAttributeFinder
 			try {
 				bag = new BagAttribute(new URI(StringAttribute.identifier), values);
 			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -187,24 +183,6 @@ public class OpenmrsSubjectAttributeFinderModule extends AbstractAttributeFinder
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
-				
-//-----------------------go to openmrsEnforceServiceContext to get the assignedPatient uuid list-------------
-				
-//				HashMap<String, HashSet<String>> assigendPatientIds = 
-//						OpenmrsEnforceServiceContext.getInstance().getAssigendPatientInternalIds();
-//				
-//				HashSet<String> set = assigendPatientIds.get(user.getId().toString());
-//				
-//				for(String ss : set){
-//					values.add(StringAttribute.getInstance(ss));
-//				}
-//				try {
-//					bag = new BagAttribute(new URI(StringAttribute.identifier), values);
-//				} catch (URISyntaxException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//-----------------------------------------------------------------------------------------------------------
 			}else{
 				attributeType = StringAttribute.identifier;
 				attribute = SubjectAttributeXmlName.ASSIGNED_PATIENT;
@@ -226,26 +204,11 @@ public class OpenmrsSubjectAttributeFinderModule extends AbstractAttributeFinder
 				e.printStackTrace();
 			}
 			
-		}else if(attributeURI.toString().equals(SubjectAttributeURI.ACTION_URI))
-		{
-			if(methodName.equals("savePatientAssignment")){
-				System.err.println("Anita, the action is create and update !!!");
-				values.add(StringAttribute.getInstance("create"));
-				values.add(StringAttribute.getInstance("update"));
-			}else 
-				if(methodName.equals("deletePatientAssignment")){
-				values.add(StringAttribute.getInstance("delete"));
-			}else 
-				if(methodName.equals("searchPatientAssignment")){
-				values.add(StringAttribute.getInstance("view"));
-			}
-			try {
-				bag = new BagAttribute(new URI(StringAttribute.identifier), values);
-			} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}	
+		}
+
+		for(int i =0; i< values.size();i++){
+			System.out.println("values is :  " + values.get(i).toString());
+		}
 		return bag;
 	}
 	
