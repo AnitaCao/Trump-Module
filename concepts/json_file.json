@@ -1,0 +1,98 @@
+{
+           "first": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I DO NOT WAKE UP AT NIGHT. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "TEST answers 1"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I DO NOT WAKE UP AT NIGHT. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "TEST answers 2"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I DO NOT WAKE UP AT NIGHT. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "TEST answers 3"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I DO NOT WAKE UP AT NIGHT. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "TEST answers 4"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "SLEEP DURING THE NIGHT", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "TEST question"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           }
+      
+}
