@@ -8,6 +8,7 @@ headers = {'content-type': 'application/json'}
 json_file = open('json_file.json')
 concepts = json.load(json_file)
 
+url = "http://localhost:8080/openmrs/ws/rest/v1/concept/"
 
 for key in concepts.keys():
 	answer_uuids = []
@@ -26,9 +27,6 @@ for key in concepts.keys():
 				for key2 in r.json().keys():
 					if "uuid" in key2:
 						answer_uuids.append(r.json()[key2])
-
-
-
 
 	for subKey in question_answer_dict.keys():
 		if "question" in subKey:
