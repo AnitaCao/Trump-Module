@@ -1,12 +1,12 @@
 {
-           "first": {
+           "1": {
                "answers": [
                    {
                        "conceptClass": "Misc", 
                        "datatype": "N/A", 
                        "descriptions": [
                            {
-                               "description": "I DO NOT WAKE UP AT NIGHT. ", 
+                               "description": "I never take longer than 30 minutes to fall asleep. ", 
                                "locale": "en"
                            }
                        ], 
@@ -15,7 +15,7 @@
                                "conceptNameType": "FULLY_SPECIFIED", 
                                "locale": "en", 
                                "localePreferred": true, 
-                               "name": "TEST answers 1"
+                               "name": "Fall asleep fast"
                            }
                        ]
                    }, 
@@ -24,7 +24,7 @@
                        "datatype": "N/A", 
                        "descriptions": [
                            {
-                               "description": "I DO NOT WAKE UP AT NIGHT. ", 
+                               "description": "I take at least 30 minutes to fall asleep, less than half the time. ", 
                                "locale": "en"
                            }
                        ], 
@@ -33,7 +33,7 @@
                                "conceptNameType": "FULLY_SPECIFIED", 
                                "locale": "en", 
                                "localePreferred": true, 
-                               "name": "TEST answers 2"
+                               "name": "Fall asleep not so fast"
                            }
                        ]
                    }, 
@@ -42,7 +42,7 @@
                        "datatype": "N/A", 
                        "descriptions": [
                            {
-                               "description": "I DO NOT WAKE UP AT NIGHT. ", 
+                               "description": "I take at least 30 minutes to fall asleep, more than half the time. ", 
                                "locale": "en"
                            }
                        ], 
@@ -51,7 +51,7 @@
                                "conceptNameType": "FULLY_SPECIFIED", 
                                "locale": "en", 
                                "localePreferred": true, 
-                               "name": "TEST answers 3"
+                               "name": "Fall asleep slowly"
                            }
                        ]
                    }, 
@@ -60,7 +60,7 @@
                        "datatype": "N/A", 
                        "descriptions": [
                            {
-                               "description": "I DO NOT WAKE UP AT NIGHT. ", 
+                               "description": "I take more than 60 minutes to fall asleep,more than half the time. ", 
                                "locale": "en"
                            }
                        ], 
@@ -69,7 +69,7 @@
                                "conceptNameType": "FULLY_SPECIFIED", 
                                "locale": "en", 
                                "localePreferred": true, 
-                               "name": "TEST answers 4"
+                               "name": "Difficulte to fall asleep"
                            }
                        ]
                    }
@@ -79,7 +79,7 @@
                    "datatype": "Coded", 
                    "descriptions": [
                        {
-                           "description": "SLEEP DURING THE NIGHT", 
+                           "description": "Falling Asleep situation: ", 
                            "locale": "en"
                        }
                    ], 
@@ -88,11 +88,1452 @@
                            "conceptNameType": "FULLY_SPECIFIED", 
                            "locale": "en", 
                            "localePreferred": true, 
-                           "name": "TEST question"
+                           "name": "Falling asleep situation:"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+           "2": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I do not wake up at night. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Sleep tight at night"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I have a restless,light sleep with a few brief awakenings each night. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Sleep light at night"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I wake up at least once a night, but i go back to sleep easily. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Sleep light, easily go back to sleep when wake up"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I awaken more than once a night and stay awake for 20 minutes or more, more than half the time. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Sleep light, wake up frequently"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "Sleep during the night ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "Sleep during the night"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+           "3": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "Most of the time,I awaken no more than 30 minutes before I need to get up. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Don't wake up earlier than planed time"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "More than half the time, I awaken more than 30 minutes before I need to get up. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Wake up earlier than planed time"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I almost always awaken at least one hour or so before I need to ,but I go back to sleep eventually. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Wake up much earlier but go back to sleep again"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I awaken at least one hour before I need to,and can't go back to sleep. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Wake up much earlier than planed time"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "Waking up too early ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "Waking up too early"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+           "4": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I sleep no longer than 7-8 hours/night, without napping during the day. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Sleep less than 8 hours"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I sleep no longer than 10 hours in a 24-hour period inclunding naps. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Sleep less than 10 hours including naps"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I sleep no longer than 12 hours in a 24-hour period including naps. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Sleep less than 12 hours including naps"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I sleep longer than 12 hours in a 24-hour period including naps. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Sleep longer than 12 hours including naps"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "Sleeping too much ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "Sleeping too much"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+           "5": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I do not feel sad. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Do't feel sad"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I feel sad less than half the time. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Sometimes feel sad"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I feel sad more than half the time. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Feel sad very often"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I feel sad nearly all of the time. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Always feel sad"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "Feeling sad ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "Feeling sad"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+            "6": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "There is no change in my usual appetite. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Not Decreased'"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I eat somewhat less ofthen or lesser amounts of food than usual. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Eat less"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I eat much less than usual and only with personal effort. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Eat much less"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I rarely eat within a 24-hour period, and only with extreme personal effort or when others persuade me to eat. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Rarely eat"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "Decreased Appetite: ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "Decreased Appetite"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+           "7": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "There is no change from my usual appetite. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Not Increased"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I feel a need to eat more frequently than usual. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Eat more "
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I regularly eat more often and/or greater amounts of food than usual. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Regularly eat more"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I feel driven to overeat both at mealtime and between meals. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Eat much more and often"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "Increased Appetite: ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "Increased Appetite"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+           "8": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I have not had a change in my weight. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Not lost weight"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I feel as if I have had a slight weight loss. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Lost a bit weight"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I have lost 2 pounds or more. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Lost some weight"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I have lost 5 pounds or more. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Lost a lot weight"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "Decreased weight: ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "Descreased weight"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+          "9": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I have not had a change in my weight. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Not gain weight"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I feel as if i have had a slight weight gain. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Gain a bit weight"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I have gained 2 pounds or more. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Gain some weight"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I have gained 5 pounds or more. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Gain a lot weight"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "Increased weight: ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "Increased weight"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+          "10": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "There is no change in my usual capacity to concentrate or make decisions. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "No change in concentration/decision making"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I occasionally feel indecisive or find that my attention wanders ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "occasionally can't concentrate"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "Most of the time, I struggle to focus my attention or to make decisions. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Cannot concentrate most of the time"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I cannot concentrate well enough to read or cannot make even minor decisions. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Cannot concentrate at all"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "Concentration/Decision Making : ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "Concentration/Decision Making"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+          "11": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I see myself as equally worthwhile and deserving as other people. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "I see myself equally"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I am more self-blamming than usual. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "I am more self-blamming"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I largely believe that I cause problems for others. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "I believe I cause problems"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I think almost constantly about major and minor defects in myself. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "I keep thinking about defects in myself"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "View of Myself: ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "View of Myself"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+          "12": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I do not think of suicide or death. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "I don't think of suicide or death"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I feel that life is empty or wonder if it's worth living. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "I feel that life is empty"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I think of suicide or death several times a week for several minutes. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "I think of suicide several times a week"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I think of suicide or death several times a day in some detail,or i have made specific plans for suicide or have actually tried to take my life. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "I think of suicide several times a day"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "Thoughts of Death or Suicide: ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "Thoughts of Death or Suicide"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+          "13": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "There is no change from usual in how interested i am in other people or activities. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "No change in general interest"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I notice that i am less interested in people or activities. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "I am less interested in people or activities"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I find I have interest in only one or two of my formerly pursued activities. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "I am much less interested in activities"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I have virtually no interest in formerly pursued activities. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "I have virtually no interest in activities"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "General Interest: ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "General Interest"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+          "14": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "There is no change in my usual level of energy. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "No change in energy level"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I get tired more easily than usual. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Get tired more easily"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I have to make a big effort to start or finish my usual daily activities(for example,shopping, homework, cooking, or going to work). ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Get tired very easily"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I really cannot carry out most of my usual daily activities because I just don't have the energy. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Don't have energy at all"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "Energy Level: ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "Energy Level"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+          "15": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I think, speak, and move at my usual rate of speed. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "No change in my usual speed"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I find that my thinking is slowed down or my voice sounds dull or my voice sounds dull or flat. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "My thinking is slowed down"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "It takes me several seconds to respond to most questions and I'm sure my thinking is slowed. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "My thinking and reaction is slowed"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I am often unable to respond to questions without extreme effort ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "My thinking and reaction is extremely slowed"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "Feeling Slowed Down: ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "Feeling slowed down"
+                       }
+                   ], 
+                   "version": "1.0"
+               }
+           },
+
+          "16": {
+               "answers": [
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I do not feel restless. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "I don't fell restless"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I'm often fidgety, wringing my hands, or need to shift how i am sitting. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Feel a bit restless"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "I have impulses to move about and am quite restless. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Feel quite restless"
+                           }
+                       ]
+                   }, 
+                   {
+                       "conceptClass": "Misc", 
+                       "datatype": "N/A", 
+                       "descriptions": [
+                           {
+                               "description": "At times, I am unable to stay seated and need to pace around. ", 
+                               "locale": "en"
+                           }
+                       ], 
+                       "names": [
+                           {
+                               "conceptNameType": "FULLY_SPECIFIED", 
+                               "locale": "en", 
+                               "localePreferred": true, 
+                               "name": "Feel very restless all the time"
+                           }
+                       ]
+                   }
+               ], 
+               "question": {
+                   "conceptClass": "Question", 
+                   "datatype": "Coded", 
+                   "descriptions": [
+                       {
+                           "description": "Feeling Restless: ", 
+                           "locale": "en"
+                       }
+                   ], 
+                   "names": [
+                       {
+                           "conceptNameType": "FULLY_SPECIFIED", 
+                           "locale": "en", 
+                           "localePreferred": true, 
+                           "name": "Feeling Restless"
                        }
                    ], 
                    "version": "1.0"
                }
            }
+
       
 }
