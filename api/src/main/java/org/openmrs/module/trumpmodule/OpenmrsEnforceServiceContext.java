@@ -105,6 +105,11 @@ public class OpenmrsEnforceServiceContext {
 		return path + File.separator + "provenance";
 	}
 	
+	public String getConceptsDirectory(){
+		String path = System.getProperty("user.dir");
+		return path + File.separator + "concepts";	
+	}
+	
 	public void setPolicies(HashMap<String, ArrayList<Policy>> policies) {
 		this.policies = policies;
 	}

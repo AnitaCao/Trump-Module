@@ -14,7 +14,15 @@
 package org.openmrs.module.trumpmodule;
 
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
+
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,6 +52,26 @@ public class TrumpModuleActivator implements Activator {
 		SerContext.getExpiredObs().clear();
 		SerContext.getFulfilledObs().clear();
 		SerContext.getObligationSets().clear();
+		
+		ScriptEngineManager manager = new ScriptEngineManager();
+		ScriptEngine engine = manager.getEngineByName("python");
+		String fileLocation = SerContext.getConceptsDirectory()+"/concepts.py";
+		System.out.println(fileLocation);
+		FileReader fr = null;
+		ScriptContext context = new SimpleScriptContext();
+		try {
+			fr = new FileReader(fileLocation);
+			
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} 
+		
+		try {
+			engine.eval("print ('runing pythoncode!')");
+			engine.eval(fr,context);
+		} catch (ScriptException e) {
+			e.printStackTrace();
+		}
 
 	
 	}

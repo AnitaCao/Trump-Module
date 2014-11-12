@@ -8,7 +8,7 @@ headers = {'content-type': 'application/json'}
 json_file = open('json_file.json')
 concepts = json.load(json_file)
 
-
+print ("running python file now !")
 
 for key in concepts.keys():
 
