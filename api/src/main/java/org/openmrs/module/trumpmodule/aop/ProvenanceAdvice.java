@@ -1,6 +1,7 @@
 package org.openmrs.module.trumpmodule.aop;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.UUID;
 
 import luca.tmac.basic.data.uris.ProvenanceStrings;
@@ -8,6 +9,7 @@ import luca.tmac.basic.data.uris.ProvenanceStrings;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.openmrs.OpenmrsData;
+import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
@@ -18,14 +20,13 @@ import uk.ac.dotrural.prov.jena.ProvenanceBundle;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.tdb.TDBFactory;
 
 
 public class ProvenanceAdvice implements MethodInterceptor {
 	
 	private Dataset dataset;
-	
+	ProvenanceBundle provBundle = new ProvenanceBundle(ProvenanceStrings.NS);
 	OpenmrsEnforceServiceContext openmrsContext = OpenmrsEnforceServiceContext.getInstance();
 	private String directory = openmrsContext.getProvenanceDirectory();
 
@@ -34,36 +35,39 @@ public class ProvenanceAdvice implements MethodInterceptor {
 		Method method = invocation.getMethod();
 		String name = method.getName();
 		// data object resulting from this captured method invocation that we will store provenance about
-		Object result = null;
-		// decide what type of logging we're doing with the current method and loglevel
-		if (OpenmrsUtil.stringStartsWith(name, ProvenanceStrings.SETTER_METHOD_PREFIXES)) {
+		// decide what type of logging we're doing with the current method and log level
+		Object result = addInfoToTDB(invocation, name);
+		return result;
+		
+	}
+
+	public Object addInfoToTDB(MethodInvocation invocation, String name)
+			throws Throwable {
+		Object result = null;;
+		// currently, we only capture the "create","save","delete","update" methods.
+		if (OpenmrsUtil.stringStartsWith(name, ProvenanceStrings.SETTER_METHOD_PREFIXES)) {   
+			String className = invocation.getThis().getClass().getName();
+			String activityNameSpace = name+"_"+className+"/";
+			System.err.println("the activity name space is : "+ activityNameSpace);
+		
 			// used for the execution time calculations
 			long startTime = System.currentTimeMillis();
 			
 			//System.out.println("the directory of provenance is : " + directory);
 			dataset = TDBFactory.createDataset(directory);
+			provBundle = new ProvenanceBundle(ProvenanceStrings.NS);
 			
-			ProvenanceBundle provBundle = new ProvenanceBundle(ProvenanceStrings.NS);
 			//insert to TDB
 			
-			//1. activity has one property: action_name
-			String activityURI = provBundle.createActivity(ProvenanceStrings.NS +ProvenanceStrings.ACTIVITY_PATIENT + UUID.randomUUID().getMostSignificantBits());
-			Resource activity = provBundle.getResource(activityURI);
-			
-			// create a new action property, if it doesn't already exist, which
-			// is just the name of the invoked method
-			Property actionProp = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.ACTIVITY_NAME);
-			activity.addProperty(actionProp, name);
+			// 1. activity
+			com.hp.hpl.jena.rdf.model.Resource activity = generateActivity(
+					activityNameSpace);
 
-			//2. agent - comes from the logged in user or the user who is invoking the method
-			User user = Context.getAuthenticatedUser();
-			String agentURI = provBundle.createAgent(ProvenanceStrings.NS + ProvenanceStrings.AGENT_USER + user.getId());
-			Resource agent = provBundle.getResource(agentURI);
+			// 2. agent - comes from the logged in user or the user who is invoking the method
+			com.hp.hpl.jena.rdf.model.Resource agent = generateAgent();
 
-			// NOW: we need to execute the method to actually get the created
-			// entity details
-			result = (OpenmrsData) invocation.proceed();
-			
+			// NOW: we need to execute the method to actually get the created entity details
+			result = invocation.proceed();
 
 			//3. entity - comes from the uuid of the newly created patient (the
 			// entity is not an agent, it represents the new record)
@@ -72,17 +76,9 @@ public class ProvenanceAdvice implements MethodInterceptor {
 			// resulting in some entity being created (i.e. a new patient record
 			// with a UUID) -
 			// i.e. from the result we just got
-			String entityURI = provBundle.createEntity(ProvenanceStrings.NS + ProvenanceStrings.ENTITY_PATIENT + ((OpenmrsData) result).getId());
+			com.hp.hpl.jena.rdf.model.Resource entity = generateEntity((OpenmrsData)result,className+"/",null);
 			
-			Resource entity = provBundle.getResource(entityURI);
-			// entity has an property : patient_uuid
-			Property entityProp = provBundle.getModel().createProperty(ProvenanceStrings.NS, ProvenanceStrings.PATIENT_UUID);
-			entity.addProperty(entityProp, ((OpenmrsData) result).getUuid());
-
-			// add statement describing when the activity started
-			provBundle.addStartedAtTime(activity, startTime);
-			// add statement describing when the activity ended.
-			provBundle.addEndedAtTime(activity, System.currentTimeMillis());
+			addStartEndTime(startTime, activity);
 			
 			//the activity was started by the agent. 
 			provBundle.addWasStartedBy(activity, agent);
@@ -91,21 +87,143 @@ public class ProvenanceAdvice implements MethodInterceptor {
 			//the entity was attributed to the agent
 			provBundle.addWasAttributedTo(entity, agent);
 
-			provBundle.getModel().write(System.out);
-
-			Model model = dataset.getDefaultModel();
-
-			model.add(provBundle.getModel());
-
-			dataset.close();
-			
+	//		provBundle.getModel().write(System.out);
+			closeDataset();
 		} else {
 			// if we're not interested in capturing provenance for this method, still let it proceed
 			result = invocation.proceed();
 		}
 		return result;
-		
 	}
+	
+	
+	
+	public OpenmrsData addToTDB(String methodName, OpenmrsData delegate, String activityNamespace, 
+			String entityNamespace, HashMap<String,String> entityProperties) {
+		long startTime = System.currentTimeMillis();
+		dataset = TDBFactory.createDataset(directory);
+
+		// insert to TDB
+		// 1. activity
+		com.hp.hpl.jena.rdf.model.Resource activity = generateActivity(
+				activityNamespace);
+
+		// 2. agent - comes from the logged in user or the user who is invoking the method
+		com.hp.hpl.jena.rdf.model.Resource agent = generateAgent();
+
+		// 3. the entity is the class which is calling this method(such as PatientAssignment)
+		com.hp.hpl.jena.rdf.model.Resource entity = generateEntity(delegate,
+				entityNamespace, entityProperties);
+
+		addStartEndTime(startTime, activity);
+		// the activity was started by the agent.
+		provBundle.addWasStartedBy(activity, agent);
+		
+		if(methodName.startsWith("delete")){
+			provBundle.addWasInvalidatedBy(entity, activity);
+		}else {
+			// the entity was generated by the activity
+			provBundle.addWasGeneratedBy(entity, activity);
+			// the entity was attributed to the agent
+			provBundle.addWasAttributedTo(entity, agent);
+		}
+
+		//provBundle.getModel().write(System.out);
+		closeDataset();
+		return delegate;
+	}
+
+	/**
+	 * generate entity to store in TDB
+	 * @param delegate
+	 * @param entityNamespace
+	 * @param entityProperties
+	 * @return entity
+	 */
+	public com.hp.hpl.jena.rdf.model.Resource generateEntity(OpenmrsData delegate, String entityNamespace, HashMap<String,String> entityProperties) {
+		
+		String entityURI = provBundle.createEntity(ProvenanceStrings.NS
+				+ entityNamespace
+				//+ delegate.getPatientassignmentUUID());
+				+ delegate.getUuid());
+		
+		com.hp.hpl.jena.rdf.model.Resource entity = provBundle.getResource(entityURI);
+		
+		for(String key : entityProperties.keySet()){
+			Property entityProp = provBundle.getModel().createProperty(
+				ProvenanceStrings.NS, key);
+			entity.addProperty(entityProp, entityProperties.get(key));
+		}		
+
+		return entity;
+	}
+
+	/**
+	 * generate agent, by default, the agent is current user.
+	 * @return agent
+	 */
+	public com.hp.hpl.jena.rdf.model.Resource generateAgent() {
+		User user = Context.getAuthenticatedUser();
+		String agentURI = provBundle.createAgent(ProvenanceStrings.NS
+				+ ProvenanceStrings.AGENT_USER + user.getUserId());
+		com.hp.hpl.jena.rdf.model.Resource agent = provBundle
+				.getResource(agentURI);
+		return agent;
+	}
+	
+	/**
+	 * generate activity, by default, activity have one property, which is activity name.
+	 * @param activityNamespace
+	 * @param actionNameString
+	 * @return activity
+	 */
+	public com.hp.hpl.jena.rdf.model.Resource generateActivity(
+			String activityNamespace, String actionNameString) {
+		
+		String activityURI = provBundle.createActivity(ProvenanceStrings.NS
+				+ activityNamespace
+				+ UUID.randomUUID().getMostSignificantBits());
+		com.hp.hpl.jena.rdf.model.Resource activity = provBundle.getResource(activityURI);
+
+		Property actionProp = provBundle.getModel().createProperty(
+				ProvenanceStrings.NS, ProvenanceStrings.ACTIVITY_NAME);
+		activity.addProperty(actionProp, actionNameString );
+		return activity;
+	}
+	
+	public com.hp.hpl.jena.rdf.model.Resource generateActivity(
+			String activityNamespace) {
+		
+		String activityURI = provBundle.createActivity(ProvenanceStrings.NS
+				+ activityNamespace
+				+ UUID.randomUUID().getMostSignificantBits());
+		com.hp.hpl.jena.rdf.model.Resource activity = provBundle.getResource(activityURI);
+
+		return activity;
+	}
+	
+	/**
+	 * add start time and end time to this activity
+	 * @param startTime
+	 * @param activity
+	 */
+	public void addStartEndTime(long startTime,
+			com.hp.hpl.jena.rdf.model.Resource activity) {
+		// add statement describing when the activity started
+		provBundle.addStartedAtTime(activity, startTime);
+		// add statement describing when the activity ended.
+		provBundle.addEndedAtTime(activity, System.currentTimeMillis());
+	}
+	
+	/**
+	 * put model to dataset, then close dataset.
+	 */
+	public void closeDataset() {
+		Model model = dataset.getDefaultModel();
+		model.add(provBundle.getModel());
+		dataset.close();
+	}
+	
 }
 	
 
