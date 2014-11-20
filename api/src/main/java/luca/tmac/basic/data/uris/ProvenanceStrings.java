@@ -40,4 +40,13 @@ public class ProvenanceStrings {
 			+ " PREFIX RDF: <" + ProvenanceStrings.RDF + ">" 
 			+ " PREFIX PROV: <" + ProvenanceStrings.PROV + ">" 
 			+ " PREFIX NS: <" + ProvenanceStrings.NS + ">";
+	
+	public static final String getQueryPerfix(String dataType){
+		return
+				  " PREFIX agent: <" + ProvenanceStrings.NS + ProvenanceStrings.AGENT_USER + ">"
+				+ " PREFIX entity: <" + ProvenanceStrings.NS + dataType + "/>"
+				+ " PREFIX RDF: <" + ProvenanceStrings.RDF + ">" 
+				+ " PREFIX PROV: <" + ProvenanceStrings.PROV + ">" 
+				+ " PREFIX NS: <" + ProvenanceStrings.NS + ">";
+	}
 }
