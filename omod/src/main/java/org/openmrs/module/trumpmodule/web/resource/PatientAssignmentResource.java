@@ -13,6 +13,7 @@ import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;
 import org.openmrs.module.trumpmodule.aop.AuthorizationAdvice;
 import org.openmrs.module.trumpmodule.aop.ProvenanceAdvice;
 import org.openmrs.module.trumpmodule.patientassignment.PatientAssignment;
+import org.openmrs.module.trumpmodule.provenance.Provenance;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
@@ -26,7 +27,6 @@ import org.openmrs.module.webservices.rest.web.resource.impl.EmptySearchResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
-
 
 import java.util.Collection;
 
@@ -172,58 +172,36 @@ public class PatientAssignmentResource extends
 		requiredPrivileges.add(PatientAssignmentResource.VIEW_ASSIGNMENT);
 		checkAccessRequest("searchPatientAssignment",new Object[]{uniqueId}, requiredPrivileges);
 
+		PatientAssignment pa = new PatientAssignment();
 		String patient_uuid = null;
 		String doctor_id = null;
 		boolean invalidated = false;
-
-		String queryString = ProvenanceStrings.QUERY_PREFIX + "SELECT *  WHERE {"
-				+ "pA:" +uniqueId + " ?property ?value}";
-
-		System.err.println(queryString);
-		dataset = TDBFactory.createDataset(directory);
-		Query query = QueryFactory.create(queryString);
-		QueryExecution qexec = QueryExecutionFactory.create(query, dataset);
-		ResultSet results = qexec.execSelect();
-		while (results.hasNext()) {
-
-			QuerySolution row = results.next();
-			Iterator columns = row.varNames();
-
-			while (columns.hasNext()) {
-				RDFNode cell = row.get((String) columns.next());
-				if (cell.isResource()) {
-					com.hp.hpl.jena.rdf.model.Resource resource = cell
-							.asResource();
-					String resourceString = resource.toString();
-					if (resourceString.contains("doctor_id")) {
-						doctor_id = row.get((String) columns.next()).toString();
-
-					} else if (resourceString.contains("patient_uuid")) {
-						patient_uuid = row.get((String) columns.next()).toString();
-
-					} else if (resourceString.contains("wasInvalidatedBy")){
-						invalidated = true;
-					}
-				} else {
-					System.out.println(cell.toString());
+		
+		HashMap<String,String> properties = new Provenance().getByUUID("patientassignment", uniqueId);
+		
+		if(properties.isEmpty()){
+			return null;
+		}else{
+			for(String key : properties.keySet()){
+				if (key.equals("doctor_id")){
+					doctor_id = properties.get(key);
+				}else if(key.equals("patient_uuid")){
+					patient_uuid = properties.get(key);
+				}else if(key.equals("isvalidated")){
+					invalidated = true;
 				}
 			}
+			// unlike saving everything to OpenmrsServiceContext class, we are getting information from TDB, 
+			// which means we can't get the object, we can only get the information of the object, so we need
+			// to new an instance and set the information by passing the obtained information to the new 
+			// instance. Am I right ? --- YES
+			pa.setDoctorId(doctor_id);
+			pa.setPatientUUID(patient_uuid);
+			pa.setUuid(uniqueId);
+			pa.setInvalidated(invalidated);
+			pa.setUserId(Context.getAuthenticatedUser().getId().toString());
 		}
 
-		// unlike saving everything to OpenmrsServiceContext class, we are getting information from TDB, 
-		// which means we can't get the object, we can only get the information of the object, so we need
-		// to new an instance and set the information by passing the obtained information to the new 
-		// instance. Am I right ? --- YES
-		PatientAssignment pa = new PatientAssignment();
-		pa.setDoctorId(doctor_id);
-		pa.setPatientUUID(patient_uuid);
-		//pa.setPatientassignmentUUID(uniqueId);
-		pa.setUuid(uniqueId);
-		pa.setInvalidated(invalidated);
-		pa.setUserId(Context.getAuthenticatedUser().getId().toString());
-		pa.setInvalidated(invalidated);
-
-		dataset.close();
 		return pa;
 	}
 
@@ -234,26 +212,7 @@ public class PatientAssignmentResource extends
 		checkAccessRequest("searchPatientAssignment",new Object[]{context}, requiredPrivileges);
 		
 		List<PatientAssignment> patientAssignments = new ArrayList<PatientAssignment>();
-		List<String> uuidList = new ArrayList<String>();
-
-		String q = ProvenanceStrings.QUERY_PREFIX + "SELECT ?s " + "WHERE {"+ "?s a PROV:Entity .}";
-
-		dataset = TDBFactory.createDataset(directory);
-		Query query = QueryFactory.create(q);
-		QueryExecution qexec = QueryExecutionFactory.create(query, dataset);
-		ResultSet results = qexec.execSelect();
-		
-		while (results.hasNext()) {
-			QuerySolution row = results.next();
-			String things = row.get("s").toString();
-			if (things.contains("patientassignment")) {
-				String[] ss = things.split("/");
-				String paUUID = ss[ss.length-1];
-				System.out.println(paUUID);
-				uuidList.add(paUUID);
-			}
-		}
-		dataset.close();
+		List<String> uuidList = new Provenance().getAll("patientassignment");
 		
 		for(int i = 0; i<uuidList.size(); i++){
 			patientAssignments.add(getByUniqueId(uuidList.get(i)));
@@ -261,6 +220,8 @@ public class PatientAssignmentResource extends
 
 		return new NeedsPaging<PatientAssignment>(patientAssignments, context);
 	}
+
+
 
 	public String getDisplayString(PatientAssignment patientAssignment) {
 		return "Patient : "+patientAssignment.getPatientUUID() + " assigned to Doctor: "

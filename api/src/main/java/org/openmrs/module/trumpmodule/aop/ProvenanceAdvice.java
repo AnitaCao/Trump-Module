@@ -9,7 +9,6 @@ import luca.tmac.basic.data.uris.ProvenanceStrings;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.openmrs.OpenmrsData;
-import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.trumpmodule.OpenmrsEnforceServiceContext;

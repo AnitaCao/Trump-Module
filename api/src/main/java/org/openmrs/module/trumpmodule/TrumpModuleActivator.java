@@ -53,25 +53,25 @@ public class TrumpModuleActivator implements Activator {
 		SerContext.getFulfilledObs().clear();
 		SerContext.getObligationSets().clear();
 		
-		ScriptEngineManager manager = new ScriptEngineManager();
-		ScriptEngine engine = manager.getEngineByName("python");
-		String fileLocation = SerContext.getConceptsDirectory()+"/concepts.py";
-		System.out.println(fileLocation);
-		FileReader fr = null;
-		ScriptContext context = new SimpleScriptContext();
-		try {
-			fr = new FileReader(fileLocation);
-			
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} 
-		
-		try {
-			engine.eval("print ('runing pythoncode!')");
-			engine.eval(fr,context);
-		} catch (ScriptException e) {
-			e.printStackTrace();
-		}
+//		ScriptEngineManager manager = new ScriptEngineManager();
+//		ScriptEngine engine = manager.getEngineByName("python");
+//		String fileLocation = SerContext.getConceptsDirectory()+"/concepts.py";
+//		System.out.println(fileLocation);
+//		FileReader fr = null;
+//		ScriptContext context = new SimpleScriptContext();
+//		try {
+//			fr = new FileReader(fileLocation);
+//			
+//		} catch (FileNotFoundException e1) {
+//			e1.printStackTrace();
+//		} 
+//		
+//		try {
+//			engine.eval("print ('runing pythoncode!')");
+//			engine.eval(fr,context);
+//		} catch (ScriptException e) {
+//			e.printStackTrace();
+//		}
 
 	
 	}
