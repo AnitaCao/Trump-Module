@@ -32,7 +32,7 @@ public class Provenance {
 	public List<String> getAll(String dataType) {
 		List<String> uuidList = new ArrayList<String>();
 
-		String q = ProvenanceStrings.QUERY_PREFIX + "SELECT ?s " + "WHERE {"+ "?s a PROV:Entity .}";
+		String q = ProvenanceStrings.getQueryPerfix(dataType) + "SELECT ?s " + "WHERE {"+ "?s a PROV:Entity .}";
 
 		dataset = TDBFactory.createDataset(directory);
 		Query query = QueryFactory.create(q);
@@ -56,12 +56,12 @@ public class Provenance {
 	public HashMap<String,String> getByUUID(String dataType,String uuid){
 		HashMap<String,String> properties = new HashMap<String, String>();
 		
-		String queryString = ProvenanceStrings.getQueryPerfix(dataType) + "SELECT *  WHERE {"
+		String q = ProvenanceStrings.getQueryPerfix(dataType) + "SELECT *  WHERE {"
 				+ "entity:" +uuid + " ?property ?value}";
 
-		System.err.println(queryString);
+		System.err.println(q);
 		dataset = TDBFactory.createDataset(directory);
-		Query query = QueryFactory.create(queryString);
+		Query query = QueryFactory.create(q);
 		QueryExecution qexec = QueryExecutionFactory.create(query, dataset);
 		ResultSet results = qexec.execSelect();
 		while (results.hasNext()) {
@@ -75,6 +75,8 @@ public class Provenance {
 					com.hp.hpl.jena.rdf.model.Resource resource = cell
 							.asResource();
 					String resourceString = resource.toString();
+					//if the resource string contains the properties' namespace, which means this resource is actually
+					//a property of an Entity (we only put entity properties when we store information to TDB)
 					if (resourceString.contains(ProvenanceStrings.NS)) {
 						properties.put(resourceString.replace(ProvenanceStrings.NS, ""), row.get((String) columns.next()).toString());
 
@@ -89,4 +91,44 @@ public class Provenance {
 		dataset.close();
 		return properties;
 	}
+	
+	public boolean checkExist(String dataType, HashMap<String,String> propeties){
+		
+		boolean exist = false;
+		boolean isInValidated = false;
+		
+		StringBuilder tmp = new StringBuilder();
+		tmp.append(ProvenanceStrings.getQueryPerfix(dataType) + "SELECT *  WHERE { ");
+		for(String key : propeties.keySet()){
+			tmp.append("?pa NS:" + key+ "'" + propeties.get(key)+"'.");
+		}
+		tmp.append("?pa PROV:wasGeneratedBy ?assign_activity ."
+        		+ "?assign_activity PROV:startedAtTime ?assign_time ."
+        		+ "OPTIONAL { ?pa PROV:wasInvalidatedBy ?unassign_activity ."
+        		+            "?unassign_activity PROV:startedAtTime ?unassign_time .}"
+        		+ "}");
+		dataset = TDBFactory.createDataset(directory);
+		Query query = QueryFactory.create(tmp.toString());
+		QueryExecution qexec = QueryExecutionFactory.create(query, dataset);
+		ResultSet results = qexec.execSelect();
+		while(results.hasNext()){
+			exist = true;
+			QuerySolution row = results.next();
+			RDFNode unassignTimeNode = row.get("unassign_time");
+			if(unassignTimeNode!=null){
+				String unassignTime = unassignTimeNode.toString();
+				String assignTime = row.get("assign_time").toString();
+				System.err.println("the unassign_time is : " + unassignTime);
+				System.err.println("the assign_time is : " + assignTime);
+				System.out.println(unassignTime.compareTo(assignTime));
+				if(unassignTime.compareTo(assignTime)>=0){ //means unassign_activity happened at a later time
+					                                       //which means it has been unassigned.
+					isInValidated = true;
+				}
+				
+			}else isInValidated = false; //if there is no unassignTimeNode, which means this activity has not been invalidated.
+		}
+		return (exist&&!isInValidated);
+	}
+	
 }

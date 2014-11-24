@@ -133,7 +133,11 @@ public class ProvenanceAdvice implements MethodInterceptor {
 	}
 
 	/**
-	 * generate entity to store in TDB
+	 * generate entity to store in TDB, if the entity is the exist type in Openmrs,
+	 * then we do not need to add any property to this entity, because everything 
+	 * will be stored in database, we just need to store the uuid of the entity, 
+	 * when we use provBundle.createEntity(..) to create the entity resource, it
+	 * take the uuid in the resource,which means we do not need to do anything.
 	 * @param delegate
 	 * @param entityNamespace
 	 * @param entityProperties
@@ -147,13 +151,15 @@ public class ProvenanceAdvice implements MethodInterceptor {
 				+ delegate.getUuid());
 		
 		com.hp.hpl.jena.rdf.model.Resource entity = provBundle.getResource(entityURI);
-		
-		for(String key : entityProperties.keySet()){
-			Property entityProp = provBundle.getModel().createProperty(
-				ProvenanceStrings.NS, key);
-			entity.addProperty(entityProp, entityProperties.get(key));
-		}		
+		if(!entityProperties.isEmpty()){
+			for(String key : entityProperties.keySet()){
+				Property entityProp = provBundle.getModel().createProperty(
+					ProvenanceStrings.NS, key);
+				entity.addProperty(entityProp, entityProperties.get(key));
+			}	
+		}	
 
+		
 		return entity;
 	}
 

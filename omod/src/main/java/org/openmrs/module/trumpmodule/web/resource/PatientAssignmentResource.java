@@ -3,7 +3,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import luca.tmac.basic.data.uris.ProvenanceStrings;
@@ -37,7 +36,6 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.tdb.TDBFactory;
 
 @Resource(name = "v1/trumpmodule/patientassignment", supportedClass = PatientAssignment.class, supportedOpenmrsVersions = {
@@ -54,6 +52,7 @@ public class PatientAssignmentResource extends
 	OpenmrsEnforceServiceContext openmrsContext = OpenmrsEnforceServiceContext
 			.getInstance();
 	private String directory = openmrsContext.getProvenanceDirectory();
+	private Provenance pro = new Provenance();
 
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(
@@ -122,7 +121,7 @@ public class PatientAssignmentResource extends
 		properties.put(ProvenanceStrings.PATIENT_UUID, delegate.getPatientUUID());
 		properties.put(ProvenanceStrings.DOCTOR_ID, delegate.getDoctorId());
 		
-		if (!checkExist(delegate.getDoctorId(),delegate.getPatientUUID())) {
+		if (!pro.checkExist("patientassignment", properties)) {
 			return (PatientAssignment) new ProvenanceAdvice().addToTDB("save",delegate,"save_patientassignment/"
 					,"patientassignment/", properties);
 		}else {
@@ -135,16 +134,18 @@ public class PatientAssignmentResource extends
 	@Override
 	protected void delete(PatientAssignment delegate, String reason,
 			RequestContext context) throws ResponseException {
-		// TODO Before deleting the patientAssignment, we need to firstly check TDB, 
+		// Before deleting the patientAssignment, we need to firstly check TDB, 
 		// to see if there is the patientAssignment and if it was invalidated already,
-		// if so, we can not delete an un-exist patientAssignment or an already deleted
+		// if so, we can not delete a not exist patientAssignment or an already deleted
 		// one. 
 		
 		Collection<String> requiredPrivileges = new ArrayList<String>();
 		requiredPrivileges.add(PatientAssignmentResource.DELETE_ASSIGNMENT);
 		checkAccessRequest("deletePatientAssignment",new Object[]{delegate,reason,context}, requiredPrivileges);
-		
-		if (checkExist(delegate.getDoctorId(),delegate.getPatientUUID())) {
+		HashMap<String,String> properties = new HashMap<String,String>();
+		properties.put(ProvenanceStrings.PATIENT_UUID, delegate.getPatientUUID());
+		properties.put(ProvenanceStrings.DOCTOR_ID, delegate.getDoctorId());
+		if (pro.checkExist("patientassignment", properties)) {
 			// when we do delete patientAssignment, we do not actually delete it
 			// from TDB, we do invalidating this patientAssignment entity.
 			new ProvenanceAdvice().addToTDB("delete",delegate,"delete_patientassignment/",
@@ -157,7 +158,6 @@ public class PatientAssignmentResource extends
 	@Override
 	public void purge(PatientAssignment delegate, RequestContext context)
 			throws ResponseException {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -228,41 +228,41 @@ public class PatientAssignmentResource extends
 				+ patientAssignment.getDoctorId() + ".  NOTE: This assignment is active  :" + !patientAssignment.getInvalidated();
 	}
 	
-	public boolean checkExist(String doctorId, String patientUUID){
-		boolean exist = false;
-		boolean isInValidated = false;
-		
-		String q = ProvenanceStrings.QUERY_PREFIX + "SELECT *  WHERE {"
-				+ "?pa NS:doctor_id "+"'"+doctorId+"' ."
-        		+ "?pa NS:patient_uuid "+"'"+patientUUID+"' ."
-        		+ "?pa PROV:wasGeneratedBy ?assign_activity ."
-        		+ "?assign_activity PROV:startedAtTime ?assign_time ."
-        		+ "OPTIONAL { ?pa PROV:wasInvalidatedBy ?unassign_activity ."
-        		+            "?unassign_activity PROV:startedAtTime ?unassign_time .}"
-        		+ "}";
-		dataset = TDBFactory.createDataset(directory);
-		Query query = QueryFactory.create(q);
-		QueryExecution qexec = QueryExecutionFactory.create(query, dataset);
-		ResultSet results = qexec.execSelect();
-		while(results.hasNext()){
-			exist = true;
-			QuerySolution row = results.next();
-			RDFNode unassignTimeNode = row.get("unassign_time");
-			if(unassignTimeNode!=null){
-				String unassignTime = unassignTimeNode.toString();
-				String assignTime = row.get("assign_time").toString();
-				System.err.println("the unassign_time is : " + unassignTime);
-				System.err.println("the assign_time is : " + assignTime);
-				System.out.println(unassignTime.compareTo(assignTime));
-				if(unassignTime.compareTo(assignTime)>=0){ //means unassign_activity happened at a later time
-					                                       //which means it has been unassigned.
-					isInValidated = true;
-				}
-				
-			}else isInValidated = false; //if there is no unassignTimeNode, which means this activity has not been invalidated.
-		}
-		return (exist&&!isInValidated);
-	}
+//	public boolean checkExist(String doctorId, String patientUUID){
+//		boolean exist = false;
+//		boolean isInValidated = false;
+//		
+//		String q = ProvenanceStrings.QUERY_PREFIX + "SELECT *  WHERE {"
+//				+ "?pa NS:doctor_id "+"'"+doctorId+"' ."
+//        		+ "?pa NS:patient_uuid "+"'"+patientUUID+"' ."
+//        		+ "?pa PROV:wasGeneratedBy ?assign_activity ."
+//        		+ "?assign_activity PROV:startedAtTime ?assign_time ."
+//        		+ "OPTIONAL { ?pa PROV:wasInvalidatedBy ?unassign_activity ."
+//        		+            "?unassign_activity PROV:startedAtTime ?unassign_time .}"
+//        		+ "}";
+//		dataset = TDBFactory.createDataset(directory);
+//		Query query = QueryFactory.create(q);
+//		QueryExecution qexec = QueryExecutionFactory.create(query, dataset);
+//		ResultSet results = qexec.execSelect();
+//		while(results.hasNext()){
+//			exist = true;
+//			QuerySolution row = results.next();
+//			RDFNode unassignTimeNode = row.get("unassign_time");
+//			if(unassignTimeNode!=null){
+//				String unassignTime = unassignTimeNode.toString();
+//				String assignTime = row.get("assign_time").toString();
+//				System.err.println("the unassign_time is : " + unassignTime);
+//				System.err.println("the assign_time is : " + assignTime);
+//				System.out.println(unassignTime.compareTo(assignTime));
+//				if(unassignTime.compareTo(assignTime)>=0){ //means unassign_activity happened at a later time
+//					                                       //which means it has been unassigned.
+//					isInValidated = true;
+//				}
+//				
+//			}else isInValidated = false; //if there is no unassignTimeNode, which means this activity has not been invalidated.
+//		}
+//		return (exist&&!isInValidated);
+//	}
 	
 	
 	@Override
