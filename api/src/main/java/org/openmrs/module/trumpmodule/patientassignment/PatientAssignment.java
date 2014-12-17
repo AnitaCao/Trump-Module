@@ -12,7 +12,7 @@ public class PatientAssignment extends BaseOpenmrsData implements Serializable {
      private String pauuid;
      private Integer id;
      private String patientUUID;
-     private String doctorId; //assigned to this doctor, actually this doctorId is an userId
+     private String assigned_user_id; //assigned to this doctor, actually this doctorId is an userId
      private String userId; //who did this assignment
      private boolean invalidated;
     
@@ -26,9 +26,9 @@ public class PatientAssignment extends BaseOpenmrsData implements Serializable {
           this.userId = Context.getAuthenticatedUser().getId().toString();
      }
     
-     public PatientAssignment(String patientUUID, String doctorId) {
+     public PatientAssignment(String patientUUID, String assigned_user_id) {
           this.patientUUID = patientUUID;
-         this.doctorId = doctorId;
+         this.assigned_user_id = assigned_user_id;
          this.invalidated = false;
 
      }
@@ -59,13 +59,7 @@ public class PatientAssignment extends BaseOpenmrsData implements Serializable {
           this.patientUUID = patientUUID;
      }
 
-     public String getDoctorId() {
-          return doctorId;
-     }
 
-     public void setDoctorId(String doctorId) {
-          this.doctorId = doctorId;
-     }
 
 //	public String getPatientassignmentUUID() {
 //		return this.getUuid();
@@ -86,6 +80,14 @@ public class PatientAssignment extends BaseOpenmrsData implements Serializable {
  	}
   
 
+	public String getAssigned_user_id() {
+		return assigned_user_id;
+	}
+
+	public void setAssigned_user_id(String assigned_user_id) {
+		this.assigned_user_id = assigned_user_id;
+	}
+
 	public Boolean getInvalidated() {
 		return isInvalidated();
 	}
@@ -98,6 +100,8 @@ public class PatientAssignment extends BaseOpenmrsData implements Serializable {
 	public void setInvalidated(boolean invalidated) {
 		this.invalidated = invalidated;
 	}
+
+
 	
 
 }

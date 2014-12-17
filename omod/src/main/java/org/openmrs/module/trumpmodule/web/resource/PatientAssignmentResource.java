@@ -47,6 +47,7 @@ public class PatientAssignmentResource extends
 	private static final String DELETE_ASSIGNMENT = "Delete Assignment";
 	private static final String UPDATE_ASSIGNMENT = "Update Assignment";
 	private static final String VIEW_ASSIGNMENT = "View Assignment";
+
 	
 	private Dataset dataset;
 	OpenmrsEnforceServiceContext openmrsContext = OpenmrsEnforceServiceContext
@@ -61,7 +62,7 @@ public class PatientAssignmentResource extends
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("pauuid");
 			description.addProperty("patientUUID");
-			description.addProperty("doctorId");
+			description.addProperty("assigned_user_id");
 			description.addProperty("invalidated");
 			description.addProperty("display", findMethod("getDisplayString"));
 			description.addSelfLink();
@@ -70,7 +71,7 @@ public class PatientAssignmentResource extends
 		} else if (rep instanceof FullRepresentation) {
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("pauuid");
-			description.addProperty("doctorId");
+			description.addProperty("assigned_user_id");
 			description.addProperty("patientUUID");
 			description.addProperty("userId");
 			description.addProperty("invalidated");
@@ -86,7 +87,7 @@ public class PatientAssignmentResource extends
 	@Override
 	public DelegatingResourceDescription getCreatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
-		description.addRequiredProperty("doctorId");
+		description.addRequiredProperty("assigned_user_id");
 		description.addRequiredProperty("patientUUID");
 		return description;
 	}
@@ -94,7 +95,7 @@ public class PatientAssignmentResource extends
 	@Override
 	public DelegatingResourceDescription getUpdatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
-		description.addRequiredProperty("doctorId");
+		description.addRequiredProperty("assigned_user_id");
 		description.addRequiredProperty("patientUUID");
 
 		return description;
@@ -119,7 +120,7 @@ public class PatientAssignmentResource extends
 		
 		HashMap<String,String> properties = new HashMap<String,String>();
 		properties.put(ProvenanceStrings.PATIENT_UUID, delegate.getPatientUUID());
-		properties.put(ProvenanceStrings.DOCTOR_ID, delegate.getDoctorId());
+		properties.put(ProvenanceStrings.ASSIGNED_USER_ID, delegate.getAssigned_user_id());
 		
 		if (!pro.checkExist("patientassignment", properties)) {
 			return (PatientAssignment) new ProvenanceAdvice().addToTDB("save",delegate,"save_patientassignment/"
@@ -144,7 +145,7 @@ public class PatientAssignmentResource extends
 		checkAccessRequest("deletePatientAssignment",new Object[]{delegate,reason,context}, requiredPrivileges);
 		HashMap<String,String> properties = new HashMap<String,String>();
 		properties.put(ProvenanceStrings.PATIENT_UUID, delegate.getPatientUUID());
-		properties.put(ProvenanceStrings.DOCTOR_ID, delegate.getDoctorId());
+		properties.put(ProvenanceStrings.ASSIGNED_USER_ID, delegate.getAssigned_user_id());
 		if (pro.checkExist("patientassignment", properties)) {
 			// when we do delete patientAssignment, we do not actually delete it
 			// from TDB, we do invalidating this patientAssignment entity.
@@ -174,7 +175,7 @@ public class PatientAssignmentResource extends
 
 		PatientAssignment pa = new PatientAssignment();
 		String patient_uuid = null;
-		String doctor_id = null;
+		String assigned_user_id = null;
 		boolean invalidated = false;
 		
 		HashMap<String,String> properties = new Provenance().getByUUID("patientassignment", uniqueId);
@@ -183,8 +184,8 @@ public class PatientAssignmentResource extends
 			return null;
 		}else{
 			for(String key : properties.keySet()){
-				if (key.equals("doctor_id")){
-					doctor_id = properties.get(key);
+				if (key.equals("assigned_user_id")){
+					assigned_user_id = properties.get(key);
 				}else if(key.equals("patient_uuid")){
 					patient_uuid = properties.get(key);
 				}else if(key.equals("isvalidated")){
@@ -195,7 +196,7 @@ public class PatientAssignmentResource extends
 			// which means we can't get the object, we can only get the information of the object, so we need
 			// to new an instance and set the information by passing the obtained information to the new 
 			// instance. Am I right ? --- YES
-			pa.setDoctorId(doctor_id);
+			pa.setAssigned_user_id(assigned_user_id);
 			pa.setPatientUUID(patient_uuid);
 			pa.setUuid(uniqueId);
 			pa.setInvalidated(invalidated);
@@ -224,45 +225,10 @@ public class PatientAssignmentResource extends
 
 
 	public String getDisplayString(PatientAssignment patientAssignment) {
-		return "Patient : "+patientAssignment.getPatientUUID() + " assigned to Doctor: "
-				+ patientAssignment.getDoctorId() + ".  NOTE: This assignment is active  :" + !patientAssignment.getInvalidated();
+		return "Patient : "+patientAssignment.getPatientUUID() + " assigned to This User whose id is : "
+				+ patientAssignment.getAssigned_user_id() + ".  NOTE: This assignment is active  :" + !patientAssignment.getInvalidated();
 	}
 	
-//	public boolean checkExist(String doctorId, String patientUUID){
-//		boolean exist = false;
-//		boolean isInValidated = false;
-//		
-//		String q = ProvenanceStrings.QUERY_PREFIX + "SELECT *  WHERE {"
-//				+ "?pa NS:doctor_id "+"'"+doctorId+"' ."
-//        		+ "?pa NS:patient_uuid "+"'"+patientUUID+"' ."
-//        		+ "?pa PROV:wasGeneratedBy ?assign_activity ."
-//        		+ "?assign_activity PROV:startedAtTime ?assign_time ."
-//        		+ "OPTIONAL { ?pa PROV:wasInvalidatedBy ?unassign_activity ."
-//        		+            "?unassign_activity PROV:startedAtTime ?unassign_time .}"
-//        		+ "}";
-//		dataset = TDBFactory.createDataset(directory);
-//		Query query = QueryFactory.create(q);
-//		QueryExecution qexec = QueryExecutionFactory.create(query, dataset);
-//		ResultSet results = qexec.execSelect();
-//		while(results.hasNext()){
-//			exist = true;
-//			QuerySolution row = results.next();
-//			RDFNode unassignTimeNode = row.get("unassign_time");
-//			if(unassignTimeNode!=null){
-//				String unassignTime = unassignTimeNode.toString();
-//				String assignTime = row.get("assign_time").toString();
-//				System.err.println("the unassign_time is : " + unassignTime);
-//				System.err.println("the assign_time is : " + assignTime);
-//				System.out.println(unassignTime.compareTo(assignTime));
-//				if(unassignTime.compareTo(assignTime)>=0){ //means unassign_activity happened at a later time
-//					                                       //which means it has been unassigned.
-//					isInValidated = true;
-//				}
-//				
-//			}else isInValidated = false; //if there is no unassignTimeNode, which means this activity has not been invalidated.
-//		}
-//		return (exist&&!isInValidated);
-//	}
 	
 	
 	@Override
@@ -276,30 +242,30 @@ public class PatientAssignmentResource extends
 		String includeInvalidated = context.getRequest().getParameter("include_invalidated");
 		String q = null;
 		
-		// search specific patient assignment by the given doctorid, this will return a list of patient assignment which involves 
+		// search specific patient assignment by the given assigned_user_id, this will return a list of patient assignment which involves 
 		// the doctor.
-		String doctorId = context.getRequest().getParameter("doctorid");
+		String assigned_user_id = context.getRequest().getParameter("assigned_user_id");
 		
-		if(doctorId!=null){
+		if(assigned_user_id!=null){
 			// if the parameter is true, means we want the invalidated patientassignment as well as the uninvalidated ones.
 			// if the parameter is false, means we only want the uninvalidated ones.
 			if(includeInvalidated.equals("true")){
 				q = ProvenanceStrings.QUERY_PREFIX
 						+ "SELECT *" 
 						+ "WHERE {" 
-						+ "?pa NS:doctor_id " + "'"+doctorId+"'" + " ."
-						+ "?pa PROV:wasGeneratedBy ?activity ."
-						+ "?activity NS:action_name 'assign_patient' ."
-						+ "OPTIONAL { ?pa PROV:wasInvalidatedBy ?unassign_activity .}"
+						+ "?pa NS:assigned_user_id " + "'"+assigned_user_id+"'" + " ."
+						+ "?pa PROV:wasGeneratedBy ?assign_activity ."
+						+ "?assign_activity NS:action_name 'save_patientassignment' ."
+						+ "OPTIONAL { ?pa PROV:wasInvalidatedBy ?delete_patientassginment .}"
 						+ "}";
 			}else {
 				q = ProvenanceStrings.QUERY_PREFIX
 						+ "SELECT *" 
 						+ "WHERE {" 
-						+ "?pa NS:doctor_id " + "'"+doctorId+"'" + " ."
+						+ "?pa NS:assigned_user_id " + "'"+assigned_user_id+"'" + " ."
 						+ "?pa PROV:wasGeneratedBy ?activity ."
-						+ "?activity NS:action_name 'assign_patient' ."
-						+ "FILTER NOT EXISTS { ?pa PROV:wasInvalidatedBy ?unassign_activity .}"
+						+ "?activity NS:action_name 'save_patientassignment' ."
+						+ "FILTER NOT EXISTS { ?pa PROV:wasInvalidatedBy ?delete_patientassginment .}"
 						+ "}";
 			}
 		}
@@ -313,8 +279,8 @@ public class PatientAssignmentResource extends
 						+ "WHERE {" 
 						+ "?pa NS:patient_uuid " + "'"+patientUUID+"'" + " ."
 						+ "?pa PROV:wasGeneratedBy ?activity ."
-						+ "?activity NS:action_name 'assign_patient' ."
-						+ "OPTIONAL { ?pa PROV:wasInvalidatedBy ?unassign_activity .}"
+						+ "?activity NS:action_name 'save_patientassignment' ."
+						+ "OPTIONAL { ?pa PROV:wasInvalidatedBy ?delete_patientassginment .}"
 						+ "}";
 			}else {
 				q = ProvenanceStrings.QUERY_PREFIX
@@ -322,10 +288,11 @@ public class PatientAssignmentResource extends
 						+ "WHERE {" 
 						+ "?pa NS:patient_uuid " + "'"+patientUUID+"'" + " ."
 						+ "?pa PROV:wasGeneratedBy ?activity ."
-						+ "?activity NS:action_name 'assign_patient' ."
-						+ "FILTER NOT EXISTS { ?pa PROV:wasInvalidatedBy ?unassign_activity .}"
+						+ "?activity NS:action_name 'save_patientassignment' ."
+						+ "FILTER NOT EXISTS { ?pa PROV:wasInvalidatedBy ?delete_patientassginment .}"
 						+ "}";
 			}
+			
 		}
 		
 		dataset = TDBFactory.createDataset(directory);
