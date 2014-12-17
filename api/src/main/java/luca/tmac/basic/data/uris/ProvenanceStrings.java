@@ -21,7 +21,7 @@ public class ProvenanceStrings {
 	
 	// property namespace
 	public static final String PATIENT_NAME = "patient_name";
-	public static final String DOCTOR_ID = "doctor_id";
+	public static final String ASSIGNED_USER_ID = "assigned_user_id";
 	public static final String PATIENT_UUID = "patient_uuid";
 	public static final String PATIENT_ASSIGNMENT_UUID = "patientassignment_uuid";
 	public static final String ACTIVITY_NAME = "action_name";
