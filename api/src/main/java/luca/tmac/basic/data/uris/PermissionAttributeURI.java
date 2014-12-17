@@ -12,4 +12,6 @@ public class PermissionAttributeURI {
 	
 	public static String PERMISSION_ATTRIBUTES_URI = PERMISSION_CATEGORY_URI + ":" + "attributes";
 	
+	public static final String WANTED_PATIENT_URI = PERMISSION_CATEGORY_URI + ":" + "wanted_patient";
+	
 }
