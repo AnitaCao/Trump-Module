@@ -45,8 +45,11 @@ public class ProvenanceAdvice implements MethodInterceptor {
 		Object result = null;;
 		// currently, we only capture the "create","save","delete","update" methods.
 		if (OpenmrsUtil.stringStartsWith(name, ProvenanceStrings.SETTER_METHOD_PREFIXES)) {   
-			String className = invocation.getThis().getClass().getName();
-			String activityNameSpace = name+"_"+className+"/";
+			//String className = invocation.getThis().getClass().getName();
+			String classFullName = invocation.getArguments()[0].getClass().toString();
+			String className = classFullName.substring(classFullName.lastIndexOf(".")+1);
+			String activityName = name+"_"+className;
+			String activityNameSpace = activityName+"/";
 			System.err.println("the activity name space is : "+ activityNameSpace);
 		
 			// used for the execution time calculations
@@ -60,7 +63,7 @@ public class ProvenanceAdvice implements MethodInterceptor {
 			
 			// 1. activity
 			com.hp.hpl.jena.rdf.model.Resource activity = generateActivity(
-					activityNameSpace);
+					activityNameSpace,activityName );
 
 			// 2. agent - comes from the logged in user or the user who is invoking the method
 			com.hp.hpl.jena.rdf.model.Resource agent = generateAgent();
@@ -75,7 +78,8 @@ public class ProvenanceAdvice implements MethodInterceptor {
 			// resulting in some entity being created (i.e. a new patient record
 			// with a UUID) -
 			// i.e. from the result we just got
-			com.hp.hpl.jena.rdf.model.Resource entity = generateEntity((OpenmrsData)result,className+"/",null);
+			HashMap<String,String> entityProperties = new HashMap<String,String>();
+			com.hp.hpl.jena.rdf.model.Resource entity = generateEntity((OpenmrsData)result,className+"/",entityProperties);
 			
 			addStartEndTime(startTime, activity);
 			
@@ -105,7 +109,7 @@ public class ProvenanceAdvice implements MethodInterceptor {
 		// insert to TDB
 		// 1. activity
 		com.hp.hpl.jena.rdf.model.Resource activity = generateActivity(
-				activityNamespace);
+				activityNamespace, activityNamespace.replace("/", ""));
 
 		// 2. agent - comes from the logged in user or the user who is invoking the method
 		com.hp.hpl.jena.rdf.model.Resource agent = generateAgent();
@@ -196,16 +200,6 @@ public class ProvenanceAdvice implements MethodInterceptor {
 		return activity;
 	}
 	
-	public com.hp.hpl.jena.rdf.model.Resource generateActivity(
-			String activityNamespace) {
-		
-		String activityURI = provBundle.createActivity(ProvenanceStrings.NS
-				+ activityNamespace
-				+ UUID.randomUUID().getMostSignificantBits());
-		com.hp.hpl.jena.rdf.model.Resource activity = provBundle.getResource(activityURI);
-
-		return activity;
-	}
 	
 	/**
 	 * add start time and end time to this activity

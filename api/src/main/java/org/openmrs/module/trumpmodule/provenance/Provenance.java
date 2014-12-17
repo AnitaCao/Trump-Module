@@ -29,6 +29,13 @@ public class Provenance {
 			.getInstance();
 	private String directory = openmrsContext.getProvenanceDirectory();
 	
+	
+	/**
+	 * get all objects which is the given dataType, for example, if the dataType is "PatientAssignment",
+	 * this method will get all the patientAssignment objects' uuids
+	 * @param dataType the required dataType, such as "PatientAssignment", "Concept","Policy"..
+	 * @return uuidList the objects' uuids
+	 */
 	public List<String> getAll(String dataType) {
 		List<String> uuidList = new ArrayList<String>();
 
@@ -44,15 +51,23 @@ public class Provenance {
 			String things = row.get("s").toString();
 			if (things.contains(dataType)) {
 				String[] ss = things.split("/");
-				String paUUID = ss[ss.length-1];
-				System.out.println(paUUID);
-				uuidList.add(paUUID);
+				//this uuid is from the url of the resource in TDB
+				String UUID = ss[ss.length-1];
+				System.out.println(UUID);
+				uuidList.add(UUID);
 			}
 		}
 		dataset.close();
 		return uuidList;
 	}
 	
+	/**
+	 * Get the object by given dataType and the uuid of the required object
+	 * @param dataType  the required dataType, such as "PatientAssignment", "Concept","Policy"..
+	 * @param uuid  the uuid of the required object
+	 * @return properties  the required object's property hashMap, which contain the properties 
+	 * from TDB, we will use this hashMap to create a object. (information in TDB is not object.)
+	 */
 	public HashMap<String,String> getByUUID(String dataType,String uuid){
 		HashMap<String,String> properties = new HashMap<String, String>();
 		
@@ -82,6 +97,11 @@ public class Provenance {
 
 					} else if (resourceString.contains("wasInvalidatedBy")){
 						properties.put("invalidated","true");
+					} else {
+						//if the property name does not contain the properties we want to get, we need to 
+						//jump two to skip the next value of the property which we don't need ( actually, 
+						//we are jumping to next row by skipping the next value.)
+						columns.next();
 					}
 				} else {
 					System.out.println(cell.toString());
@@ -92,6 +112,12 @@ public class Provenance {
 		return properties;
 	}
 	
+	/**
+	 * Check if the required object is exist in TDB or not
+	 * @param dataType  the dataType of the object
+	 * @param propeties  the properties of the object
+	 * @return
+	 */
 	public boolean checkExist(String dataType, HashMap<String,String> propeties){
 		
 		boolean exist = false;
