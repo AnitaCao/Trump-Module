@@ -14,5 +14,6 @@ public class SubjectAttributeURI {
 	public static final String WANTED_PATIENT_URI = SUBJECT_CATEGORY_URI + ":" + "wanted_patient";
 	public static final String ACTION_URI = SUBJECT_CATEGORY_URI + ":" +"action";
 	public static final String RESOURCE_TYPE_URI = SUBJECT_CATEGORY_URI + ":" +"resource_type";
+	public static final String WANTED_DOCTOR_URI = SUBJECT_CATEGORY_URI + ":" +"wanted_doctorid";
 	
 }

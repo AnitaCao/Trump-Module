@@ -148,6 +148,16 @@ public class OpenmrsSubjectAttributeFinderModule extends AbstractAttributeFinder
 				e.printStackTrace();
 			}
 			
+			//search patientassignment by doctor id. the wanted doctor id is from the parameters array
+			//which is the input when user do the searching.
+		}else if(attributeURI.toString().equals(SubjectAttributeURI.WANTED_DOCTOR_URI)){
+			values.add(StringAttribute.getInstance(parameters[0].toString()));
+			try {
+				bag = new BagAttribute(new URI(StringAttribute.identifier), values);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+			
 		}else if(attributeURI.toString().equals(SubjectAttributeURI.ASSIGNED_PATIENT_URI))
 		{
 			if (methodName.startsWith("getPatient")) {

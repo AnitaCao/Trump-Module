@@ -22,6 +22,7 @@ import luca.data.AttributeQuery;
 import luca.data.DataHandler;
 import luca.tmac.basic.data.AbstractAttributeFinderModule;
 import luca.tmac.basic.data.uris.PermissionAttributeURI;
+import luca.tmac.basic.data.uris.SubjectAttributeURI;
 import luca.tmac.basic.data.xml.SubjectAttributeXmlName;
 
 
@@ -121,6 +122,7 @@ public class OpenmrsPermissionAttributeFinderModule extends AbstractAttributeFin
 					values.add(StringAttribute.getInstance("view"));
 				}
 			}
+				
 		}
 		// if the method is not about patientassignment, which means it is something from openmrs,
 		// then we use the permission attributes we got from openmrs annotation. 
@@ -129,8 +131,17 @@ public class OpenmrsPermissionAttributeFinderModule extends AbstractAttributeFin
 				values.add(StringAttribute.getInstance(resourceString));
 			}else if(attributeURI.toString().equals(PermissionAttributeURI.ACTION_URI)){
 				values.add(StringAttribute.getInstance(actionString));
+			}else if(attributeURI.toString().equals(PermissionAttributeURI.WANTED_PATIENT_URI))
+			{	
+				values.add(StringAttribute.getInstance(parameters[0].toString()));
+				try {
+					bag = new BagAttribute(new URI(StringAttribute.identifier), values);
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				}	
 			}
 		}
+		
 		try {
 			bag = new BagAttribute(new URI(StringAttribute.identifier), values);
 		} catch (URISyntaxException e) {
